@@ -32,4 +32,4 @@ jobs:
         run: |
           npm install -g caprover
           echo "Deploying to CapRover..."
-          caprover deploy --caproverUrl ${{ secrets.CAPROVER_SERVER }} --appName ${{ secrets.APP_NAME }} --caproverPassword ${{ secrets.APP_TOKEN }} --branch main
+          caprover deploy --caproverUrl ${{ secrets.CAPROVER_SERVER }} --appName ${{ secrets.APP_NAME }} --caproverPassword ${{ secrets.APP_TOKEN }}
