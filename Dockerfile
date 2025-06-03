@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache tzdata
@@ -7,17 +7,23 @@ ENV TZ=Europe/Amsterdam
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Explicitly copy the app directory
-COPY app/ ./app/
-COPY public/ ./public/
-COPY *.config.js ./
-COPY *.json ./
-
-# Debug verification
-RUN echo "Files copied:" && ls -la
-RUN echo "App directory:" && ls -la app/
+# Copy all necessary files
+COPY . .
 
 RUN npm run build
 
+# Production stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+RUN apk add --no-cache tzdata
+ENV TZ=Europe/Amsterdam
+ENV NODE_ENV=production
+
+# Copy standalone build
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
