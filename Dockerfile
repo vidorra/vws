@@ -14,12 +14,23 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application
+# DEBUG: Show exactly what got copied
+RUN echo "=== ROOT DIRECTORY CONTENTS ==="
+RUN ls -la
+
+RUN echo "=== APP DIRECTORY CHECK ==="
+RUN ls -la app/ || echo "❌ APP DIRECTORY NOT FOUND!"
+
+RUN echo "=== PAGES DIRECTORY CHECK ==="  
+RUN ls -la pages/ || echo "✅ PAGES DIRECTORY NOT FOUND (GOOD)"
+
+RUN echo "=== ALL SUBDIRECTORIES ==="
+RUN find . -maxdepth 2 -type d
+
+# Try to build anyway to see the exact error
 RUN npm run build
 
 EXPOSE 3000
-
 ENV PORT 3000
 ENV NODE_ENV production
-
 CMD ["npm", "start"]
