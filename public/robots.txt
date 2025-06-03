@@ -1,3 +1,18 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+
+# Block admin panel
+Disallow: /data-beheer/
+Disallow: /data-beheer/*
+
+# Block API endpoints
+Disallow: /api/
+Disallow: /api/*
+
+# Block private pages
+Disallow: /_next/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://wasstripsvergelijker.nl/sitemap.xml
