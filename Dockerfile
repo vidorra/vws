@@ -11,8 +11,12 @@ RUN cp /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source code
-COPY . .
+COPY app/ ./app/
+COPY public/ ./public/
+COPY next.config.js ./
+COPY tailwind.config.js ./
+COPY tsconfig.json ./
+COPY postcss.config.js ./
 
 # DEBUG: Show exactly what got copied
 RUN echo "=== ROOT DIRECTORY CONTENTS ==="
@@ -31,6 +35,6 @@ RUN find . -maxdepth 2 -type d
 RUN npm run build
 
 EXPOSE 3000
-ENV PORT 3000
-ENV NODE_ENV production
+# ENV PORT 3000
+# ENV NODE_ENV production
 CMD ["npm", "start"]
