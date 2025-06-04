@@ -41,4 +41,9 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3000
+
+# Set the host to listen on all interfaces
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
+
 CMD ["node", "server.js"]
