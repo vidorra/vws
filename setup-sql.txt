@@ -1,0 +1,226 @@
+# PostgreSQL Setup Guide for Vaatwasstrips Vergelijker
+
+## PART 1: LOCAL DEVELOPMENT WITH PGADMIN 4
+
+### Step 1: Create Local Database Server in pgAdmin 4
+
+1. Open pgAdmin 4
+2. Right-click on "Servers" in the left panel
+3. Select "Register" > "Server..."
+4. In the "General" tab:
+   - Name: "Vaatwasstrips Local"
+   - Server group: "Servers" (default)
+
+5. In the "Connection" tab:
+   - Host name/address: "localhost" or "127.0.0.1"
+   - Port: 5432 (default PostgreSQL port)
+   - Maintenance database: "postgres"
+   - Username: "postgres" (or your PostgreSQL username)
+   - Password: [your PostgreSQL password]
+   - Save password: Check this box
+
+6. Click "Save"
+
+### Step 2: Create Database
+
+1. Expand your new "Vaatwasstrips Local" server
+2. Right-click on "Databases"
+3. Select "Create" > "Database..."
+4. Enter:
+   - Database: "vaatwasstrips"
+   - Owner: "postgres" (or your username)
+   - Encoding: "UTF8"
+5. Click "Save"
+
+### Step 3: Get Connection String
+
+Your local connection string will be:
+```
+DATABASE_URL="postgresql://postgres:[YOUR_PASSWORD]@localhost:5432/vaatwasstrips"
+```
+
+### Step 4: Update Your Project
+
+1. Create a `.env` file in your project root (copy from .env.example):
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update the DATABASE_URL in `.env`:
+   ```
+   DATABASE_URL="postgresql://postgres:[YOUR_PASSWORD]@localhost:5432/vaatwasstrips"
+   ```
+
+3. Install ts-node if not already done:
+   ```bash
+   npm install --save-dev ts-node
+   ```
+
+4. Push the schema to your database:
+   ```bash
+   npm run db:push
+   ```
+
+5. Seed the database with initial data:
+   ```bash
+   npm run db:seed
+   ```
+
+6. Verify everything worked:
+   ```bash
+   npm run db:studio
+   ```
+
+## PART 2: CAPROVER DEPLOYMENT OPTIONS
+
+### Option A: PostgreSQL One-Click App in CapRover (RECOMMENDED)
+
+1. **In CapRover Dashboard:**
+   - Go to "Apps"
+   - Click "One-Click Apps/Databases"
+   - Search for "PostgreSQL"
+   - Click "Deploy"
+   
+2. **Configure PostgreSQL App:**
+   - App Name: "vaatwasstrips-db"
+   - PostgreSQL Root Password: [choose strong password]
+   - PostgreSQL Database: "vaatwasstrips"
+   - PostgreSQL User: "vaatwasstrips_user"
+   - PostgreSQL Password: [choose strong password]
+   - Click "Deploy"
+
+3. **Get Connection String:**
+   After deployment, your connection string will be:
+   ```
+   DATABASE_URL="postgresql://vaatwasstrips_user:[PASSWORD]@srv-captain--vaatwasstrips-db:5432/vaatwasstrips"
+   ```
+
+4. **Update Your App:**
+   - Go to your main app in CapRover
+   - Go to "App Configs" > "Environmental Variables"
+   - Add: `DATABASE_URL` with the connection string above
+
+### Option B: External Database (Supabase/Neon) - EASIEST
+
+1. **Create Free Database:**
+   - Go to https://supabase.com or https://neon.tech
+   - Create new project
+   - Copy the connection string
+
+2. **In CapRover:**
+   - Go to your app > "App Configs" > "Environmental Variables"
+   - Add: `DATABASE_URL` with the Supabase/Neon connection string
+
+### Option C: Migrate Local Database to CapRover
+
+1. **Export Local Database:**
+   ```bash
+   # In your local terminal
+   # If pg_dump is not in your PATH, use the full path:
+   /Library/PostgreSQL/17/bin/pg_dump -U postgres -d vaatwasstrips -f vaatwasstrips_backup.sql
+   
+   # Or if you've added PostgreSQL to your PATH (requires new terminal session):
+   pg_dump -U postgres -d vaatwasstrips -f vaatwasstrips_backup.sql
+   ```
+
+2. **Connect to CapRover PostgreSQL:**
+   ```bash
+   # Get CapRover PostgreSQL credentials from the app
+   psql -h [CAPROVER_DOMAIN] -p [PORT] -U vaatwasstrips_user -d vaatwasstrips
+   ```
+
+3. **Import Database:**
+   ```bash
+   psql -h [CAPROVER_DOMAIN] -p [PORT] -U vaatwasstrips_user -d vaatwasstrips < vaatwasstrips_backup.sql
+   ```
+
+## PART 3: DEPLOYMENT STEPS
+
+### Before Deploying to CapRover:
+
+1. **Update captain-definition** (already correct)
+2. **Ensure Dockerfile includes Prisma generation:**
+   ```dockerfile
+   # Add after npm ci
+   RUN npx prisma generate
+   ```
+
+3. **Add to package.json scripts:**
+   ```json
+   "build": "prisma generate && next build"
+   ```
+
+### Environment Variables for CapRover:
+
+Add these in CapRover App Configs:
+```
+DATABASE_URL=postgresql://user:pass@host:5432/vaatwasstrips
+ADMIN_EMAIL=admin@vaatwasstripsvergelijker.nl
+ADMIN_PASSWORD_HASH=[generate with bcrypt]
+JWT_SECRET=[generate random string]
+NODE_ENV=production
+```
+
+### After Deployment:
+
+1. **Run migrations on production:**
+   - SSH into CapRover server or
+   - Create a one-time script endpoint:
+   
+   ```typescript
+   // app/api/setup/route.ts (DELETE AFTER USE!)
+   import { NextResponse } from 'next/server';
+   import { prisma } from '@/lib/prisma';
+   
+   export async function GET(request: Request) {
+     // Check for secret key
+     const { searchParams } = new URL(request.url);
+     const secret = searchParams.get('secret');
+     
+     if (secret !== 'your-setup-secret-12345') {
+       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+     }
+     
+     try {
+       // Run seed
+       const { main } = await import('@/prisma/seed');
+       await main();
+       
+       return NextResponse.json({ success: true });
+     } catch (error) {
+       return NextResponse.json({ error: error.message }, { status: 500 });
+     }
+   }
+   ```
+   
+   Then visit: `https://your-app.caprover.domain/api/setup?secret=your-setup-secret-12345`
+
+## RECOMMENDED APPROACH:
+
+1. **Development**: Use local PostgreSQL with pgAdmin 4
+2. **Production**: Use CapRover PostgreSQL one-click app OR Supabase/Neon
+3. **Migration**: Use Prisma migrations to keep schemas in sync
+
+## QUICK START COMMANDS:
+
+```bash
+# Local development
+npm install --save-dev ts-node
+npm run db:push
+npm run db:seed
+npm run dev
+
+# Check database
+npm run db:studio
+
+# Before deploying
+npm run build
+```
+
+## TROUBLESHOOTING:
+
+1. **Connection refused**: Check PostgreSQL is running
+2. **Authentication failed**: Verify username/password
+3. **Database does not exist**: Create it in pgAdmin first
+4. **Permission denied**: Check user has correct privileges
+5. **CapRover issues**: Check app logs in CapRover dashboard

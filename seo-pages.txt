@@ -1,0 +1,78 @@
+# SEO Pages That Need Content - Vaatwasstrips Vergelijker
+
+## Pages That Exist But Need Content:
+
+### Price Category Pages (/prijzen/[category])
+- /prijzen/goedkoopste - "Goedkoopste Vaatwasstrips" page needs product listings and content
+- /prijzen/beste-waarde - "Beste Prijs-Kwaliteit Vaatwasstrips" page needs product listings and content
+- /prijzen/premium - "Premium Vaatwasstrips" page needs product listings and content
+
+### Guide Pages (/gids)
+- /gids/beginners - "Beginners Guide" page exists but needs actual guide content
+- /gids/milieuvriendelijk - Route missing, needs to be created with eco-friendly guide content
+- /gids/kopen-tips - Route missing, needs to be created with buying tips content
+
+### Blog Pages (/blog)
+- /blog - Blog index page exists but needs blog post listings
+- /blog/wasstrips-vs-wasmiddel - Route missing, needs article comparing strips vs traditional detergent
+- /blog/duurzaam-wassen - Route missing, needs article about sustainable washing
+- /blog/besparen-wasmiddel - Route missing, needs article about saving on detergent costs
+
+### Review Pages (/reviews)
+- /reviews - Review index page exists but needs review listings
+- /reviews/2025 - Route missing, needs "Best Vaatwasstrips 2025" roundup content
+- /reviews/[merk] - Dynamic route missing, needs individual brand review pages
+
+## Content Elements Needed:
+
+### For Each Product/Brand Page:
+- Detailed product descriptions (currently using mock data)
+- Real user reviews and ratings
+- Actual price data and history
+- Authentic pros and cons based on testing
+- Real product images
+- Video reviews (optional but recommended)
+
+### For Category Pages:
+- Category introduction text (why choose this category)
+- Comparison tables
+- Buying guide specific to category
+- FAQ section per category
+- Related articles/guides
+
+### For Guide Pages:
+- Comprehensive guide content (1500+ words recommended)
+- Step-by-step instructions
+- Images/infographics
+- Video tutorials (optional)
+- Related product recommendations
+- FAQ section
+
+### For Blog Posts:
+- Full article content (1000+ words recommended)
+- Author information
+- Publication date
+- Featured image
+- Related posts
+- Comments section (optional)
+
+### Homepage Elements Needing Real Content:
+- Real product data (currently mock)
+- Actual price comparisons
+- Real user testimonials
+- Updated statistics
+- Fresh reviews
+
+### Missing Meta Elements:
+- OG images for social sharing (/public/og-image.jpg referenced but missing)
+- Favicon
+- Apple touch icons
+- PWA manifest file
+
+### Additional SEO Content Needed:
+- Privacy Policy page (/privacy)
+- Terms of Service page (/terms)
+- About Us page (/over-ons)
+- Contact page (/contact)
+- FAQ page (/faq)
+- Shipping & Returns page (/verzending-retour)

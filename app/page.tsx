@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { TrendingDown, Award, Star, ExternalLink } from 'lucide-react';
+import { getProducts, getProductStats } from '@/lib/db/products';
+import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
   title: 'Vaatwasstrips Vergelijker Nederland - Beste Prijzen 2024',
@@ -20,130 +22,7 @@ export const metadata: Metadata = {
   }
 };
 
-// Mock data - will be replaced with real data from database
-const products = [
-  {
-    id: 1,
-    name: "Wasstrip.nl",
-    supplier: "Wasstrip.nl",
-    slug: 'wasstrip-nl',
-    price: 12.80,
-    pricePerWash: 0.16,
-    originalPricePerWash: 0.23,
-    washesPerPack: 80,
-    rating: 4.2,
-    reviewCount: 234,
-    inStock: true,
-    features: ['Hypoallergeen', 'Koud & warm water', 'Biologisch afbreekbaar'],
-    description: 'Milieuvriendelijke vaatwasstrips met natuurlijke ingrediënten',
-    sustainability: 8.8,
-    availability: 'Online only',
-    pros: ['Laagste prijs', 'Grote verpakkingen'],
-    cons: ['Minder bekende merk', 'Beperkte reviews'],
-    badges: ['Beste waarde'],
-    emoji: '🌿',
-    color: 'rgb(132, 204, 22)',
-    bgColor: 'rgb(236, 252, 203)',
-    borderColor: 'border-green-400'
-  },
-  {
-    id: 2,
-    name: "Mother's Earth",
-    supplier: "Mother's Earth",
-    slug: 'mothers-earth',
-    price: 10.20,
-    pricePerWash: 0.17,
-    originalPricePerWash: 0.25,
-    washesPerPack: 60,
-    rating: 4.6,
-    reviewCount: 1247,
-    inStock: true,
-    features: ['Plantaardig', '30 dagen garantie', 'Doneert aan goede doelen'],
-    description: 'Nederlandse kwaliteit met focus op duurzaamheid',
-    sustainability: 9.2,
-    availability: 'Online only',
-    pros: ['Goedkoop per wasbeurt', 'Biologisch afbreekbaar'],
-    cons: ['Lange levertijd (5-9 dagen)', 'Verzending vanuit China'],
-    badges: ['Trending', 'Beste waarde'],
-    emoji: '🌍',
-    color: 'rgb(34, 197, 94)',
-    bgColor: 'rgb(220, 252, 231)',
-    borderColor: 'border-green-400'
-  },
-  {
-    id: 3,
-    name: 'Bubblyfy',
-    supplier: 'Bubblyfy',
-    slug: 'bubblyfy',
-    price: 14.08,
-    pricePerWash: 0.22,
-    originalPricePerWash: 0.30,
-    washesPerPack: 64,
-    rating: 4.4,
-    reviewCount: 456,
-    inStock: true,
-    features: ['100% natuurlijk', 'Enzymen uit planten', 'Geld-terug garantie'],
-    description: 'Moderne vaatwasstrips met frisse geuren',
-    sustainability: 9.0,
-    availability: 'Online only',
-    pros: ['Natuurlijke ingrediënten', 'Innovatieve formule'],
-    cons: ['Beperkte beschikbaarheid', 'Relatief nieuw merk'],
-    badges: ['Trending'],
-    emoji: '💧',
-    color: 'rgb(6, 182, 212)',
-    bgColor: 'rgb(207, 250, 254)',
-    borderColor: 'border-gray-200'
-  },
-  {
-    id: 4,
-    name: 'Cosmeau',
-    supplier: 'Cosmeau',
-    slug: 'cosmeau',
-    price: 15.00,
-    pricePerWash: 0.25,
-    originalPricePerWash: 0.35,
-    washesPerPack: 60,
-    rating: 4.3,
-    reviewCount: 892,
-    inStock: true,
-    features: ['Anti-bacterieel', 'Enzyme formule', 'Vrij van parabenen'],
-    description: 'Premium biologische vaatwasstrips',
-    sustainability: 8.5,
-    availability: 'Online + Winkels',
-    pros: ['Snelle levering', 'Breed verkrijgbaar'],
-    cons: ['Hoger prijspunt', 'Schuimvorming bij kleine vaatwassers'],
-    badges: [],
-    emoji: '🧽',
-    color: 'rgb(59, 130, 246)',
-    bgColor: 'rgb(219, 234, 254)',
-    borderColor: 'border-gray-200'
-  },
-  {
-    id: 5,
-    name: 'Bio-Suds',
-    supplier: 'Bio-Suds',
-    slug: 'bio-suds',
-    price: 17.40,
-    pricePerWash: 0.29,
-    originalPricePerWash: 0.35,
-    washesPerPack: 60,
-    rating: 4.1,
-    reviewCount: 189,
-    inStock: false,
-    features: ['Fosfaatvrij', 'Chloorvrij', 'Premium formule'],
-    description: 'Premium biologische vaatwasstrips',
-    sustainability: 8.7,
-    availability: 'Online + Bol.com',
-    pros: ['Premium kwaliteit', 'Milieuvriendelijke verpakking'],
-    cons: ['Duurste optie', 'Kleinere community'],
-    badges: [],
-    emoji: '🍃',
-    color: 'rgb(16, 185, 129)',
-    bgColor: 'rgb(209, 250, 229)',
-    borderColor: 'border-gray-200'
-  }
-];
-
+// Traditional tablets for comparison
 const traditionalTablets = [
   { name: 'Dreft Tablets', pricePerWash: 0.68, sustainability: 3.2, increase: 325 },
   { name: 'Sun Tablets', pricePerWash: 0.57, sustainability: 3.8, increase: 256 },
@@ -169,7 +48,77 @@ const faqs = [
   }
 ];
 
-export default function HomePage() {
+// Helper function to get product badges
+function getProductBadges(product: any) {
+  const badges = [];
+  
+  // Check if it's trending (you can implement getTrendingProducts later)
+  if (product.pricePerWash && product.pricePerWash <= 0.20) {
+    badges.push('Beste waarde');
+  }
+  
+  // Add more badge logic as needed
+  return badges;
+}
+
+// Helper function to get product color scheme
+function getProductColorScheme(supplier: string) {
+  const colorSchemes: Record<string, { color: string; bgColor: string; borderColor: string; emoji: string }> = {
+    "Wasstrip.nl": {
+      color: 'rgb(132, 204, 22)',
+      bgColor: 'rgb(236, 252, 203)',
+      borderColor: 'border-green-400',
+      emoji: '🌿'
+    },
+    "Mother's Earth": {
+      color: 'rgb(34, 197, 94)',
+      bgColor: 'rgb(220, 252, 231)',
+      borderColor: 'border-green-400',
+      emoji: '🌍'
+    },
+    "Bubblyfy": {
+      color: 'rgb(6, 182, 212)',
+      bgColor: 'rgb(207, 250, 254)',
+      borderColor: 'border-gray-200',
+      emoji: '💧'
+    },
+    "Cosmeau": {
+      color: 'rgb(59, 130, 246)',
+      bgColor: 'rgb(219, 234, 254)',
+      borderColor: 'border-gray-200',
+      emoji: '🧽'
+    },
+    "Bio-Suds": {
+      color: 'rgb(16, 185, 129)',
+      bgColor: 'rgb(209, 250, 229)',
+      borderColor: 'border-gray-200',
+      emoji: '🍃'
+    }
+  };
+  
+  return colorSchemes[supplier] || {
+    color: 'rgb(107, 114, 128)',
+    bgColor: 'rgb(243, 244, 246)',
+    borderColor: 'border-gray-200',
+    emoji: '📦'
+  };
+}
+
+export default async function HomePage() {
+  // Fetch products from database
+  const products = await getProducts({
+    orderBy: 'pricePerWash',
+    order: 'asc'
+  });
+  
+  // Get statistics
+  const stats = await getProductStats();
+  
+  // Calculate lowest price
+  const lowestPrice = products.length > 0 && products[0].pricePerWash 
+    ? products[0].pricePerWash.toFixed(2) 
+    : '0.16';
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -204,7 +153,7 @@ export default function HomePage() {
           {/* Statistics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <div className="text-3xl font-bold text-blue-600">€0.16</div>
+              <div className="text-3xl font-bold text-blue-600">€{lowestPrice}</div>
               <div className="text-sm text-gray-500">Laagste prijs per wasbeurt</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -212,7 +161,7 @@ export default function HomePage() {
               <div className="text-sm text-gray-500">Besparing vs. tablets</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <div className="text-3xl font-bold text-purple-600">5</div>
+              <div className="text-3xl font-bold text-purple-600">{stats.totalProducts}</div>
               <div className="text-sm text-gray-500">Aanbieders vergeleken</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -249,148 +198,174 @@ export default function HomePage() {
 
         {/* Product Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
-          {products.map((product) => (
-            <div 
-              key={product.id} 
-              className={`bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-                !product.inStock ? 'opacity-75' : ''
-              } ${product.borderColor}`}
-            >
-              <div className="p-6 pb-4">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-3xl">{product.emoji}</div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">{product.name}</h3>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center">
-                          <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                          <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
+          {products.map((product: any) => {
+            const colorScheme = getProductColorScheme(product.supplier);
+            const badges = getProductBadges(product);
+            const originalPrice = product.pricePerWash ? product.pricePerWash * 1.4 : 0.30;
+            
+            return (
+              <div 
+                key={product.id} 
+                className={`bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                  !product.inStock ? 'opacity-75' : ''
+                } ${colorScheme.borderColor}`}
+              >
+                <div className="p-6 pb-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="text-3xl">{colorScheme.emoji}</div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">{product.name}</h3>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center">
+                            <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                            <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
+                          </div>
+                          <span className="text-sm text-gray-400">({product.reviewCount} reviews)</span>
                         </div>
-                        <span className="text-sm text-gray-400">({product.reviewCount} reviews)</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-1">
+                      {badges.map((badge, index) => (
+                        <span 
+                          key={index}
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            badge === 'Beste waarde' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                          }`}
+                        >
+                          {badge}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Price Box */}
+                  <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-4 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-3xl font-bold" style={{ color: colorScheme.color }}>
+                          €{product.pricePerWash?.toFixed(2) || '0.00'}
+                        </div>
+                        <div className="text-sm text-gray-600">per wasbeurt</div>
+                        <div className="text-sm text-gray-400 line-through">€{originalPrice.toFixed(2)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-semibold text-gray-900">€{product.currentPrice?.toFixed(2) || '0.00'}</div>
+                        <div className="text-sm text-gray-600">{product.washesPerPack} wasbeurten</div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end space-y-1">
-                    {product.badges.map((badge, index) => (
-                      <span 
-                        key={index}
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          badge === 'Beste waarde' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
-                        }`}
-                      >
-                        {badge}
-                      </span>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Price Box */}
-                <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-4 mb-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-3xl font-bold" style={{ color: product.color }}>
-                        €{product.pricePerWash.toFixed(2)}
+                  {/* Sustainability */}
+                  {product.sustainability && (
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Duurzaamheid</span>
+                        <span className="text-sm font-bold text-green-600">{product.sustainability}/10</span>
                       </div>
-                      <div className="text-sm text-gray-600">per wasbeurt</div>
-                      <div className="text-sm text-gray-400 line-through">€{product.originalPricePerWash.toFixed(2)}</div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-green-500 h-2 rounded-full transition-all duration-300" 
+                          style={{ width: `${product.sustainability * 10}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-lg font-semibold text-gray-900">€{product.price.toFixed(2)}</div>
-                      <div className="text-sm text-gray-600">{product.washesPerPack} wasbeurten</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sustainability */}
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Duurzaamheid</span>
-                    <span className="text-sm font-bold text-green-600">{product.sustainability}/10</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${product.sustainability * 10}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Features */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Kenmerken</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {product.features.slice(0, 3).map((feature, index) => (
-                      <span 
-                        key={index}
-                        className="px-2 py-1 text-xs rounded-full"
-                        style={{ backgroundColor: product.bgColor, color: product.color }}
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                    {product.features.length > 3 && (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                        +{product.features.length - 3} meer
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Pros and Cons */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <h5 className="text-xs font-semibold text-green-600 mb-1">Voordelen</h5>
-                    <ul className="text-xs text-gray-600 space-y-1">
-                      {product.pros.map((pro, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="text-green-500 mr-1">✓</span>{pro}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-semibold text-red-600 mb-1">Nadelen</h5>
-                    <ul className="text-xs text-gray-600 space-y-1">
-                      {product.cons.map((con, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="text-red-500 mr-1">✗</span>{con}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Availability */}
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                  <span>Beschikbaarheid:</span>
-                  <span className="font-medium">{product.availability}</span>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="px-6 pb-6">
-                <div className="flex space-x-2">
-                  {product.inStock ? (
-                    <button className="flex-1 py-3 px-4 rounded-xl btn-primary">
-                      Naar website
-                    </button>
-                  ) : (
-                    <button
-                      className="flex-1 py-3 px-4 rounded-xl font-medium transition-all bg-gray-100 text-gray-400 cursor-not-allowed"
-                      disabled
-                    >
-                      Uitverkocht
-                    </button>
                   )}
-                  <button className="p-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                    <ExternalLink className="h-4 w-4 text-gray-600" />
-                  </button>
+
+                  {/* Features */}
+                  {product.features && product.features.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Kenmerken</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {product.features.slice(0, 3).map((feature: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 text-xs rounded-full"
+                            style={{ backgroundColor: colorScheme.bgColor, color: colorScheme.color }}
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                        {product.features.length > 3 && (
+                          <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                            +{product.features.length - 3} meer
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pros and Cons */}
+                  {((product.pros && product.pros.length > 0) || (product.cons && product.cons.length > 0)) && (
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      {product.pros && product.pros.length > 0 && (
+                        <div>
+                          <h5 className="text-xs font-semibold text-green-600 mb-1">Voordelen</h5>
+                          <ul className="text-xs text-gray-600 space-y-1">
+                            {product.pros.map((pro: string, index: number) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-green-500 mr-1">✓</span>{pro}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {product.cons && product.cons.length > 0 && (
+                        <div>
+                          <h5 className="text-xs font-semibold text-red-600 mb-1">Nadelen</h5>
+                          <ul className="text-xs text-gray-600 space-y-1">
+                            {product.cons.map((con: string, index: number) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-red-500 mr-1">✗</span>{con}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Availability */}
+                  {product.availability && (
+                    <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+                      <span>Beschikbaarheid:</span>
+                      <span className="font-medium">{product.availability}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="px-6 pb-6">
+                  <div className="flex space-x-2">
+                    {product.inStock ? (
+                      <Link 
+                        href={product.url || '#'} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-3 px-4 rounded-xl btn-primary text-center"
+                      >
+                        Naar website
+                      </Link>
+                    ) : (
+                      <button
+                        className="flex-1 py-3 px-4 rounded-xl font-medium transition-all bg-gray-100 text-gray-400 cursor-not-allowed"
+                        disabled
+                      >
+                        Uitverkocht
+                      </button>
+                    )}
+                    <Link 
+                      href={`/merken/${product.slug}`}
+                      className="p-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center"
+                    >
+                      <ExternalLink className="h-4 w-4 text-gray-600" />
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Comparison Table */}

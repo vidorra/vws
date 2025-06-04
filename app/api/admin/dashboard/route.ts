@@ -1,64 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
-
-// Mock data for now - will be replaced with database queries
-const mockProducts = [
-  {
-    id: '1',
-    name: 'Wasstrips Original',
-    supplier: "Mother's Earth",
-    price: 14.95,
-    pricePerWash: 0.25,
-    inStock: true,
-    lastUpdated: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Eco Wasstrips',
-    supplier: 'Cosmeau',
-    price: 12.99,
-    pricePerWash: 0.22,
-    inStock: true,
-    lastUpdated: new Date().toISOString()
-  },
-  {
-    id: '3',
-    name: 'Wasstrips Fresh',
-    supplier: 'Bubblyfy',
-    price: 13.50,
-    pricePerWash: 0.23,
-    inStock: false,
-    lastUpdated: new Date().toISOString()
-  }
-];
+import { getProducts, getProductStats } from '@/lib/db/products';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
-    // Check authorization
+    // Verify authentication
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '');
     
     if (!token || !verifyToken(token)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    // In production, this would fetch from database
-    const dashboardData = {
-      products: mockProducts,
-      lastScrape: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-      totalProducts: mockProducts.length,
-      inStockCount: mockProducts.filter(p => p.inStock).length,
-      outOfStockCount: mockProducts.filter(p => !p.inStock).length
-    };
-
-    return NextResponse.json(dashboardData);
+    
+    // Get products from database
+    const products = await getProducts({ orderBy: 'name' });
+    
+    // Get statistics
+    const stats = await getProductStats();
+    
+    // Get last scrape time
+    const lastScrape = await prisma.scrapingLog.findFirst({
+      where: { status: 'success' },
+      orderBy: { completedAt: 'desc' },
+      select: { completedAt: true }
+    });
+    
+    // Format products for dashboard
+    const formattedProducts = products.map((product: any) => ({
+      id: product.id,
+      name: product.name,
+      supplier: product.supplier,
+      price: product.currentPrice,
+      pricePerWash: product.pricePerWash,
+      inStock: product.inStock,
+      lastUpdated: product.lastChecked,
+      reviewCount: product._count?.reviews || 0
+    }));
+    
+    return NextResponse.json({
+      products: formattedProducts,
+      lastScrape: lastScrape?.completedAt || null,
+      stats: {
+        totalProducts: stats.totalProducts,
+        inStock: stats.inStockCount,
+        outOfStock: stats.outOfStockCount,
+        averagePrice: stats.averagePrice
+      }
+    });
   } catch (error) {
-    console.error('Dashboard error:', error);
+    console.error('Dashboard API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch dashboard data' },
       { status: 500 }
     );
   }

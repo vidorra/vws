@@ -1,0 +1,280 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Product model for storing vaatwasstrips products
+model Product {
+  id              String          @id @default(cuid())
+  slug            String          @unique
+  name            String
+  supplier        String
+  description     String?
+  longDescription String?         @db.Text
+  url             String?
+  imageUrl        String?
+  
+  // Pricing
+  currentPrice    Float?
+  pricePerWash    Float?
+  washesPerPack   Int             @default(60)
+  currency        String          @default("EUR")
+  
+  // Stock & Availability
+  inStock         Boolean         @default(true)
+  availability    String?         // "Online only", "Online + Winkels", etc.
+  lastChecked     DateTime        @default(now())
+  
+  // Ratings
+  rating          Float?
+  reviewCount     Int             @default(0)
+  
+  // Sustainability
+  sustainability  Float?          // Score out of 10
+  
+  // Features
+  features        String[]        // Array of feature strings
+  pros            String[]        // Array of pros
+  cons            String[]        // Array of cons
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  
+  // Timestamps
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relations
+  priceHistory    PriceHistory[]
+  reviews         Review[]
+  scrapingLogs    ScrapingLog[]
+  priceAlerts     PriceAlert[]
+  
+  @@index([slug])
+  @@index([supplier])
+  @@index([currentPrice])
+}
+
+// Price history tracking
+model PriceHistory {
+  id            String    @id @default(cuid())
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price         Float
+  pricePerWash  Float
+  recordedAt    DateTime  @default(now())
+  
+  @@index([productId, recordedAt])
+}
+
+// User reviews
+model Review {
+  id          String    @id @default(cuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Review details
+  rating      Int       // 1-5 stars
+  title       String
+  content     String    @db.Text
+  
+  // User info
+  userName    String
+  userEmail   String?
+  verified    Boolean   @default(false)
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([productId])
+  @@index([rating])
+}
+
+// Scraping logs for tracking scraping history
+model ScrapingLog {
+  id          String    @id @default(cuid())
+  productId   String?
+  product     Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  // Scraping details
+  supplier    String
+  status      String    // "success", "failed", "partial"
+  message     String?
+  
+  // Results
+  oldPrice    Float?
+  newPrice    Float?
+  priceChange Float?
+  
+  // Timestamps
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  duration    Int?      // Duration in milliseconds
+  
+  @@index([supplier, startedAt])
+  @@index([status])
+}
+
+// Price alerts for users
+model PriceAlert {
+  id          String    @id @default(cuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Alert details
+  email       String
+  targetPrice Float
+  active      Boolean   @default(true)
+  
+  // Notification history
+  lastNotified DateTime?
+  notifyCount  Int      @default(0)
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([productId, active])
+  @@index([email])
+}
+
+// Admin users
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  
+  // Profile
+  name         String?
+  role         String    @default("admin")
+  
+  // Activity
+  lastLogin    DateTime?
+  loginCount   Int       @default(0)
+  
+  // Timestamps
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Email subscribers
+model Subscriber {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  
+  // Preferences
+  active        Boolean   @default(true)
+  priceAlerts   Boolean   @default(true)
+  newsletter    Boolean   @default(true)
+  
+  // Verification
+  verified      Boolean   @default(false)
+  verifyToken   String?   @unique
+  
+  // Timestamps
+  subscribedAt  DateTime  @default(now())
+  unsubscribedAt DateTime?
+}
+
+// Blog posts
+model BlogPost {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  
+  // Content
+  title         String
+  excerpt       String?
+  content       String    @db.Text
+  featuredImage String?
+  
+  // SEO
+  metaTitle     String?
+  metaDescription String?
+  keywords      String[]
+  
+  // Publishing
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  author        String?
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([slug])
+  @@index([published, publishedAt])
+}
+
+// Guide articles
+model Guide {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  category      String    // "beginners", "eco", "tips", etc.
+  
+  // Content
+  title         String
+  excerpt       String?
+  content       String    @db.Text
+  featuredImage String?
+  
+  // SEO
+  metaTitle     String?
+  metaDescription String?
+  keywords      String[]
+  
+  // Publishing
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  author        String?
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([slug])
+  @@index([category])
+  @@index([published, publishedAt])
+}
+
+// Affiliate clicks tracking
+model AffiliateClick {
+  id          String    @id @default(cuid())
+  productId   String
+  supplier    String
+  
+  // Click details
+  ipAddress   String?
+  userAgent   String?
+  referrer    String?
+  
+  // Conversion tracking
+  converted   Boolean   @default(false)
+  revenue     Float?
+  
+  // Timestamp
+  clickedAt   DateTime  @default(now())
+  
+  @@index([productId, clickedAt])
+  @@index([supplier, clickedAt])
+}
+
+// Site settings
+model SiteSetting {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  value       String    @db.Text
+  description String?
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

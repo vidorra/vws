@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { TrendingDown, Award, Star } from 'lucide-react';
+import { getProducts, getProductsByCategory } from '@/lib/db/products';
 
 export const metadata: Metadata = {
   title: 'Wasstrips Prijzen Vergelijken - Alle Categorieën',
@@ -53,7 +54,31 @@ const priceCategories = [
   }
 ];
 
-export default function PrijzenPage() {
+// Helper function to determine category
+function getProductCategory(pricePerWash: number | null, rating: number | null, sustainability: number | null): string {
+  if (!pricePerWash) return 'Onbekend';
+  
+  if (pricePerWash <= 0.20) return 'Goedkoopste';
+  if (pricePerWash <= 0.25 && rating && rating >= 4.0) return 'Beste Waarde';
+  if (pricePerWash > 0.25 || (sustainability && sustainability >= 8.5)) return 'Premium';
+  
+  return 'Goedkoopste';
+}
+
+export default async function PrijzenPage() {
+  // Fetch products for the comparison table
+  const products = await getProducts({
+    inStock: true,
+    orderBy: 'pricePerWash',
+    order: 'asc'
+  });
+
+  // Take top products from each category for the table
+  const tableProducts = products.slice(0, 6).map((product: any) => ({
+    ...product,
+    category: getProductCategory(product.pricePerWash, product.rating, product.sustainability)
+  }));
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumbs */}
@@ -134,86 +159,36 @@ export default function PrijzenPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Link href="/merken/cosmeau" className="text-blue-600 hover:text-blue-800 font-medium">
-                    Cosmeau
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">€12.99</td>
-                <td className="px-6 py-4 whitespace-nowrap font-semibold">€0.22</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                    Goedkoopste
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1">4.3</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Link href="/merken/bubblyfy" className="text-blue-600 hover:text-blue-800 font-medium">
-                    Bubblyfy
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">€13.50</td>
-                <td className="px-6 py-4 whitespace-nowrap font-semibold">€0.23</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                    Goedkoopste
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1">4.4</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Link href="/merken/mothers-earth" className="text-blue-600 hover:text-blue-800 font-medium">
-                    Mother's Earth
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">€14.95</td>
-                <td className="px-6 py-4 whitespace-nowrap font-semibold">€0.25</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                    Beste Waarde
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1">4.5</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Link href="/merken/bio-suds" className="text-blue-600 hover:text-blue-800 font-medium">
-                    Bio Suds
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">€16.99</td>
-                <td className="px-6 py-4 whitespace-nowrap font-semibold">€0.28</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                    Premium
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1">4.6</span>
-                  </div>
-                </td>
-              </tr>
+              {tableProducts.map((product: any) => (
+                <tr key={product.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Link href={`/merken/${product.slug}`} className="text-blue-600 hover:text-blue-800 font-medium">
+                      {product.name}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    €{product.currentPrice?.toFixed(2) || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap font-semibold">
+                    €{product.pricePerWash?.toFixed(2) || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      product.category === 'Goedkoopste' ? 'bg-green-100 text-green-800' :
+                      product.category === 'Beste Waarde' ? 'bg-blue-100 text-blue-800' :
+                      'bg-purple-100 text-purple-800'
+                    }`}>
+                      {product.category}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="ml-1">{product.rating?.toFixed(1) || '-'}</span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

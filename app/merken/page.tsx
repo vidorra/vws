@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Star, ArrowRight } from 'lucide-react';
+import { getProducts } from '@/lib/db/products';
 
 export const metadata: Metadata = {
   title: 'Alle Wasstrips Merken - Vergelijk & Reviews 2024',
@@ -8,50 +9,45 @@ export const metadata: Metadata = {
   keywords: 'wasstrips merken, mothers earth, cosmeau, bubblyfy, bio suds, vergelijken'
 };
 
-const brands = [
-  {
-    slug: 'mothers-earth',
-    name: "Mother's Earth",
-    description: 'Pionier in milieuvriendelijke wasstrips met natuurlijke ingrediënten',
-    price: 14.95,
-    pricePerWash: 0.25,
-    rating: 4.5,
-    reviews: 234,
-    features: ['100% Plasticvrij', 'Veganistisch', 'Hypoallergeen']
-  },
-  {
-    slug: 'cosmeau',
-    name: 'Cosmeau',
-    description: 'Nederlandse kwaliteit met focus op duurzaamheid en effectiviteit',
-    price: 12.99,
-    pricePerWash: 0.22,
-    rating: 4.3,
-    reviews: 189,
-    features: ['CO2 Neutraal', 'Biologisch afbreekbaar', 'Dermatologisch getest']
-  },
-  {
-    slug: 'bubblyfy',
-    name: 'Bubblyfy',
-    description: 'Moderne wasstrips met frisse geuren en krachtige waswerking',
-    price: 13.50,
-    pricePerWash: 0.23,
-    rating: 4.4,
-    reviews: 156,
-    features: ['Extra geurboost', 'Vlekverwijdering', 'Geschikt voor koud wassen']
-  },
-  {
-    slug: 'bio-suds',
-    name: 'Bio Suds',
-    description: 'Biologische wasstrips voor de bewuste consument',
-    price: 16.99,
-    pricePerWash: 0.28,
-    rating: 4.6,
-    reviews: 98,
-    features: ['100% Biologisch', 'Geen synthetische geuren', 'Composteerbaar']
-  }
-];
+export default async function BrandsPage() {
+  // Fetch all products from database
+  const products = await getProducts({
+    orderBy: 'name',
+    order: 'asc'
+  });
 
-export default function BrandsPage() {
+  // Group products by supplier/brand
+  const brandMap = new Map<string, any[]>();
+  products.forEach((product: any) => {
+    if (!brandMap.has(product.supplier)) {
+      brandMap.set(product.supplier, []);
+    }
+    brandMap.get(product.supplier)?.push(product);
+  });
+
+  // Convert to array of brands with aggregated data
+  const brands = Array.from(brandMap.entries()).map(([supplier, products]) => {
+    const avgPrice = products.reduce((sum, p) => sum + (p.currentPrice || 0), 0) / products.length;
+    const avgPricePerWash = products.reduce((sum, p) => sum + (p.pricePerWash || 0), 0) / products.length;
+    const avgRating = products.reduce((sum, p) => sum + (p.rating || 0), 0) / products.length;
+    const totalReviews = products.reduce((sum, p) => sum + (p.reviewCount || 0), 0);
+    
+    // Get the first product as representative
+    const representativeProduct = products[0];
+    
+    return {
+      slug: representativeProduct.slug,
+      name: supplier,
+      description: representativeProduct.description || `${supplier} biedt hoogwaardige vaatwasstrips voor een schone was`,
+      price: avgPrice,
+      pricePerWash: avgPricePerWash,
+      rating: avgRating,
+      reviews: totalReviews,
+      features: representativeProduct.features || [],
+      productCount: products.length
+    };
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumbs */}
@@ -73,8 +69,12 @@ export default function BrandsPage() {
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-2xl font-bold">{brand.name}</h2>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600">€{brand.price}</div>
-                  <div className="text-sm text-gray-600">€{brand.pricePerWash}/was</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    €{brand.price.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    €{brand.pricePerWash.toFixed(2)}/was
+                  </div>
                 </div>
               </div>
               
@@ -87,28 +87,42 @@ export default function BrandsPage() {
                   ))}
                 </div>
                 <span className="ml-2 text-gray-600">
-                  {brand.rating} ({brand.reviews} reviews)
+                  {brand.rating.toFixed(1)} ({brand.reviews} reviews)
                 </span>
               </div>
 
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Kenmerken:</h3>
-                <ul className="space-y-1">
-                  {brand.features.map((feature, index) => (
-                    <li key={index} className="text-sm text-gray-600 flex items-center">
-                      <span className="text-green-500 mr-2">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {brand.features.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-2">Kenmerken:</h3>
+                  <ul className="space-y-1">
+                    {brand.features.slice(0, 3).map((feature: string, index: number) => (
+                      <li key={index} className="text-sm text-gray-600 flex items-center">
+                        <span className="text-green-500 mr-2">✓</span>
+                        {feature}
+                      </li>
+                    ))}
+                    {brand.features.length > 3 && (
+                      <li className="text-sm text-gray-500 italic">
+                        +{brand.features.length - 3} meer kenmerken
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
 
-              <Link 
-                href={`/merken/${brand.slug}`}
-                className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
-              >
-                Lees volledige review <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              <div className="flex items-center justify-between">
+                <Link 
+                  href={`/merken/${brand.slug}`}
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold"
+                >
+                  Lees volledige review <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+                {brand.productCount > 1 && (
+                  <span className="text-sm text-gray-500">
+                    {brand.productCount} producten
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         ))}
