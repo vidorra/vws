@@ -5,12 +5,16 @@ RUN apk add --no-cache tzdata
 ENV TZ=Europe/Amsterdam
 
 COPY package.json package-lock.json ./
+
+# Copy prisma folder before npm ci to ensure postinstall script works
+COPY prisma ./prisma
+
 RUN npm ci
 
 # Copy all necessary files
 COPY . .
 
-# Generate Prisma client
+# Generate Prisma client (already done in postinstall, but keeping for clarity)
 RUN npx prisma generate
 
 RUN npm run build
