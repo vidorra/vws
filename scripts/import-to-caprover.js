@@ -27,7 +27,11 @@ async function importDatabase() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ sql: sqlContent })
+      body: JSON.stringify({ sql: sqlContent }),
+      // Ignore SSL certificate errors for self-signed certificates
+      agent: new (require('https').Agent)({
+        rejectUnauthorized: false
+      })
     });
 
     const result = await response.json();
