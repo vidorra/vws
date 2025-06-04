@@ -15,8 +15,8 @@ async function importDatabase() {
     const sqlContent = fs.readFileSync(backupPath, 'utf8');
     console.log('✅ Read backup file, size:', (sqlContent.length / 1024).toFixed(2), 'KB');
 
-    // Your CapRover app URL
-    const appUrl = 'https://vaatwasstripsvergelijker.server.devjens.nl';
+    // Your CapRover app URL (using HTTP)
+    const appUrl = 'http://vaatwasstripsvergelijker.server.devjens.nl';
     const endpoint = `${appUrl}/api/setup-db?secret=setup-secret-vws-2024`;
 
     console.log('📤 Sending to:', endpoint);

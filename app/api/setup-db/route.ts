@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import fs from 'fs/promises';
-
-const execAsync = promisify(exec);
 
 export async function POST(request: Request) {
   try {
@@ -23,26 +18,46 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No SQL content provided' }, { status: 400 });
     }
 
-    // Write SQL to a temporary file
-    const tempFile = '/tmp/import.sql';
-    await fs.writeFile(tempFile, sql);
+    // Split SQL into individual statements
+    const statements = sql
+      .split(';')
+      .map((s: string) => s.trim())
+      .filter((s: string) => s.length > 0 && !s.startsWith('--'));
 
-    // Import using psql command
-    const dbUrl = process.env.DATABASE_URL;
-    const { stdout, stderr } = await execAsync(`psql "${dbUrl}" < ${tempFile}`);
-    
-    // Clean up temp file
-    await fs.unlink(tempFile);
+    let successCount = 0;
+    let errors: string[] = [];
 
-    return NextResponse.json({ 
+    // Execute each statement
+    for (const statement of statements) {
+      try {
+        // Skip certain PostgreSQL-specific commands that Prisma doesn't support
+        if (
+          statement.toUpperCase().startsWith('SET ') ||
+          statement.toUpperCase().startsWith('SELECT PG_') ||
+          statement.toUpperCase().startsWith('ALTER SEQUENCE') ||
+          statement.toUpperCase().startsWith('CREATE SEQUENCE') ||
+          statement.toUpperCase().startsWith('DROP SEQUENCE')
+        ) {
+          continue;
+        }
+
+        // Execute the SQL statement
+        await prisma.$executeRawUnsafe(statement);
+        successCount++;
+      } catch (error: any) {
+        // Log but don't fail on individual statement errors
+        errors.push(`Statement error: ${error.message}`);
+      }
+    }
+
+    return NextResponse.json({
       success: true,
-      message: 'Database imported successfully',
-      output: stdout,
-      errors: stderr 
+      message: `Database import completed. ${successCount} statements executed successfully.`,
+      errors: errors.length > 0 ? errors : undefined
     });
   } catch (error: any) {
     console.error('Database import error:', error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: error.message,
       details: error.toString()
     }, { status: 500 });
