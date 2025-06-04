@@ -193,11 +193,17 @@ async function main() {
   console.log('🎉 Database seed completed!');
 }
 
-main()
-  .catch((e) => {
-    console.error('❌ Seed failed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// Export for use in API routes
+export { main };
+
+// Run if called directly
+if (require.main === module) {
+  main()
+    .catch((e) => {
+      console.error('❌ Seed failed:', e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}
