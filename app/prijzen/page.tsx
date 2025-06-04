@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { TrendingDown, Award, Star } from 'lucide-react';
-import { getProducts, getProductsByCategory } from '@/lib/db/products';
+import { getProductsSafe } from '@/lib/db-safe';
 
 export const metadata: Metadata = {
   title: 'Wasstrips Prijzen Vergelijken - Alle Categorieën',
@@ -69,14 +69,19 @@ function getProductCategory(pricePerWash: number | null, rating: number | null, 
 
 export default async function PrijzenPage() {
   // Fetch products for the comparison table
-  const products = await getProducts({
-    inStock: true,
-    orderBy: 'pricePerWash',
-    order: 'asc'
-  });
+  const products = await getProductsSafe();
+  
+  // Filter in stock and sort by price
+  const sortedProducts = products
+    .filter((p: any) => p.inStock !== false)
+    .sort((a: any, b: any) => {
+      const priceA = a.pricePerWash || a.currentPrice || 0;
+      const priceB = b.pricePerWash || b.currentPrice || 0;
+      return priceA - priceB;
+    });
 
   // Take top products from each category for the table
-  const tableProducts = products.slice(0, 6).map((product: any) => ({
+  const tableProducts = sortedProducts.slice(0, 6).map((product: any) => ({
     ...product,
     category: getProductCategory(product.pricePerWash, product.rating, product.sustainability)
   }));

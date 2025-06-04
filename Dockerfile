@@ -40,10 +40,16 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
+# Copy package.json for reference
+COPY --from=builder /app/package.json ./package.json
+
 EXPOSE 3000
 
 # Set the host to listen on all interfaces
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=3000
+
+# Debug: List files to ensure server.js exists
+RUN ls -la /app/
 
 CMD ["node", "server.js"]

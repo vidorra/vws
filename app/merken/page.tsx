@@ -2,34 +2,16 @@ export const dynamic = 'force-dynamic';
 
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import { getBrandsSafe } from '@/lib/db-safe';
 
 export const metadata: Metadata = {
   title: 'Vaatwasstrips Merken | Alle Merken Vergelijken',
   description: 'Ontdek alle merken vaatwasstrips die wij vergelijken. Van premium merken tot huismerken.',
 };
 
-async function getBrands() {
-  try {
-    const products = await prisma.product.findMany({
-      select: {
-        supplier: true,
-      },
-      distinct: ['supplier'],
-      orderBy: {
-        supplier: 'asc',
-      },
-    });
-
-    return products.map((p: { supplier: string }) => p.supplier);
-  } catch (error) {
-    console.error('Error fetching brands:', error);
-    return [];
-  }
-}
 
 export default async function MerkenPage() {
-  const brands = await getBrands();
+  const brands = await getBrandsSafe();
 
   return (
     <div className="container mx-auto px-4 py-8">

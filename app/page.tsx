@@ -3,8 +3,7 @@ export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { TrendingDown, Award, Star, ExternalLink } from 'lucide-react';
-import { getProducts, getProductStats } from '@/lib/db/products';
-import { prisma } from '@/lib/prisma';
+import { getProductsSafe } from '@/lib/db-safe';
 
 export const metadata: Metadata = {
   title: 'Vaatwasstrips Vergelijker Nederland - Beste Prijzen 2024',
@@ -107,19 +106,29 @@ function getProductColorScheme(supplier: string) {
 }
 
 export default async function HomePage() {
-  // Fetch products from database
-  const products = await getProducts({
-    orderBy: 'pricePerWash',
-    order: 'asc'
+  // Fetch products from database with error handling
+  const products = await getProductsSafe();
+  
+  // Sort by price per wash if available
+  const sortedProducts = products.sort((a: any, b: any) => {
+    const priceA = a.pricePerWash || a.currentPrice || 0;
+    const priceB = b.pricePerWash || b.currentPrice || 0;
+    return priceA - priceB;
   });
   
-  // Get statistics
-  const stats = await getProductStats();
-  
   // Calculate lowest price
-  const lowestPrice = products.length > 0 && products[0].pricePerWash 
-    ? products[0].pricePerWash.toFixed(2) 
+  const lowestPrice = sortedProducts.length > 0 && sortedProducts[0].pricePerWash
+    ? sortedProducts[0].pricePerWash.toFixed(2)
     : '0.16';
+  
+  // Calculate stats from products
+  const stats = {
+    totalProducts: products.length,
+    averagePrice: products.length > 0
+      ? (products.reduce((sum: number, p: any) => sum + (p.currentPrice || 0), 0) / products.length).toFixed(2)
+      : 0,
+    brandsCount: new Set(products.map((p: any) => p.supplier)).size
+  };
   
   const structuredData = {
     "@context": "https://schema.org",
