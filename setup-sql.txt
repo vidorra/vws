@@ -145,7 +145,7 @@ DATABASE_URL="postgresql://postgres:[YOUR_PASSWORD]@localhost:5432/vaatwasstrips
    RUN npx prisma generate
    ```
 
-3. **Add to package.json scripts:**
+3. **Add to package.json scripts:** 
    ```json
    "build": "prisma generate && next build"
    ```
