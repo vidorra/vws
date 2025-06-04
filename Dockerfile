@@ -17,6 +17,9 @@ COPY . .
 # Generate Prisma client (already done in postinstall, but keeping for clarity)
 RUN npx prisma generate
 
+# Build with a dummy DATABASE_URL to satisfy Prisma during build time
+# The actual DATABASE_URL will be provided at runtime
+ENV DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy"
 RUN npm run build
 
 # Production stage
