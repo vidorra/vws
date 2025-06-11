@@ -98,6 +98,75 @@ const products = [
     cons: ['Duurste optie', 'Kleinere community'],
     url: 'https://bio-suds.com',
   },
+  {
+    slug: 'natuwash',
+    name: 'Natuwash',
+    supplier: 'NATUWASH',
+    description: 'OECD 301B gecertificeerde biologisch afbreekbare vaatwasstrips',
+    longDescription: 'Nederlands bedrijf dat technologie en natuur combineert voor duurzame wasoplossingen. Als enige merk met OECD 301B certificering biedt Natuwash de hoogste standaard in biologische afbreekbaarheid.',
+    currentPrice: 16.95, // Estimated price
+    pricePerWash: 0.28, // Estimated based on 60 washes
+    washesPerPack: 60,
+    rating: 4.2,
+    reviewCount: 156,
+    inStock: true,
+    sustainability: 9.2,
+    availability: 'Online only',
+    features: [
+      'OECD 301B Gecertificeerd',
+      'Hypoallergeen',
+      'Plastic-vrije verpakking',
+      'Fosfaatvrij',
+      '30 dagen geld-terug-garantie'
+    ],
+    pros: [
+      'Enige merk met OECD 301B certificering',
+      'Hypoallergene varianten beschikbaar',
+      'Nederlandse bedrijfsvoering',
+      '30 dagen proefperiode'
+    ],
+    cons: [
+      'Beperkte online aanwezigheid',
+      'Onduidelijke prijsstelling',
+      'Kleinere bekendheid'
+    ],
+    url: 'https://natuwash.com/products/vaatwasstrips',
+  },
+  {
+    slug: 'greengoods',
+    name: 'GreenGoods',
+    supplier: 'GREENGOODS',
+    description: 'Eco-vriendelijke vaatwasstrips met flexibel doseringssysteem',
+    longDescription: 'Nederlands merk gericht op eco-vriendelijke huishoudproducten met scheur-in-tweeën doseringssysteem. Perfect voor beginners met betaalbare proefpakketten.',
+    currentPrice: 34.95,
+    pricePerWash: 0.29,
+    washesPerPack: 120,
+    rating: 4.0,
+    reviewCount: 89,
+    inStock: true,
+    sustainability: 8.5,
+    availability: 'Bol.com',
+    features: [
+      '100% plastic-vrij',
+      'Biologisch afbreekbaar',
+      'Scheur-in-tweeën dosering',
+      'Verkrijgbaar via Bol.com',
+      'Proefpakketten beschikbaar'
+    ],
+    pros: [
+      'Flexibele dosering mogelijk',
+      'Verkrijgbaar via Bol.com',
+      'Betaalbare proefpakketten',
+      'Goed voor beginners'
+    ],
+    cons: [
+      'Geen eigen website',
+      'Beperkte productinformatie',
+      'Kleinere verpakkingen',
+      'Minder premium positionering'
+    ],
+    url: 'https://www.bol.com/nl/s/?searchtext=greengoods+vaatwasstrips',
+  },
 ];
 
 async function main() {

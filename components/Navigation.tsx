@@ -58,6 +58,12 @@ export default function Navigation() {
                     <Link href="/merken/bio-suds" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Bio Suds
                     </Link>
+                    <Link href="/merken/natuwash" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Natuwash
+                    </Link>
+                    <Link href="/merken/greengoods" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      GreenGoods
+                    </Link>
                   </div>
                 </div>
               )}
@@ -172,6 +178,12 @@ export default function Navigation() {
               </Link>
               <Link href="/merken/bio-suds" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                 Bio Suds
+              </Link>
+              <Link href="/merken/natuwash" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                Natuwash
+              </Link>
+              <Link href="/merken/greengoods" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                GreenGoods
               </Link>
             </div>
 

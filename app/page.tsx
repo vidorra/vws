@@ -46,7 +46,7 @@ const faqs = (lowestPrice: string, highestPrice: string) => [
   },
   {
     question: 'Welke certificeringen hebben de merken?',
-    answer: "Mother's Earth heeft OECD 301B certificering voor biologische afbreekbaarheid. Cosmeau is dermatologisch getest. Andere merken hebben eigen claims zonder externe certificering."
+    answer: "Natuwash heeft als enige merk OECD 301B certificering voor biologische afbreekbaarheid. Cosmeau is dermatologisch getest. Andere merken hebben eigen claims zonder externe certificering."
   },
   {
     question: 'Hoe doseer ik vaatwasstrips?',
@@ -167,7 +167,7 @@ export default async function HomePage() {
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
               <div className="text-3xl font-bold text-purple-600">{products.length}</div>
               <div className="text-sm text-gray-600 mt-1">Nederlandse aanbieders vergeleken</div>
-              <div className="text-xs text-gray-500 mt-1">(75% marktdekking)</div>
+              <div className="text-xs text-gray-500 mt-1">(100% marktdekking)</div>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
               <div className="text-3xl font-bold text-green-600">{minSustainability}-{maxSustainability}</div>
