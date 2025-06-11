@@ -26,15 +26,24 @@ export async function GET(request: NextRequest) {
       select: { completedAt: true }
     });
     
-    // Format products for dashboard
+    // Format products for dashboard - include all fields needed for editing
     const formattedProducts = products.map((product: any) => ({
       id: product.id,
       name: product.name,
       supplier: product.supplier,
       price: product.currentPrice,
+      currentPrice: product.currentPrice,
       pricePerWash: product.pricePerWash,
+      washesPerPack: product.washesPerPack,
       inStock: product.inStock,
       lastUpdated: product.lastChecked,
+      url: product.url,
+      description: product.description,
+      features: product.features,
+      pros: product.pros,
+      cons: product.cons,
+      sustainability: product.sustainability,
+      rating: product.rating,
       reviewCount: product._count?.reviews || 0
     }));
     

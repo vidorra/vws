@@ -2,15 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Trash2, Edit } from 'lucide-react';
+import EditProductModal from '@/components/EditProductModal';
 
 interface Product {
   id: string;
   name: string;
   supplier: string;
   price: number | null;
-  pricePerWash: number | null;
+  pricePerWash?: number | null;
   inStock: boolean;
-  lastUpdated: string | null;
+  lastUpdated?: string | null;
+  currentPrice?: number;
+  washesPerPack?: number;
+  url?: string;
+  description?: string;
+  features?: string[];
+  pros?: string[];
+  cons?: string[];
+  sustainability?: number;
+  rating?: number;
 }
 
 export default function AdminDashboard() {
@@ -18,6 +29,8 @@ export default function AdminDashboard() {
   const [scrapingStatus, setScrapingStatus] = useState('idle');
   const [lastScrape, setLastScrape] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -73,6 +86,68 @@ export default function AdminDashboard() {
     } catch (error) {
       setScrapingStatus('failed');
       setTimeout(() => setScrapingStatus('idle'), 3000);
+    }
+  };
+
+  const handleEdit = (product: Product) => {
+    // Map the product data to include all fields
+    const fullProduct = {
+      ...product,
+      currentPrice: product.price || 0,
+      washesPerPack: product.pricePerWash && product.price
+        ? Math.round(product.price / product.pricePerWash)
+        : 0,
+    };
+    setEditingProduct(fullProduct);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveProduct = async (updatedProduct: Product) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`/api/admin/products/${updatedProduct.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedProduct),
+      });
+
+      if (response.ok) {
+        setIsEditModalOpen(false);
+        await fetchDashboardData();
+      } else {
+        alert('Fout bij het opslaan van het product');
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+      alert('Fout bij het opslaan van het product');
+    }
+  };
+
+  const handleDelete = async (productId: string) => {
+    if (!confirm('Weet je zeker dat je dit product wilt verwijderen?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`/api/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        await fetchDashboardData();
+      } else {
+        alert('Fout bij het verwijderen van het product');
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Fout bij het verwijderen van het product');
     }
   };
 
@@ -195,9 +270,22 @@ export default function AdminDashboard() {
                           {product.lastUpdated ? new Date(product.lastUpdated).toLocaleString('nl-NL') : 'Nooit'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button className="text-indigo-600 hover:text-indigo-900">
-                            Bewerken
-                          </button>
+                          <div className="flex items-center space-x-3">
+                            <button
+                              onClick={() => handleEdit(product)}
+                              className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Bewerken
+                            </button>
+                            <button
+                              onClick={() => handleDelete(product.id)}
+                              className="text-red-600 hover:text-red-900 flex items-center"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Verwijderen
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -208,6 +296,17 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Edit Product Modal */}
+      <EditProductModal
+        product={editingProduct}
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingProduct(null);
+        }}
+        onSave={handleSaveProduct}
+      />
     </div>
   );
 }
