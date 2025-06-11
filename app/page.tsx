@@ -75,7 +75,7 @@ export default async function HomePage() {
     : '0.26';
     
   const lastProduct = sortedProducts[sortedProducts.length - 1];
-  const highestPrice = sortedProducts.length > 0 && lastProduct?.pricePerWash
+  const highestPrice = sortedProducts.length > 0 && lastProduct?.pricePerWash !== null && lastProduct?.pricePerWash !== undefined
     ? lastProduct.pricePerWash.toFixed(2)
     : '0.48';
     
