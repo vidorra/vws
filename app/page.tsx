@@ -71,11 +71,12 @@ export default async function HomePage() {
   
   // Calculate stats from products
   const lowestPrice = sortedProducts.length > 0 && sortedProducts[0].pricePerWash
-    ? sortedProducts[0].pricePerWash.toFixed(2)
+    ? sortedProducts[0].pricePerWash!.toFixed(2)
     : '0.26';
     
-  const highestPrice = sortedProducts.length > 0 && sortedProducts[sortedProducts.length - 1].pricePerWash
-    ? sortedProducts[sortedProducts.length - 1].pricePerWash.toFixed(2)
+  const lastProduct = sortedProducts[sortedProducts.length - 1];
+  const highestPrice = sortedProducts.length > 0 && lastProduct?.pricePerWash
+    ? lastProduct.pricePerWash.toFixed(2)
     : '0.48';
     
   const sustainabilityScores = products
