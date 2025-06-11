@@ -8,6 +8,8 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // Connection pool settings for production
+  // These help prevent connection errors in containerized environments
 }
 
 // Product model for storing vaatwasstrips products

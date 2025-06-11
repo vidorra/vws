@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { withRetry } from '@/lib/db-connection';
 
 // Get all products with optional filtering
 export async function getProducts(options?: {
@@ -46,32 +47,36 @@ export async function getProducts(options?: {
     orderBy[field] = options.order || 'asc';
   }
   
-  return prisma.product.findMany({
-    where,
-    orderBy,
-    include: {
-      _count: {
-        select: { reviews: true }
+  return withRetry(() =>
+    prisma.product.findMany({
+      where,
+      orderBy,
+      include: {
+        _count: {
+          select: { reviews: true }
+        }
       }
-    }
-  });
+    })
+  );
 }
 
 // Get a single product by slug
 export async function getProductBySlug(slug: string) {
-  return prisma.product.findUnique({
-    where: { slug },
-    include: {
-      priceHistory: {
-        orderBy: { recordedAt: 'desc' },
-        take: 30 // Last 30 price records
-      },
-      reviews: {
-        orderBy: { createdAt: 'desc' },
-        take: 10 // Latest 10 reviews
+  return withRetry(() =>
+    prisma.product.findUnique({
+      where: { slug },
+      include: {
+        priceHistory: {
+          orderBy: { recordedAt: 'desc' },
+          take: 30 // Last 30 price records
+        },
+        reviews: {
+          orderBy: { createdAt: 'desc' },
+          take: 10 // Latest 10 reviews
+        }
       }
-    }
-  });
+    })
+  );
 }
 
 // Create or update a product
@@ -95,30 +100,36 @@ export async function upsertProduct(data: {
   cons?: string[];
   availability?: string;
 }) {
-  const product = await prisma.product.upsert({
-    where: { slug: data.slug },
-    update: {
-      ...data,
-      lastChecked: new Date()
-    },
-    create: data
-  });
+  const product = await withRetry(() =>
+    prisma.product.upsert({
+      where: { slug: data.slug },
+      update: {
+        ...data,
+        lastChecked: new Date()
+      },
+      create: data
+    })
+  );
   
   // If price changed, add to price history
   if (data.currentPrice !== undefined) {
-    const lastPrice = await prisma.priceHistory.findFirst({
-      where: { productId: product.id },
-      orderBy: { recordedAt: 'desc' }
-    });
+    const lastPrice = await withRetry(() =>
+      prisma.priceHistory.findFirst({
+        where: { productId: product.id },
+        orderBy: { recordedAt: 'desc' }
+      })
+    );
     
     if (!lastPrice || lastPrice.price !== data.currentPrice) {
-      await prisma.priceHistory.create({
-        data: {
-          productId: product.id,
-          price: data.currentPrice,
-          pricePerWash: data.pricePerWash || data.currentPrice / (data.washesPerPack || 60)
-        }
-      });
+      await withRetry(() =>
+        prisma.priceHistory.create({
+          data: {
+            productId: product.id,
+            price: data.currentPrice!,
+            pricePerWash: data.pricePerWash || data.currentPrice! / (data.washesPerPack || 60)
+          }
+        })
+      );
     }
   }
   
@@ -129,40 +140,46 @@ export async function upsertProduct(data: {
 export async function getProductsByCategory(category: 'goedkoopste' | 'beste-waarde' | 'premium') {
   switch (category) {
     case 'goedkoopste':
-      return prisma.product.findMany({
-        where: {
-          inStock: true,
-          currentPrice: { not: null }
-        },
-        orderBy: { pricePerWash: 'asc' },
-        take: 10
-      });
+      return withRetry(() =>
+        prisma.product.findMany({
+          where: {
+            inStock: true,
+            currentPrice: { not: null }
+          },
+          orderBy: { pricePerWash: 'asc' },
+          take: 10
+        })
+      );
       
     case 'beste-waarde':
       // Products with good balance of price and rating
-      return prisma.product.findMany({
-        where: {
-          inStock: true,
-          rating: { gte: 4.0 },
-          pricePerWash: { lte: 0.25 }
-        },
-        orderBy: [
-          { rating: 'desc' },
-          { pricePerWash: 'asc' }
-        ]
-      });
+      return withRetry(() =>
+        prisma.product.findMany({
+          where: {
+            inStock: true,
+            rating: { gte: 4.0 },
+            pricePerWash: { lte: 0.25 }
+          },
+          orderBy: [
+            { rating: 'desc' },
+            { pricePerWash: 'asc' }
+          ]
+        })
+      );
       
     case 'premium':
-      return prisma.product.findMany({
-        where: {
-          inStock: true,
-          sustainability: { gte: 8.5 }
-        },
-        orderBy: [
-          { sustainability: 'desc' },
-          { rating: 'desc' }
-        ]
-      });
+      return withRetry(() =>
+        prisma.product.findMany({
+          where: {
+            inStock: true,
+            sustainability: { gte: 8.5 }
+          },
+          orderBy: [
+            { sustainability: 'desc' },
+            { rating: 'desc' }
+          ]
+        })
+      );
       
     default:
       return [];
@@ -174,13 +191,15 @@ export async function getProductPriceHistory(productId: string, days: number = 3
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
   
-  return prisma.priceHistory.findMany({
-    where: {
-      productId,
-      recordedAt: { gte: startDate }
-    },
-    orderBy: { recordedAt: 'asc' }
-  });
+  return withRetry(() =>
+    prisma.priceHistory.findMany({
+      where: {
+        productId,
+        recordedAt: { gte: startDate }
+      },
+      orderBy: { recordedAt: 'asc' }
+    })
+  );
 }
 
 // Update product stock status
