@@ -1,9 +1,10 @@
 # Production Scraper Fix Deployment Summary
 
 ## 🚀 Deployment Status
-- **Commit**: afbd4aa
+- **Initial Commit**: afbd4aa (failed - Chrome installation issue)
+- **Fix Commit**: 93c43a5 (switched to Chromium)
 - **Branch**: main
-- **Pushed**: 16-6-2025, 11:06 PM (Europe/Amsterdam)
+- **Pushed**: 16-6-2025, 11:12 PM (Europe/Amsterdam)
 - **GitHub Actions**: Deployment triggered automatically
 
 ## 📋 Changes Deployed
@@ -55,10 +56,15 @@ const browser = await puppeteer.launch({
 
 ### 3. Dockerfile Updates
 - Changed from `node:20-alpine` to `node:20-slim` (Debian-based)
-- Added Chrome installation and dependencies
+- **Fixed**: Switched from google-chrome-stable to chromium (more reliable)
+- Added all necessary dependencies for headless browser
 - Set Puppeteer environment variables:
   - `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true`
-  - `PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable`
+  - `PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`
+
+### 4. Scraper Updates
+- Added `executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined` to all scrapers
+- This ensures Puppeteer uses the system-installed Chromium in production
 
 ### 4. Other Improvements
 - Changed user agent to Linux-based for production
@@ -128,3 +134,10 @@ If scraping still fails in production:
 - ✅ All 6 brands scrape successfully
 - ✅ Stable scraping without timeouts
 - ✅ Consistent results between local and production
+
+## 🔧 Fix Applied
+Due to Chrome installation failure in CapRover, we switched to Chromium:
+1. Replaced `google-chrome-stable` with `chromium` package
+2. Updated `PUPPETEER_EXECUTABLE_PATH` to `/usr/bin/chromium`
+3. Added `executablePath` configuration to all scrapers
+4. This approach is more reliable in containerized environments
