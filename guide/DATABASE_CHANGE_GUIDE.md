@@ -10,6 +10,15 @@ The project uses:
 - **GitHub Actions** for automatic deployment to CapRover
 - **Remote database management scripts** for production updates
 
+## CapRover Setup
+
+We have two apps in CapRover:
+1. **vaatwasstrips-db** - PostgreSQL database with its own environment variables
+2. **vaatwasstripsvergelijker** - Next.js application with:
+   - DATABASE_URL: `postgresql://vaatwasstrips_user:b3f1911f7b58306f@srv-captain--vaatwasstrips-db:5432/vaatwasstrips`
+   - DB_MANAGEMENT_SECRET: `y43IofseizOambHXporOQRhhu6vB55G+7tEQ2mfJ2js=`
+   - Other vars: ADMIN_EMAIL, ADMIN_PASSWORD_HASH, JWT_SECRET, NODE_ENV
+
 ## Making Database Changes
 
 ### 1. Schema Changes (Adding/Modifying Tables)
@@ -77,6 +86,7 @@ git commit -m "Descriptive message about database changes"
 git push origin main
 
 # 3. GitHub Actions automatically deploys to CapRover
+# NO NEED for 'npm run deploy' - GitHub Actions handles it!
 # Monitor at: https://github.com/[your-username]/[repo-name]/actions
 ```
 
@@ -87,15 +97,17 @@ git push origin main
 After the code is deployed:
 
 ```bash
-# 1. Set the management secret locally
-export DB_MANAGEMENT_SECRET=your-secret-from-caprover
+# 1. Set the management secret locally (for this project)
+export DB_MANAGEMENT_SECRET="y43IofseizOambHXporOQRhhu6vB55G+7tEQ2mfJ2js="
 
-# 2. Push schema changes to production
+# 2. Push schema changes to production (may fail with Prisma version issues - can skip if only data changes)
 ./scripts/manage-remote-db.sh push-schema
 
-# 3. Seed production database (if needed)
+# 3. Seed production database (this is usually what you need)
 ./scripts/manage-remote-db.sh seed
 ```
+
+**Note:** The seed script will clear existing data and recreate all products. It uses `upsert` for admin users and settings to avoid conflicts.
 
 ## Important Files
 
@@ -206,22 +218,93 @@ curl https://vaatwasstripsvergelijker.server.devjens.nl/api/health
 
 ### Local Development
 ```bash
+# Switch to Node 20 if needed
+nvm use 20
+
+# Database commands
 npm run db:push      # Push schema changes
 npm run db:seed      # Seed database
 npm run db:studio    # Visual database editor
 npm run dev          # Start development server
 ```
 
-### Production Deployment
+### Production Deployment (Complete Flow)
 ```bash
+# 1. Make your changes locally
+# 2. Test locally
+npm run db:seed
+npm run dev
+
+# 3. Commit and deploy
 git add . && git commit -m "message" && git push origin main
-export DB_MANAGEMENT_SECRET=xxx
-./scripts/manage-remote-db.sh push-schema
+
+# 4. Wait for GitHub Actions to complete deployment
+
+# 5. Update production database
+export DB_MANAGEMENT_SECRET="y43IofseizOambHXporOQRhhu6vB55G+7tEQ2mfJ2js="
 ./scripts/manage-remote-db.sh seed
+
+# 6. Verify
+curl http://vaatwasstripsvergelijker.server.devjens.nl/api/health
 ```
 
+### Common Tasks
+
+#### Adding New Products
+1. Edit `prisma/seed.ts` to add new product data
+2. Run `npm run db:seed` locally to test
+3. Commit, push, and run remote seed as above
+
+#### Removing Products
+- Products are cleared and recreated on each seed
+- To remove a product, simply remove it from `prisma/seed.ts`
+- Run the full deployment flow
+
 ### Environment Variables
-See `CAPROVER_ENV_VARS.md` for complete list
+- Local: `.env.development` (not in git)
+- Production: Set in CapRover app configs
+- See `CAPROVER_ENV_VARS.md` for complete list
+
+### Important URLs
+- Production: http://vaatwasstripsvergelijker.server.devjens.nl
+- Health Check: http://vaatwasstripsvergelijker.server.devjens.nl/api/health
+- Admin Panel: http://vaatwasstripsvergelijker.server.devjens.nl/data-beheer
+
+## Web Scraping Implementation
+
+### New Endpoints Added
+- `/api/admin/scrape` - Manual scraping trigger (admin authenticated)
+- `/api/cron/scrape` - Automated scraping endpoint (DB_MANAGEMENT_SECRET authenticated)
+
+### Scraping Features
+The application now includes real web scrapers for all 7 brands:
+- Mother's Earth, Cosmeau, Bubblyfy, Bio-Suds, Wasstrip.nl, GreenGoods, Natuwash
+
+### Manual Scraping
+1. Login to admin panel: `/data-beheer`
+2. Click "Start Handmatige Scrape" button
+3. Real prices will be fetched and stored in database
+
+### Automated Scraping Setup
+For weekly automated scraping, set up a cron job that calls:
+```bash
+curl -H "Authorization: Bearer $DB_MANAGEMENT_SECRET" \
+     https://vaatwasstripsvergelijker.server.devjens.nl/api/cron/scrape
+```
+
+The endpoint uses the existing `DB_MANAGEMENT_SECRET` for authentication.
+
+### Testing Scrapers
+```bash
+# Test scrapers locally before deployment
+node scripts/test-scrapers.js
+```
+
+### Important Notes
+- Scrapers need real product URLs to work (update in `lib/scrapers/scraping-coordinator.ts`)
+- 3-second delay between scrapes to be respectful to websites
+- Failed scrapes don't stop the entire process
+- Puppeteer is configured for containerized environments
 
 ---
 

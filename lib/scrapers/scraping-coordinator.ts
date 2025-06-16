@@ -1,4 +1,10 @@
-import { MothersEarthScraper } from './mothersearth-scraper';
+import { RealMothersEarthScraper } from './real-mothersearth-scraper';
+import { RealCosmEauScraper } from './real-cosmeau-scraper';
+import { RealBubblyfyScraper } from './real-bubblyfy-scraper';
+import { RealBioSudsScraper } from './real-biosuds-scraper';
+import { RealWasstripNlScraper } from './real-wasstripnl-scraper';
+import { RealGreenGoodsScraper } from './real-greengoods-scraper';
+import { RealNatuwashScraper } from './real-natuwash-scraper';
 import { ProductData } from './base-scraper';
 
 interface ScrapingTarget {
@@ -6,6 +12,7 @@ interface ScrapingTarget {
   supplier: string;
   url: string;
   scraper: any;
+  productSlug: string;
 }
 
 export class ScrapingCoordinator {
@@ -13,18 +20,68 @@ export class ScrapingCoordinator {
     {
       name: 'Wasstrips Original',
       supplier: "Mother's Earth",
-      url: 'https://example.com/mothers-earth-wasstrips',
-      scraper: MothersEarthScraper
+      url: 'https://mothersearth.nl/products/wasstrips', // Update with real URL
+      scraper: RealMothersEarthScraper,
+      productSlug: 'mothers-earth'
     },
-    // Add more products here as we implement more scrapers
+    {
+      name: 'Cosmeau Vaatwasstrips',
+      supplier: 'Cosmeau',
+      url: 'https://cosmeau.nl/products/vaatwasstrips', // Update with real URL
+      scraper: RealCosmEauScraper,
+      productSlug: 'cosmeau'
+    },
+    {
+      name: 'Bubblyfy Wasstrips',
+      supplier: 'Bubblyfy',
+      url: 'https://bubblyfy.com/products/vaatwasstrips', // Update with real URL
+      scraper: RealBubblyfyScraper,
+      productSlug: 'bubblyfy'
+    },
+    {
+      name: 'Bio-Suds Wasstrips',
+      supplier: 'Bio-Suds',
+      url: 'https://bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips',
+      scraper: RealBioSudsScraper,
+      productSlug: 'bio-suds'
+    },
+    {
+      name: 'Wasstrip.nl',
+      supplier: 'Wasstrip.nl',
+      url: 'https://wasstrip.nl/products/vaatwasstrips', // Update with real URL
+      scraper: RealWasstripNlScraper,
+      productSlug: 'wasstrip-nl'
+    },
+    {
+      name: 'GreenGoods Vaatwasstrips',
+      supplier: 'GreenGoods',
+      url: 'https://www.bol.com/nl/nl/p/greengoods-vaatwasstrips/', // Update with real Bol.com URL
+      scraper: RealGreenGoodsScraper,
+      productSlug: 'greengoods'
+    },
+    {
+      name: 'Natuwash Vaatwasstrips',
+      supplier: 'Natuwash',
+      url: 'https://natuwash.com/products/vaatwasstrips', // Update with real URL
+      scraper: RealNatuwashScraper,
+      productSlug: 'natuwash'
+    }
   ];
 
   async scrapeAllProducts(): Promise<ProductData[]> {
     const results: ProductData[] = [];
     
+    console.log(`🚀 Starting scrape of ${this.targets.length} products...`);
+    
     for (const target of this.targets) {
       try {
-        console.log(`Scraping ${target.name} from ${target.supplier}...`);
+        console.log(`\n📦 Scraping ${target.name} from ${target.supplier}...`);
+        
+        // Add delay between scrapes to be respectful
+        if (results.length > 0) {
+          console.log('⏳ Waiting 3 seconds before next scrape...');
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
         
         const scraper = new target.scraper();
         const productData = await scraper.scrapeProduct(
@@ -33,14 +90,34 @@ export class ScrapingCoordinator {
           target.supplier
         );
         
+        // Add the product slug for database updates
+        (productData as any).slug = target.productSlug;
+        
         results.push(productData);
-        console.log(`Successfully scraped ${target.name}`);
+        console.log(`✅ Successfully scraped ${target.name}`);
+        
       } catch (error) {
-        console.error(`Failed to scrape ${target.name}:`, error);
+        console.error(`❌ Failed to scrape ${target.name}:`, error);
         // Continue with other products even if one fails
+        
+        // You might want to create a failed result entry
+        results.push({
+          name: target.name,
+          supplier: target.supplier,
+          url: target.url,
+          price: {
+            price: 0,
+            pricePerWash: 0,
+            currency: 'EUR',
+            scrapedAt: new Date()
+          },
+          inStock: true, // Default
+          reviews: []
+        } as ProductData);
       }
     }
     
+    console.log(`\n🎉 Scraping completed! ${results.length} products processed.`);
     return results;
   }
 
@@ -48,6 +125,8 @@ export class ScrapingCoordinator {
     const supplierTargets = this.targets.filter(
       t => t.supplier.toLowerCase() === supplier.toLowerCase()
     );
+    
+    console.log(`🎯 Scraping ${supplierTargets.length} products for ${supplier}...`);
     
     const results: ProductData[] = [];
     
@@ -60,12 +139,25 @@ export class ScrapingCoordinator {
           target.supplier
         );
         
+        (productData as any).slug = target.productSlug;
         results.push(productData);
+        
       } catch (error) {
-        console.error(`Failed to scrape ${target.name}:`, error);
+        console.error(`❌ Failed to scrape ${target.name}:`, error);
       }
     }
     
     return results;
+  }
+
+  // Method to get all configured targets (useful for admin)
+  getTargets(): ScrapingTarget[] {
+    return this.targets.map(t => ({
+      name: t.name,
+      supplier: t.supplier,
+      url: t.url,
+      scraper: t.scraper.name,
+      productSlug: t.productSlug
+    }));
   }
 }

@@ -33,10 +33,16 @@ export async function POST(request: NextRequest) {
       let failureCount = 0;
       
       for (const productData of results) {
+        const productSlug = (productData as any).slug;
+        
         try {
+          if (productData.price.price === 0) {
+            throw new Error('No valid price found');
+          }
+          
           // Update product in database
           await upsertProduct({
-            slug: productData.supplier.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+            slug: productSlug,
             name: productData.name,
             supplier: productData.supplier,
             currentPrice: productData.price.price,
