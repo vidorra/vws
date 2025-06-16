@@ -1,7 +1,8 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
 
-RUN apk add --no-cache tzdata
+# Install timezone data
+RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 ENV TZ=Europe/Amsterdam
 
 COPY package.json package-lock.json ./
@@ -23,12 +24,41 @@ ENV DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy"
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
-RUN apk add --no-cache tzdata
+# Install Chrome dependencies for Puppeteer
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxss1 \
+    libxtst6 \
+    xdg-utils \
+    libatspi2.0-0 \
+    libgtk-4-1 \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install timezone data
+RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 ENV TZ=Europe/Amsterdam
 ENV NODE_ENV=production
+
+# Set environment variables for Puppeteer
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 # Copy standalone build
 COPY --from=builder /app/.next/standalone ./

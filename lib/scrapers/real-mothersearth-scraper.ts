@@ -16,8 +16,26 @@ export class RealMothersEarthScraper extends BaseScraper {
         '--disable-accelerated-2d-canvas',
         '--no-first-run',
         '--no-zygote',
-        '--single-process', // Required for some hosting environments
-        '--disable-gpu'
+        '--single-process',
+        '--disable-gpu',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-extensions',
+        '--disable-plugins',
+        '--disable-default-apps',
+        '--no-default-browser-check',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-ipc-flooding-protection',
+        '--disable-hang-monitor',
+        '--disable-popup-blocking',
+        '--disable-prompt-on-repost',
+        '--disable-sync',
+        '--disable-translate',
+        '--metrics-recording-only',
+        '--no-crash-upload',
+        '--disable-breakpad'
       ]
     });
 
@@ -25,19 +43,19 @@ export class RealMothersEarthScraper extends BaseScraper {
       const page = await browser.newPage();
       
       // Set realistic user agent
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      await page.setUserAgent('Mozilla/5.0 (Linux; x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
       
       // Set viewport
       await page.setViewport({ width: 1280, height: 720 });
       
       // Navigate to product page
-      await page.goto(url, { 
+      await page.goto(url, {
         waitUntil: 'networkidle2',
-        timeout: 30000 
+        timeout: 45000 // Increased timeout for production
       });
       
-      // Wait for page to load and price to be visible
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait for page to load
+      await new Promise(resolve => setTimeout(resolve, 3000)); // Increased wait time
       
       // Extract price information
       const priceData = await page.evaluate(() => {
@@ -141,15 +159,21 @@ export class RealMothersEarthScraper extends BaseScraper {
     
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--single-process'
+      ]
     });
 
     try {
       const page = await browser.newPage();
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
-      await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+      await page.setUserAgent('Mozilla/5.0 (Linux; x86_64) AppleWebKit/537.36');
+      await page.goto(url, { waitUntil: 'networkidle2', timeout: 45000 });
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       const stockStatus = await page.evaluate(() => {
         // Look for stock indicators
