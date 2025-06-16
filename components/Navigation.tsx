@@ -99,6 +99,10 @@ export default function Navigation() {
               )}
             </div>
 
+            <Link href="/overzicht" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+              Overzicht
+            </Link>
+
             <Link href="/reviews" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
               Reviews
             </Link>
@@ -202,6 +206,10 @@ export default function Navigation() {
                 Premium
               </Link>
             </div>
+
+            <Link href="/overzicht" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+              Overzicht
+            </Link>
 
             <Link href="/reviews" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
               Reviews
