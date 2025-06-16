@@ -20,10 +20,10 @@ export class RealBubblyfyScraper extends BaseScraper {
         // Bubblyfy-specific selectors
         const priceSelectors = [
           '.price',
+          '.price__current',
           '.product-price',
-          '[data-price]',
           '.money',
-          '.price-item--regular'
+          '[class*="price"]'
         ];
         
         let price = 0;
@@ -33,9 +33,9 @@ export class RealBubblyfyScraper extends BaseScraper {
           const element = document.querySelector(selector);
           if (element && element.textContent) {
             priceText = element.textContent.trim();
-            const priceMatch = priceText.match(/(\d+[,.]?\d*)/);
+            const priceMatch = priceText.match(/€?\s*(\d+[,.]?\d*)/);
             if (priceMatch) {
-              price = parseFloat(priceMatch[0].replace(',', '.'));
+              price = parseFloat(priceMatch[1].replace(',', '.'));
               if (price > 0) break;
             }
           }

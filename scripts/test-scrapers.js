@@ -12,32 +12,32 @@ async function testScrapers() {
     {
       name: "Mother's Earth",
       scraper: new RealMothersEarthScraper(),
-      url: 'https://mothersearth.nl/products/wasstrips' // Update with real URL
+      url: 'https://nl.mothersearth.com/collections/dishwasher-sheets'
     },
     {
       name: 'Cosmeau',
       scraper: new RealCosmEauScraper(),
-      url: 'https://cosmeau.nl/products/vaatwasstrips' // Update with real URL
+      url: 'https://cosmeau.com/products/vaatwasstrips'
     },
     {
       name: 'Bubblyfy',
       scraper: new RealBubblyfyScraper(),
-      url: 'https://bubblyfy.com/products/vaatwasstrips' // Update with real URL
+      url: 'https://www.bubblyfy.nl/products/vaatwasstrips'
     },
     {
       name: 'Bio-Suds',
       scraper: new RealBioSudsScraper(),
-      url: 'https://bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips'
+      url: 'https://www.bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips'
     },
     {
       name: 'Wasstrip.nl',
       scraper: new RealWasstripNlScraper(),
-      url: 'https://wasstrip.nl/products/vaatwasstrips' // Update with real URL
+      url: 'https://wasstrip.nl/p/vaatwasstrips-80-wasbeurten/'
     },
     {
       name: 'Natuwash',
       scraper: new RealNatuwashScraper(),
-      url: 'https://natuwash.com/products/vaatwasstrips' // Update with real URL
+      url: 'https://natuwash.com/products/vaatwasstrips'
     }
   ];
   

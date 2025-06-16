@@ -17,16 +17,13 @@ export class RealNatuwashScraper extends BaseScraper {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const priceData = await page.evaluate(() => {
-        // Natuwash website selectors (update based on actual site structure)
+        // Natuwash specific selectors (Shopify-based)
         const priceSelectors = [
+          '.price__current',
           '.price',
           '.product-price',
-          '.price-current',
-          '[data-price]',
           '.money',
-          '.price-amount',
-          '.current-price',
-          '[class*="price"]'
+          '[data-price]'
         ];
         
         let price = 0;
@@ -36,32 +33,17 @@ export class RealNatuwashScraper extends BaseScraper {
           const element = document.querySelector(selector);
           if (element && element.textContent) {
             priceText = element.textContent.trim();
-            const priceMatch = priceText.match(/(\d+[,.]?\d*)/);
+            const priceMatch = priceText.match(/€?\s*(\d+[,.]?\d*)/);
             if (priceMatch) {
-              price = parseFloat(priceMatch[0].replace(',', '.'));
+              price = parseFloat(priceMatch[1].replace(',', '.'));
               if (price > 0) break;
             }
           }
         }
         
-        // If no specific selector works, search for price patterns
-        if (price === 0) {
-          const bodyText = document.body.textContent || '';
-          const priceMatches = bodyText.match(/€\s*(\d+[,.]?\d+)/g);
-          if (priceMatches && priceMatches.length > 0) {
-            const firstPrice = priceMatches[0].match(/(\d+[,.]?\d+)/);
-            if (firstPrice) {
-              price = parseFloat(firstPrice[1].replace(',', '.'));
-            }
-          }
-        }
-        
-        // Natuwash typically has 60 strips per pack
-        const washCount = 60;
-        
         return {
           price,
-          washCount,
+          washCount: 60, // Natuwash typically 60 washes
           priceText
         };
       });

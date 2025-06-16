@@ -17,13 +17,13 @@ export class RealCosmEauScraper extends BaseScraper {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const priceData = await page.evaluate(() => {
-        // Cosmeau-specific selectors (adapt based on their actual website)
+        // Cosmeau-specific selectors (from their actual website)
         const priceSelectors = [
+          '.price--large',           // Main price selector on Cosmeau
           '.price',
           '.product-price',
-          '[data-price]',
           '.money',
-          '.current-price'
+          '[data-price]'
         ];
         
         let price = 0;
@@ -33,9 +33,10 @@ export class RealCosmEauScraper extends BaseScraper {
           const element = document.querySelector(selector);
           if (element && element.textContent) {
             priceText = element.textContent.trim();
-            const priceMatch = priceText.match(/(\d+[,.]?\d*)/);
+            // Look for price patterns like €14,99 or 14.99
+            const priceMatch = priceText.match(/€?\s*(\d+[,.]?\d*)/);
             if (priceMatch) {
-              price = parseFloat(priceMatch[0].replace(',', '.'));
+              price = parseFloat(priceMatch[1].replace(',', '.'));
               if (price > 0) break;
             }
           }
@@ -43,7 +44,7 @@ export class RealCosmEauScraper extends BaseScraper {
         
         return {
           price,
-          washCount: 60, // Default for Cosmeau
+          washCount: 60, // Cosmeau vaatwasstrips typically 60 washes
           priceText
         };
       });

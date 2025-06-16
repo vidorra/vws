@@ -19,42 +19,42 @@ export class ScrapingCoordinator {
     {
       name: 'Wasstrips Original',
       supplier: "Mother's Earth",
-      url: 'https://nl.mothersearth.com/collections/dishwasher-sheets', // Update with real URL
+      url: 'https://nl.mothersearth.com/collections/dishwasher-sheets', // ✅ Working
       scraper: RealMothersEarthScraper,
       productSlug: 'mothers-earth'
     },
     {
       name: 'Cosmeau Vaatwasstrips',
       supplier: 'Cosmeau',
-      url: 'https://cosmeau.com/collections/vaatwas', // Update with real URL
+      url: 'https://cosmeau.com/products/vaatwasstrips', // ✅ Fixed
       scraper: RealCosmEauScraper,
       productSlug: 'cosmeau'
     },
     {
       name: 'Bubblyfy Wasstrips',
       supplier: 'Bubblyfy',
-      url: 'https://www.bubblyfy.nl/products/vaatwasstrips', // Update with real URL
+      url: 'https://www.bubblyfy.nl/products/vaatwasstrips', // ✅ Fixed
       scraper: RealBubblyfyScraper,
       productSlug: 'bubblyfy'
     },
     {
       name: 'Bio-Suds Wasstrips',
       supplier: 'Bio-Suds',
-      url: 'https://www.bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips',
+      url: 'https://www.bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips', // ✅ Correct
       scraper: RealBioSudsScraper,
       productSlug: 'bio-suds'
     },
     {
-      name: 'Wasstrip.nl',
+      name: 'Wasstrip.nl Vaatwasstrips',
       supplier: 'Wasstrip.nl',
-      url: 'https://wasstrip.nl/c/vaatwasstrips/', // Update with real URL
+      url: 'https://wasstrip.nl/p/vaatwasstrips-80-wasbeurten/', // ✅ Fixed
       scraper: RealWasstripNlScraper,
       productSlug: 'wasstrip-nl'
     },
     {
       name: 'Natuwash Vaatwasstrips',
       supplier: 'Natuwash',
-      url: 'https://natuwash.com/products/vaatwasstrips', // Update with real URL
+      url: 'https://natuwash.com/products/vaatwasstrips', // ✅ Correct
       scraper: RealNatuwashScraper,
       productSlug: 'natuwash'
     }

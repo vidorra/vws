@@ -19,12 +19,10 @@ export class RealWasstripNlScraper extends BaseScraper {
       const priceData = await page.evaluate(() => {
         // Wasstrip.nl specific selectors
         const priceSelectors = [
+          '.woocommerce-Price-amount',
           '.price',
+          '.amount',
           '.product-price',
-          '.price-current',
-          '[data-price]',
-          '.money',
-          '.price-amount',
           '[class*="price"]'
         ];
         
@@ -35,27 +33,17 @@ export class RealWasstripNlScraper extends BaseScraper {
           const element = document.querySelector(selector);
           if (element && element.textContent) {
             priceText = element.textContent.trim();
-            const priceMatch = priceText.match(/(\d+[,.]?\d*)/);
+            const priceMatch = priceText.match(/€?\s*(\d+[,.]?\d*)/);
             if (priceMatch) {
-              price = parseFloat(priceMatch[0].replace(',', '.'));
+              price = parseFloat(priceMatch[1].replace(',', '.'));
               if (price > 0) break;
             }
           }
         }
         
-        // Wasstrip.nl offers larger packs (80 washes typical)
-        let washCount = 80;
-        
-        // Try to detect pack size from page content
-        const pageText = document.body.textContent?.toLowerCase() || '';
-        const packMatch = pageText.match(/(\d+)\s*(wasbeurt|strips|stuks)/i);
-        if (packMatch) {
-          washCount = parseInt(packMatch[1]);
-        }
-        
         return {
           price,
-          washCount,
+          washCount: 80, // Wasstrip.nl offers 80 washes
           priceText
         };
       });
