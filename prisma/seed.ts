@@ -132,41 +132,6 @@ const products = [
     ],
     url: 'https://natuwash.com/products/vaatwasstrips',
   },
-  {
-    slug: 'greengoods',
-    name: 'GreenGoods',
-    supplier: 'GREENGOODS',
-    description: 'Eco-vriendelijke vaatwasstrips met flexibel doseringssysteem',
-    longDescription: 'Nederlands merk gericht op eco-vriendelijke huishoudproducten met scheur-in-tweeën doseringssysteem. Perfect voor beginners met betaalbare proefpakketten.',
-    currentPrice: 34.95,
-    pricePerWash: 0.29,
-    washesPerPack: 120,
-    rating: 4.0,
-    reviewCount: 89,
-    inStock: true,
-    sustainability: 8.5,
-    availability: 'Bol.com',
-    features: [
-      '100% plastic-vrij',
-      'Biologisch afbreekbaar',
-      'Scheur-in-tweeën dosering',
-      'Verkrijgbaar via Bol.com',
-      'Proefpakketten beschikbaar'
-    ],
-    pros: [
-      'Flexibele dosering mogelijk',
-      'Verkrijgbaar via Bol.com',
-      'Betaalbare proefpakketten',
-      'Goed voor beginners'
-    ],
-    cons: [
-      'Geen eigen website',
-      'Beperkte productinformatie',
-      'Kleinere verpakkingen',
-      'Minder premium positionering'
-    ],
-    url: 'https://www.bol.com/nl/s/?searchtext=greengoods+vaatwasstrips',
-  },
 ];
 
 async function main() {

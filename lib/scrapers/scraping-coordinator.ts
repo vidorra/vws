@@ -3,7 +3,6 @@ import { RealCosmEauScraper } from './real-cosmeau-scraper';
 import { RealBubblyfyScraper } from './real-bubblyfy-scraper';
 import { RealBioSudsScraper } from './real-biosuds-scraper';
 import { RealWasstripNlScraper } from './real-wasstripnl-scraper';
-import { RealGreenGoodsScraper } from './real-greengoods-scraper';
 import { RealNatuwashScraper } from './real-natuwash-scraper';
 import { ProductData } from './base-scraper';
 
@@ -20,44 +19,37 @@ export class ScrapingCoordinator {
     {
       name: 'Wasstrips Original',
       supplier: "Mother's Earth",
-      url: 'https://mothersearth.nl/products/wasstrips', // Update with real URL
+      url: 'https://nl.mothersearth.com/collections/dishwasher-sheets', // Update with real URL
       scraper: RealMothersEarthScraper,
       productSlug: 'mothers-earth'
     },
     {
       name: 'Cosmeau Vaatwasstrips',
       supplier: 'Cosmeau',
-      url: 'https://cosmeau.nl/products/vaatwasstrips', // Update with real URL
+      url: 'https://cosmeau.com/collections/vaatwas', // Update with real URL
       scraper: RealCosmEauScraper,
       productSlug: 'cosmeau'
     },
     {
       name: 'Bubblyfy Wasstrips',
       supplier: 'Bubblyfy',
-      url: 'https://bubblyfy.com/products/vaatwasstrips', // Update with real URL
+      url: 'https://www.bubblyfy.nl/products/vaatwasstrips', // Update with real URL
       scraper: RealBubblyfyScraper,
       productSlug: 'bubblyfy'
     },
     {
       name: 'Bio-Suds Wasstrips',
       supplier: 'Bio-Suds',
-      url: 'https://bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips',
+      url: 'https://www.bio-suds.com/products/bio-suds-milieuvriendelijke-vaatwasstrips',
       scraper: RealBioSudsScraper,
       productSlug: 'bio-suds'
     },
     {
       name: 'Wasstrip.nl',
       supplier: 'Wasstrip.nl',
-      url: 'https://wasstrip.nl/products/vaatwasstrips', // Update with real URL
+      url: 'https://wasstrip.nl/c/vaatwasstrips/', // Update with real URL
       scraper: RealWasstripNlScraper,
       productSlug: 'wasstrip-nl'
-    },
-    {
-      name: 'GreenGoods Vaatwasstrips',
-      supplier: 'GreenGoods',
-      url: 'https://www.bol.com/nl/nl/p/greengoods-vaatwasstrips/', // Update with real Bol.com URL
-      scraper: RealGreenGoodsScraper,
-      productSlug: 'greengoods'
     },
     {
       name: 'Natuwash Vaatwasstrips',

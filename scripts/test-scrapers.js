@@ -3,7 +3,6 @@ const { RealCosmEauScraper } = require('../lib/scrapers/real-cosmeau-scraper');
 const { RealBubblyfyScraper } = require('../lib/scrapers/real-bubblyfy-scraper');
 const { RealBioSudsScraper } = require('../lib/scrapers/real-biosuds-scraper');
 const { RealWasstripNlScraper } = require('../lib/scrapers/real-wasstripnl-scraper');
-const { RealGreenGoodsScraper } = require('../lib/scrapers/real-greengoods-scraper');
 const { RealNatuwashScraper } = require('../lib/scrapers/real-natuwash-scraper');
 
 async function testScrapers() {
@@ -34,11 +33,6 @@ async function testScrapers() {
       name: 'Wasstrip.nl',
       scraper: new RealWasstripNlScraper(),
       url: 'https://wasstrip.nl/products/vaatwasstrips' // Update with real URL
-    },
-    {
-      name: 'GreenGoods',
-      scraper: new RealGreenGoodsScraper(),
-      url: 'https://www.bol.com/nl/nl/p/greengoods-vaatwasstrips/' // Update with real URL
     },
     {
       name: 'Natuwash',

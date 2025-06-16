@@ -179,11 +179,11 @@ export default function Navigation() {
               <Link href="/merken/bio-suds" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                 Bio Suds
               </Link>
+              <Link href="/merken/wasstrip-nl" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                Wasstrip.nl
+              </Link>
               <Link href="/merken/natuwash" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                 Natuwash
-              </Link>
-              <Link href="/merken/greengoods" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                GreenGoods
               </Link>
             </div>
 

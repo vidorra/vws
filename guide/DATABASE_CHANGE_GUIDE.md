@@ -309,3 +309,4 @@ node scripts/test-scrapers.js
 ---
 
 Last updated: June 2025
+cd /Users/jensscholtanus/PhpstormProjects/claude-engineer/vws && export DB_MANAGEMENT_SECRET="y43IofseizOambHXporOQRhhu6vB55G+7tEQ2mfJ2js=" && ./scripts/manage-remote-db.sh push-schema

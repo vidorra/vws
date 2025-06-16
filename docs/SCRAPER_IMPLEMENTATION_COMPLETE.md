@@ -8,7 +8,6 @@
 - ✅ **Bubblyfy** - `lib/scrapers/real-bubblyfy-scraper.ts`
 - ✅ **Bio-Suds** - `lib/scrapers/real-biosuds-scraper.ts`
 - ✅ **Wasstrip.nl** - `lib/scrapers/real-wasstripnl-scraper.ts`
-- ✅ **GreenGoods** - `lib/scrapers/real-greengoods-scraper.ts`
 - ✅ **Natuwash** - `lib/scrapers/real-natuwash-scraper.ts`
 
 ### 2. Updated Scraping Coordinator
