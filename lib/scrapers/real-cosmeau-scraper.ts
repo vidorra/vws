@@ -34,9 +34,9 @@ export class RealCosmEauScraper extends BaseScraper {
           if (element && element.textContent) {
             priceText = element.textContent.trim();
             // Look for price patterns like €14,99 or 14.99
-            const priceMatch = priceText.match(/€?\s*(\d+[,.]?\d*)/);
+            const priceMatch = priceText.match(/(\d+[,.]?\d*)/);
             if (priceMatch) {
-              price = parseFloat(priceMatch[1].replace(',', '.'));
+              price = parseFloat(priceMatch[0].replace(',', '.'));
               if (price > 0) break;
             }
           }
