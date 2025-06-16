@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         
         try {
           if (productData.price.price === 0) {
-            throw new Error('No valid price found');
+            throw new Error(`No valid price found - URL: ${productData.url}`);
           }
           
           // Update product in database
@@ -54,26 +54,28 @@ export async function POST(request: NextRequest) {
           
           successCount++;
           
-          // Log individual product scrape
+          // Log individual product scrape with URL
           await prisma.scrapingLog.create({
             data: {
               supplier: productData.supplier,
               status: 'success',
-              message: `Price: €${productData.price.price}`,
+              message: `Price: €${productData.price.price} - URL: ${productData.url}`,
               newPrice: productData.price.price,
               completedAt: new Date()
             }
           });
         } catch (error) {
           console.error(`Failed to update product ${productData.name}:`, error);
+          console.error(`Product URL: ${productData.url}`);
           failureCount++;
           
-          // Log failure
+          // Log failure with URL
+          const errorMessage = error instanceof Error ? error.message : 'Database update failed';
           await prisma.scrapingLog.create({
             data: {
               supplier: productData.supplier,
               status: 'failed',
-              message: error instanceof Error ? error.message : 'Database update failed',
+              message: `${errorMessage} - URL: ${productData.url}`,
               completedAt: new Date()
             }
           });

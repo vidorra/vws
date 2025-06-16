@@ -68,6 +68,7 @@ export class ScrapingCoordinator {
     for (const target of this.targets) {
       try {
         console.log(`\n📦 Scraping ${target.name} from ${target.supplier}...`);
+        console.log(`🔗 URL: ${target.url}`);
         
         // Add delay between scrapes to be respectful
         if (results.length > 0) {
@@ -86,10 +87,11 @@ export class ScrapingCoordinator {
         (productData as any).slug = target.productSlug;
         
         results.push(productData);
-        console.log(`✅ Successfully scraped ${target.name}`);
+        console.log(`✅ Successfully scraped ${target.name} - Price: €${productData.price.price}`);
         
       } catch (error) {
         console.error(`❌ Failed to scrape ${target.name}:`, error);
+        console.error(`🔗 Failed URL: ${target.url}`);
         // Continue with other products even if one fails
         
         // You might want to create a failed result entry
@@ -104,7 +106,8 @@ export class ScrapingCoordinator {
             scrapedAt: new Date()
           },
           inStock: true, // Default
-          reviews: []
+          reviews: [],
+          slug: target.productSlug
         } as ProductData);
       }
     }

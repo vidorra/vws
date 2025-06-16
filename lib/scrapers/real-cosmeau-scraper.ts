@@ -50,6 +50,10 @@ export class RealCosmEauScraper extends BaseScraper {
       });
       
       if (priceData.price === 0) {
+        console.error(`❌ Cosmeau price extraction failed:`);
+        console.error(`   URL: ${url}`);
+        console.error(`   Price text found: "${priceData.priceText}"`);
+        console.error(`   Page URL: ${await page.url()}`);
         throw new Error(`No price found for Cosmeau. Text: "${priceData.priceText}"`);
       }
       

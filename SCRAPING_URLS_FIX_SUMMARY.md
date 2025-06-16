@@ -78,3 +78,10 @@ For any brand still showing "No valid price found":
 - All URLs tested and return 200 or 403 status (403 is normal bot protection)
 - Puppeteer with proper user agent handles bot protection
 - Wash counts updated: Cosmeau (60), Bubblyfy (64), Wasstrip.nl (80), Natuwash (60)
+
+## 🔧 Hotfix Applied
+
+Fixed regex pattern issue that was causing all scrapers to fail:
+- Changed from `/€?\s*(\d+[,.]?\d*)/` with `priceMatch[1]`
+- Back to `/(\d+[,.]?\d*)/` with `priceMatch[0]`
+- This matches the pattern used in the working Mother's Earth scraper
