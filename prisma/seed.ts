@@ -233,21 +233,28 @@ async function main() {
     }
   }
   
-  // Create admin user
+  // Create or update admin user
   const bcrypt = await import('bcryptjs');
   const adminPasswordHash = await bcrypt.hash('admin123', 10);
   
-  await prisma.adminUser.create({
-    data: {
+  await prisma.adminUser.upsert({
+    where: {
+      email: 'admin@vaatwasstripsvergelijker.nl',
+    },
+    update: {
+      passwordHash: adminPasswordHash,
+      name: 'Admin User',
+    },
+    create: {
       email: 'admin@vaatwasstripsvergelijker.nl',
       passwordHash: adminPasswordHash,
       name: 'Admin User',
     },
   });
   
-  console.log('✅ Created admin user');
+  console.log('✅ Created/updated admin user');
   
-  // Add some site settings
+  // Add or update site settings
   const settings = [
     { key: 'site_name', value: 'Vaatwasstrips Vergelijker', description: 'Site name' },
     { key: 'site_description', value: 'Vergelijk vaatwasstrips van alle Nederlandse aanbieders', description: 'Site description' },
@@ -255,10 +262,14 @@ async function main() {
   ];
   
   for (const setting of settings) {
-    await prisma.siteSetting.create({ data: setting });
+    await prisma.siteSetting.upsert({
+      where: { key: setting.key },
+      update: { value: setting.value, description: setting.description },
+      create: setting,
+    });
   }
   
-  console.log('✅ Created site settings');
+  console.log('✅ Created/updated site settings');
   console.log('🎉 Database seed completed!');
 }
 

@@ -12,6 +12,7 @@ ADMIN_EMAIL=admin@vaatwasstripsvergelijker.nl
 ADMIN_PASSWORD_HASH=$2b$10$IHiFW8AWC4bx97UgoiZS8OXi6eLJ4mhbeUg0ZapW/tV3LkR.ZajHK
 JWT_SECRET=WWbPTx3royqFkvRJsknEDWRms2vA9e1E30LCNUUW5r4=
 NODE_ENV=production
+DB_MANAGEMENT_SECRET=your-secure-secret-here
 ```
 
 **Note**: The admin password is currently set to `admin123`. You can generate a new hash with a different password using `node scripts/generate-password-hash.js yourpassword`
@@ -23,6 +24,11 @@ node scripts/generate-password-hash.js
 ```
 
 ## To generate JWT_SECRET:
+```bash
+openssl rand -base64 32
+```
+
+## To generate DB_MANAGEMENT_SECRET:
 ```bash
 openssl rand -base64 32
 ```
