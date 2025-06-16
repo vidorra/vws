@@ -43,8 +43,8 @@ git add .
 git commit -m "Add Natuwash and GreenGoods brands to database"
 git push origin main
 
-# Deploy to CapRover
-npm run deploy
+# GitHub Actions will automatically deploy to CapRover
+# Monitor the deployment at: https://github.com/[your-repo]/actions
 ```
 
 ### 3. Update Production Database
