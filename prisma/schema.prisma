@@ -60,10 +60,43 @@ model Product {
   reviews         Review[]
   scrapingLogs    ScrapingLog[]
   priceAlerts     PriceAlert[]
+  variants        ProductVariant[]
   
   @@index([slug])
   @@index([supplier])
   @@index([currentPrice])
+}
+
+// Product variants for different pack sizes
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Variant details
+  name        String   // "60 wasbeurten", "Voordeelpak 120x"
+  description String?  // "Standaard pakket", "Beste prijs per wasbeurt"
+  washCount   Int      // 30, 60, 120, etc.
+  
+  // Pricing
+  price       Float
+  pricePerWash Float
+  currency    String   @default("EUR")
+  
+  // Availability
+  inStock     Boolean  @default(true)
+  isDefault   Boolean  @default(false) // Mark which variant to show by default
+  
+  // Scraping
+  scrapedAt   DateTime @default(now())
+  url         String?  // Direct URL to this variant if available
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([productId])
+  @@map("ProductVariant")
 }
 
 // Price history tracking

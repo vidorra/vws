@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { ScrapingCoordinator } from '@/lib/scrapers/scraping-coordinator';
 import { prisma } from '@/lib/prisma';
-import { upsertProduct } from '@/lib/db/products';
+import { upsertProductWithVariants } from '@/lib/db/variants';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,30 +36,34 @@ export async function POST(request: NextRequest) {
         const productSlug = (productData as any).slug;
         
         try {
-          if (productData.price.price === 0) {
-            throw new Error(`No valid price found - URL: ${productData.url}`);
+          if (productData.variants.length === 0) {
+            throw new Error(`No variants found - URL: ${productData.url}`);
           }
           
-          // Update product in database
-          await upsertProduct({
+          // Update product with all variants
+          await upsertProductWithVariants({
             slug: productSlug,
             name: productData.name,
             supplier: productData.supplier,
-            currentPrice: productData.price.price,
-            pricePerWash: productData.price.pricePerWash,
-            inStock: productData.inStock,
+            variants: productData.variants,
             url: productData.url || undefined,
-            reviewCount: productData.reviews?.length || 0
+            inStock: productData.inStock,
+            lastChecked: new Date()
           });
           
           successCount++;
+          
+          // Log variant details
+          const variantInfo = productData.variants.map(v =>
+            `${v.washCount}x@€${v.price.toFixed(2)}`
+          ).join(', ');
           
           // Log individual product scrape with URL
           await prisma.scrapingLog.create({
             data: {
               supplier: productData.supplier,
               status: 'success',
-              message: `Price: €${productData.price.price} - URL: ${productData.url}`,
+              message: `Variants: ${variantInfo} - URL: ${productData.url}`,
               newPrice: productData.price.price,
               completedAt: new Date()
             }

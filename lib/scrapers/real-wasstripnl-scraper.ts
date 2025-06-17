@@ -1,7 +1,75 @@
 import puppeteer from 'puppeteer';
-import { BaseScraper, PriceData, ReviewData } from './base-scraper';
+import { BaseScraper, PriceData, ReviewData, VariantData } from './base-scraper';
 
 export class RealWasstripNlScraper extends BaseScraper {
+  async scrapeVariants(url: string): Promise<VariantData[]> {
+    console.log(`🔍 Scraping Wasstrip.nl variants from: ${url}`);
+    
+    const browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    });
+
+    try {
+      const page = await browser.newPage();
+      await page.setUserAgent('Mozilla/5.0 (Linux; x86_64) AppleWebKit/537.36');
+      await page.goto(url, { waitUntil: 'networkidle2', timeout: 45000 });
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      const variants = await page.evaluate(() => {
+        const variantData: any[] = [];
+        
+        // Get the main price
+        const priceSelectors = [
+          '.woocommerce-Price-amount',
+          '.price',
+          '.amount',
+          '.product-price'
+        ];
+        
+        let price = 0;
+        for (const selector of priceSelectors) {
+          const element = document.querySelector(selector);
+          if (element && element.textContent) {
+            const priceText = element.textContent.trim();
+            const priceMatch = priceText.match(/(\d+[,.]?\d*)/);
+            if (priceMatch) {
+              price = parseFloat(priceMatch[0].replace(',', '.'));
+              if (price > 0) break;
+            }
+          }
+        }
+        
+        // Wasstrip.nl typically offers 80 washes per pack
+        const washCount = 80;
+        
+        if (price > 0) {
+          variantData.push({
+            name: `${washCount} wasbeurten`,
+            washCount,
+            price,
+            pricePerWash: price / washCount,
+            currency: 'EUR',
+            inStock: true,
+            isDefault: true
+          });
+        }
+        
+        return variantData;
+      });
+      
+      console.log(`✅ Found ${variants.length} Wasstrip.nl variants`);
+      return variants;
+      
+    } catch (error) {
+      console.error('❌ Error scraping Wasstrip.nl variants:', error);
+      throw error;
+    } finally {
+      await browser.close();
+    }
+  }
+
   async scrapePrice(url: string): Promise<PriceData> {
     console.log(`🔍 Scraping Wasstrip.nl price from: ${url}`);
     

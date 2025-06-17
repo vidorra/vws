@@ -19,7 +19,7 @@ export class ScrapingCoordinator {
     {
       name: 'Wasstrips Original',
       supplier: "Mother's Earth",
-      url: 'https://nl.mothersearth.com/collections/dishwasher-sheets', // ✅ Working
+      url: 'https://nl.mothersearth.com/products/dishwasher-sheet?variant=50107168784722', // ✅ Updated to specific product
       scraper: RealMothersEarthScraper,
       productSlug: 'mothers-earth'
     },
@@ -94,21 +94,23 @@ export class ScrapingCoordinator {
         console.error(`🔗 Failed URL: ${target.url}`);
         // Continue with other products even if one fails
         
-        // You might want to create a failed result entry
+        // Create a failed result entry with empty variants
         results.push({
           name: target.name,
           supplier: target.supplier,
           url: target.url,
+          variants: [], // Empty variants array for failed scrapes
           price: {
             price: 0,
             pricePerWash: 0,
             currency: 'EUR',
             scrapedAt: new Date()
           },
-          inStock: true, // Default
+          inStock: false, // Mark as out of stock when scraping fails
           reviews: [],
+          scrapedAt: new Date(),
           slug: target.productSlug
-        } as ProductData);
+        } as ProductData & { slug: string });
       }
     }
     
