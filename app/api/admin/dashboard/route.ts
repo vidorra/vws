@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
-import { getProducts, getProductStats } from '@/lib/db/products';
+import { getProductStats } from '@/lib/db/products';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
@@ -13,8 +13,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Get products from database
-    const products = await getProducts({ orderBy: 'name' });
+    // Get products from database with variants
+    const products = await prisma.product.findMany({
+      orderBy: { name: 'asc' },
+      include: {
+        _count: {
+          select: { reviews: true }
+        },
+        variants: {
+          orderBy: { washCount: 'asc' }
+        }
+      }
+    });
     
     // Get statistics
     const stats = await getProductStats();
@@ -44,7 +54,8 @@ export async function GET(request: NextRequest) {
       cons: product.cons,
       sustainability: product.sustainability,
       rating: product.rating,
-      reviewCount: product._count?.reviews || 0
+      reviewCount: product._count?.reviews || 0,
+      variants: product.variants || []
     }));
     
     return NextResponse.json({

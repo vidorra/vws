@@ -1,10 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
 import EditProductModal from '@/components/EditProductModal';
 import ScrapingLogsViewer from './components/ScrapingLogsViewer';
+
+interface ProductVariant {
+  id: string;
+  name: string;
+  washCount: number;
+  price: number;
+  pricePerWash: number;
+  inStock: boolean;
+  isDefault: boolean;
+}
 
 interface Product {
   id: string;
@@ -23,6 +33,7 @@ interface Product {
   cons?: string[];
   sustainability?: number;
   rating?: number;
+  variants?: ProductVariant[];
 }
 
 type TabType = 'dashboard' | 'logs';
@@ -35,6 +46,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
   const router = useRouter();
 
   useEffect(() => {
@@ -153,6 +165,16 @@ export default function AdminDashboard() {
       console.error('Error deleting product:', error);
       alert('Fout bij het verwijderen van het product');
     }
+  };
+
+  const toggleProductExpansion = (productId: string) => {
+    const newExpanded = new Set(expandedProducts);
+    if (newExpanded.has(productId)) {
+      newExpanded.delete(productId);
+    } else {
+      newExpanded.add(productId);
+    }
+    setExpandedProducts(newExpanded);
   };
 
   if (loading) {
@@ -285,54 +307,132 @@ export default function AdminDashboard() {
                               </td>
                             </tr>
                           ) : (
-                            products.map((product) => (
-                              <tr key={product.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                                  <div className="text-sm text-gray-500">{product.supplier}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    €{product.price?.toFixed(2) || 'N/A'}
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-gray-900">
-                                    €{product.pricePerWash?.toFixed(3) || 'N/A'}
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                    product.inStock 
-                                      ? 'bg-green-100 text-green-800' 
-                                      : 'bg-red-100 text-red-800'
-                                  }`}>
-                                    {product.inStock ? 'Op voorraad' : 'Uitverkocht'}
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                  {product.lastUpdated ? new Date(product.lastUpdated).toLocaleString('nl-NL') : 'Nooit'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                  <div className="flex items-center space-x-3">
-                                    <button
-                                      onClick={() => handleEdit(product)}
-                                      className="text-indigo-600 hover:text-indigo-900 flex items-center"
-                                    >
-                                      <Edit className="h-4 w-4 mr-1" />
-                                      Bewerken
-                                    </button>
-                                    <button
-                                      onClick={() => handleDelete(product.id)}
-                                      className="text-red-600 hover:text-red-900 flex items-center"
-                                    >
-                                      <Trash2 className="h-4 w-4 mr-1" />
-                                      Verwijderen
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))
+                            products.map((product) => {
+                              const hasVariants = product.variants && product.variants.length > 0;
+                              const isExpanded = expandedProducts.has(product.id);
+                              
+                              return (
+                                <React.Fragment key={product.id}>
+                                  <tr className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="flex items-center">
+                                        {hasVariants && (
+                                          <button
+                                            onClick={() => toggleProductExpansion(product.id)}
+                                            className="mr-2 text-gray-500 hover:text-gray-700"
+                                          >
+                                            {isExpanded ? (
+                                              <ChevronUp className="h-4 w-4" />
+                                            ) : (
+                                              <ChevronDown className="h-4 w-4" />
+                                            )}
+                                          </button>
+                                        )}
+                                        <div>
+                                          <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                                          <div className="text-sm text-gray-500">{product.supplier}</div>
+                                          {hasVariants && product.variants && (
+                                            <div className="text-xs text-gray-400 mt-1">
+                                              {product.variants.length} variant{product.variants.length > 1 ? 'en' : ''}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="text-sm font-medium text-gray-900">
+                                        €{product.price?.toFixed(2) || 'N/A'}
+                                      </div>
+                                      {hasVariants && (
+                                        <div className="text-xs text-gray-500">
+                                          Standaard variant
+                                        </div>
+                                      )}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="text-sm text-gray-900">
+                                        €{product.pricePerWash?.toFixed(3) || 'N/A'}
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                        product.inStock
+                                          ? 'bg-green-100 text-green-800'
+                                          : 'bg-red-100 text-red-800'
+                                      }`}>
+                                        {product.inStock ? 'Op voorraad' : 'Uitverkocht'}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                      {product.lastUpdated ? new Date(product.lastUpdated).toLocaleString('nl-NL') : 'Nooit'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                      <div className="flex items-center space-x-3">
+                                        <button
+                                          onClick={() => handleEdit(product)}
+                                          className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                                        >
+                                          <Edit className="h-4 w-4 mr-1" />
+                                          Bewerken
+                                        </button>
+                                        <button
+                                          onClick={() => handleDelete(product.id)}
+                                          className="text-red-600 hover:text-red-900 flex items-center"
+                                        >
+                                          <Trash2 className="h-4 w-4 mr-1" />
+                                          Verwijderen
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  
+                                  {/* Expanded variants section */}
+                                  {hasVariants && isExpanded && (
+                                    <tr>
+                                      <td colSpan={6} className="px-6 py-4 bg-gray-50">
+                                        <div className="ml-8">
+                                          <h4 className="text-sm font-medium text-gray-900 mb-3">Varianten</h4>
+                                          <div className="space-y-2">
+                                            {product.variants?.map((variant) => (
+                                              <div key={variant.id} className="bg-white rounded-lg border border-gray-200 p-3">
+                                                <div className="grid grid-cols-5 gap-4 text-sm">
+                                                  <div>
+                                                    <span className="font-medium">{variant.name}</span>
+                                                    {variant.isDefault && (
+                                                      <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                                        Standaard
+                                                      </span>
+                                                    )}
+                                                  </div>
+                                                  <div>
+                                                    <span className="text-gray-500">Wasbeurten:</span> {variant.washCount}
+                                                  </div>
+                                                  <div>
+                                                    <span className="text-gray-500">Prijs:</span> €{variant.price.toFixed(2)}
+                                                  </div>
+                                                  <div>
+                                                    <span className="text-gray-500">Per wasbeurt:</span> €{variant.pricePerWash.toFixed(3)}
+                                                  </div>
+                                                  <div>
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                      variant.inStock
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : 'bg-red-100 text-red-800'
+                                                    }`}>
+                                                      {variant.inStock ? 'Op voorraad' : 'Uitverkocht'}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </React.Fragment>
+                              );
+                            })
                           )}
                         </tbody>
                       </table>

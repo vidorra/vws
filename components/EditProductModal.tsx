@@ -3,6 +3,16 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
+interface ProductVariant {
+  id: string;
+  name: string;
+  washCount: number;
+  price: number;
+  pricePerWash: number;
+  inStock: boolean;
+  isDefault: boolean;
+}
+
 interface Product {
   id: string;
   name: string;
@@ -20,6 +30,7 @@ interface Product {
   sustainability?: number;
   rating?: number;
   lastUpdated?: string | null;
+  variants?: ProductVariant[];
 }
 
 interface EditProductModalProps {
@@ -254,6 +265,47 @@ export default function EditProductModal({ product, isOpen, onClose, onSave }: E
               placeholder="Minder effectief bij hardnekkige vlekken"
             />
           </div>
+
+          {/* Variants section - read only */}
+          {formData.variants && formData.variants.length > 0 && (
+            <div className="border-t pt-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Varianten (alleen lezen)</h3>
+              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                {formData.variants.map((variant) => (
+                  <div key={variant.id} className="bg-white rounded border border-gray-200 p-3">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                      <div>
+                        <span className="font-medium">{variant.name}</span>
+                        {variant.isDefault && (
+                          <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                            Standaard
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Wasbeurten:</span> {variant.washCount}
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Prijs:</span> €{variant.price.toFixed(2)}
+                      </div>
+                      <div>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          variant.inStock
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {variant.inStock ? 'Op voorraad' : 'Uitverkocht'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <p className="text-xs text-gray-500 mt-2">
+                  * Varianten worden automatisch bijgewerkt tijdens het scrapen
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-end space-x-3 pt-4">
             <button
