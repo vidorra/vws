@@ -19,21 +19,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Push schema to database using the installed Prisma version
-    const { stdout, stderr } = await execAsync('./node_modules/.bin/prisma db push --skip-generate');
+    // Push schema to database - try multiple approaches
+    let result: { stdout: string; stderr: string } | null = null;
+    let lastError: Error | null = null;
     
-    if (stderr && !stderr.includes('already in sync')) {
-      console.error('Schema push stderr:', stderr);
-      return NextResponse.json(
-        { error: 'Schema push failed', details: stderr },
-        { status: 500 }
-      );
+    // Try different approaches to run prisma
+    const commands = [
+      'npx prisma@5.22.0 db push --skip-generate',
+      'npx prisma db push --skip-generate',
+      'prisma db push --skip-generate',
+      './node_modules/.bin/prisma db push --skip-generate || npx prisma db push --skip-generate'
+    ];
+    
+    for (const command of commands) {
+      try {
+        console.log(`Trying command: ${command}`);
+        result = await execAsync(command);
+        
+        // If we get here, the command succeeded
+        if (result.stderr && !result.stderr.includes('already in sync')) {
+          console.warn('Schema push stderr:', result.stderr);
+        }
+        
+        break; // Success, exit the loop
+      } catch (error) {
+        console.error(`Command failed: ${command}`, error);
+        lastError = error as Error;
+        // Continue to next command
+      }
+    }
+    
+    if (!result && lastError) {
+      throw lastError;
+    }
+    
+    if (!result) {
+      throw new Error('All prisma commands failed');
     }
 
     return NextResponse.json({
       success: true,
       message: 'Schema pushed successfully',
-      output: stdout
+      output: result.stdout,
+      stderr: result.stderr
     });
   } catch (error) {
     console.error('Schema push error:', error);
