@@ -6,6 +6,9 @@ This guide covers the deployment of the multi-variant scraping feature and dashb
 ## Database Changes Required
 We've added a new `ProductVariant` table to the schema that needs to be deployed to production.
 
+## Current Status
+Based on the CapRover logs, the old code is still running (using `scrapePrice` instead of `scrapeVariants`). The deployment needs to be completed.
+
 ## Step-by-Step Deployment Process
 
 ### 1. Commit and Push Code Changes
@@ -27,7 +30,12 @@ git push origin main
 - Wait for the deployment to complete successfully
 - This will deploy the code but NOT the database schema changes
 
-### 3. Push Database Schema Changes
+### 3. Verify Deployment Status
+Check if the new code is deployed by looking at the CapRover logs:
+- If you see "Scraping X price from" - OLD code is running
+- If you see "Scraping X variants from" - NEW code is running
+
+### 4. Push Database Schema Changes
 ```bash
 # Set the database management secret
 export DB_MANAGEMENT_SECRET="y43IofseizOambHXporOQRhhu6vB55G+7tEQ2mfJ2js="
@@ -36,7 +44,13 @@ export DB_MANAGEMENT_SECRET="y43IofseizOambHXporOQRhhu6vB55G+7tEQ2mfJ2js="
 ./scripts/manage-remote-db.sh push-schema
 ```
 
-### 4. Run Initial Scraping to Populate Variants
+### 5. Restart the Application
+After schema changes, restart the app in CapRover to clear any connection issues:
+1. Go to CapRover dashboard
+2. Navigate to your app
+3. Click "Restart App"
+
+### 6. Run Initial Scraping to Populate Variants
 After the schema is updated, trigger a manual scrape to populate the variant data:
 
 ```bash
@@ -50,7 +64,7 @@ curl -X POST https://vaatwasstripsvergelijker.server.devjens.nl/api/admin/scrape
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 ```
 
-### 5. Verify Deployment
+### 7. Verify Deployment
 
 1. **Check Database Schema**:
    - The ProductVariant table should be created
@@ -110,19 +124,45 @@ After successful deployment:
 - Bio-Suds: 10, 30, 60, 120, 240, 360 washes  
 - Natuwash: 60, 120, 180, 240 washes
 
+## Troubleshooting
+
+### Database Connection Errors
+If you see "Transport endpoint is not connected" errors:
+1. Restart the app in CapRover
+2. Check if the database container is running
+3. Verify DATABASE_URL has connection pooling parameters
+
+### Old Code Still Running
+If logs show "Scraping X price from" instead of "Scraping X variants from":
+1. Check GitHub Actions - ensure deployment completed
+2. Force redeploy in CapRover:
+   ```bash
+   npm run deploy
+   ```
+3. Clear CapRover app cache and restart
+
+### No Variants Found
+If products show 0 variants after scraping:
+1. Check if schema was pushed successfully
+2. Run test scripts locally to verify scrapers work
+3. Check scraping logs for specific errors
+
 ## Monitoring
 
 1. **Check Scraping Logs**:
    - Go to Admin Dashboard > Scraping Logs tab
+   - Look for "Variants: 60x@€12.99, 120x@€21.99" format
    - Verify scrapers are finding multiple variants
 
 2. **Check Application Logs**:
    - In CapRover, check app logs for any errors
-   - Look for "Found X variants" messages
+   - Look for "Found X variants" messages (NEW code)
+   - NOT "Scraped X: €Y" messages (OLD code)
 
 3. **Database Health**:
    - Check /api/health endpoint
    - Verify database connections are stable
+   - Connection errors may require app restart
 
 ## Support
 

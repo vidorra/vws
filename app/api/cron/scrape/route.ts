@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ScrapingCoordinator } from '@/lib/scrapers/scraping-coordinator';
 import { prisma } from '@/lib/prisma';
-import { upsertProduct } from '@/lib/db/products';
+import { upsertProductWithVariants } from '@/lib/db/variants';
 
 export async function GET(request: NextRequest) {
   // Verify DB management secret to prevent unauthorized access
@@ -23,20 +23,33 @@ export async function GET(request: NextRequest) {
     let failureCount = 0;
     
     for (const productData of results) {
+      const productSlug = (productData as any).slug;
+      
       try {
-        if (productData.price.price > 0) {
-          await upsertProduct({
-            slug: (productData as any).slug,
-            name: productData.name,
-            supplier: productData.supplier,
-            currentPrice: productData.price.price,
-            pricePerWash: productData.price.pricePerWash,
-            inStock: productData.inStock
-          });
-          successCount++;
-        } else {
-          failureCount++;
+        if (productData.variants.length === 0) {
+          throw new Error(`No variants found for ${productData.name}`);
         }
+        
+        // Update product with all variants
+        await upsertProductWithVariants({
+          slug: productSlug,
+          name: productData.name,
+          supplier: productData.supplier,
+          variants: productData.variants,
+          url: productData.url || undefined,
+          inStock: productData.inStock,
+          lastChecked: new Date()
+        });
+        
+        successCount++;
+        
+        // Log variant details
+        const variantInfo = productData.variants.map(v =>
+          `${v.washCount}x@€${v.price.toFixed(2)}`
+        ).join(', ');
+        
+        console.log(`✅ ${productData.name}: ${variantInfo}`);
+        
       } catch (error) {
         console.error(`Failed to update ${productData.name}:`, error);
         failureCount++;
