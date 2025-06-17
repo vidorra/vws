@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Push schema to database
-    const { stdout, stderr } = await execAsync('npx prisma db push --skip-generate');
+    // Push schema to database using the installed Prisma version
+    const { stdout, stderr } = await execAsync('./node_modules/.bin/prisma db push --skip-generate');
     
     if (stderr && !stderr.includes('already in sync')) {
       console.error('Schema push stderr:', stderr);
