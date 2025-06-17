@@ -1,21 +1,23 @@
-import { BaseScraper, PriceData, ReviewData } from './base-scraper';
+import { BaseScraper, PriceData, ReviewData, VariantData } from './base-scraper';
 
 export class MothersEarthScraper extends BaseScraper {
-  async scrapePrice(url: string): Promise<PriceData> {
+  async scrapeVariants(url: string): Promise<VariantData[]> {
     try {
-      // In production, this would fetch and parse the actual webpage
-      // For now, returning mock data
-      const mockPrice = 14.95;
-      const washesPerPack = 60;
-      
-      return {
-        price: mockPrice,
-        pricePerWash: mockPrice / washesPerPack,
-        currency: 'EUR',
-        scrapedAt: new Date()
-      };
+      // This is a mock scraper - returning mock variant data
+      // The real scraper is in real-mothersearth-scraper.ts
+      return [
+        {
+          name: '60 wasbeurten',
+          washCount: 60,
+          price: 14.95,
+          pricePerWash: 14.95 / 60,
+          currency: 'EUR',
+          inStock: true,
+          isDefault: true
+        }
+      ];
     } catch (error) {
-      console.error('Error scraping price from Mother\'s Earth:', error);
+      console.error('Error scraping variants from Mother\'s Earth:', error);
       throw error;
     }
   }
