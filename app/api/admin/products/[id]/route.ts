@@ -40,6 +40,7 @@ export async function PUT(
         cons: body.cons,
         sustainability: body.sustainability,
         rating: body.rating,
+        displayOrder: body.displayOrder,
         lastChecked: new Date(),
       },
     });

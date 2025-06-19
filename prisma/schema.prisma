@@ -47,6 +47,9 @@ model Product {
   pros            String[]        // Array of pros
   cons            String[]        // Array of cons
   
+  // Display
+  displayOrder    Int             @default(999)  // Lower numbers appear first
+  
   // SEO
   metaTitle       String?
   metaDescription String?

@@ -17,7 +17,7 @@ interface ScrapingTarget {
 export class ScrapingCoordinator {
   private targets: ScrapingTarget[] = [
     {
-      name: 'Wasstrips Original',
+      name: "Mother's Earth",
       supplier: "Mother's Earth",
       url: 'https://nl.mothersearth.com/products/dishwasher-sheet?variant=50107168784722', // ✅ Updated to specific product
       scraper: RealMothersEarthScraper,

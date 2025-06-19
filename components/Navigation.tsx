@@ -13,9 +13,10 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-4">
+      <nav className="max-w-7xl mx-auto bg-white rounded-2xl border border-gray-200">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
@@ -40,7 +41,7 @@ export default function Navigation() {
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               {openDropdown === 'merken' && (
-                <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute left-0 mt-2 w-48 rounded-md bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     <Link href="/merken" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Alle merken
@@ -79,7 +80,7 @@ export default function Navigation() {
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               {openDropdown === 'prijzen' && (
-                <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute left-0 mt-2 w-48 rounded-md bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     <Link href="/prijzen" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Alle categorieën
@@ -117,7 +118,7 @@ export default function Navigation() {
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               {openDropdown === 'gids' && (
-                <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute left-0 mt-2 w-48 rounded-md bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     <Link href="/gids" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Alle gidsen
@@ -154,13 +155,13 @@ export default function Navigation() {
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile menu */}
-      {isOpen && (
-        <div className="md:hidden border-t border-gray-200">
+        {/* Mobile menu */}
+        {isOpen && (
+          <div className="md:hidden border-t border-gray-200">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link href="/" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
               Home
@@ -237,10 +238,11 @@ export default function Navigation() {
 
             <Link href="/methodologie" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
               Methodologie
-            </Link>
+              </Link>
+            </div>
           </div>
-        </div>
-      )}
-    </nav>
+        )}
+      </nav>
+    </div>
   );
 }

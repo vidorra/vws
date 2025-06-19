@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { CheckCircle, XCircle, RefreshCw, BarChart3, Download, Trash2, Clock, FileText, Circle } from 'lucide-react';
 
 interface ScrapingLog {
   id: string;
@@ -150,10 +151,10 @@ export default function ScrapingLogsViewer() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'success': return '✅';
-      case 'failed': return '❌';
-      case 'running': return '🔄';
-      default: return '⚪';
+      case 'success': return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case 'failed': return <XCircle className="h-5 w-5 text-red-600" />;
+      case 'running': return <RefreshCw className="h-5 w-5 text-blue-600 animate-spin" />;
+      default: return <Circle className="h-5 w-5 text-gray-400" />;
     }
   };
 
@@ -213,7 +214,7 @@ export default function ScrapingLogsViewer() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold">📊</span>
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
                 </div>
               </div>
               <div className="ml-3">
@@ -227,7 +228,7 @@ export default function ScrapingLogsViewer() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
-                  <span className="text-green-600 font-semibold">✅</span>
+                  <CheckCircle className="h-5 w-5 text-green-600" />
                 </div>
               </div>
               <div className="ml-3">
@@ -241,7 +242,7 @@ export default function ScrapingLogsViewer() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-red-100 rounded-md flex items-center justify-center">
-                  <span className="text-red-600 font-semibold">❌</span>
+                  <XCircle className="h-5 w-5 text-red-600" />
                 </div>
               </div>
               <div className="ml-3">
@@ -255,7 +256,7 @@ export default function ScrapingLogsViewer() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-purple-100 rounded-md flex items-center justify-center">
-                  <span className="text-purple-600 font-semibold">⏱️</span>
+                  <Clock className="h-5 w-5 text-purple-600" />
                 </div>
               </div>
               <div className="ml-3">
@@ -318,23 +319,26 @@ export default function ScrapingLogsViewer() {
           <div className="flex gap-2">
             <button
               onClick={fetchLogs}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-1"
             >
-              🔄 Vernieuwen
+              <RefreshCw className="h-4 w-4" />
+              <span>Vernieuwen</span>
             </button>
             
             <button
               onClick={exportLogs}
-              className="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center space-x-1"
             >
-              📊 Exporteren
+              <Download className="h-4 w-4" />
+              <span>Exporteren</span>
             </button>
             
             <button
               onClick={cleanupOldLogs}
-              className="px-4 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="px-4 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center space-x-1"
             >
-              🗑️ Opschonen
+              <Trash2 className="h-4 w-4" />
+              <span>Opschonen</span>
             </button>
           </div>
         </div>
@@ -355,7 +359,7 @@ export default function ScrapingLogsViewer() {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-r from-blue-50 to-green-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -388,7 +392,7 @@ export default function ScrapingLogsViewer() {
                 <tr>
                   <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
                     <div className="flex flex-col items-center">
-                      <span className="text-4xl mb-2">📝</span>
+                      <FileText className="h-12 w-12 text-gray-400 mb-2" />
                       <p>Geen logs gevonden voor de geselecteerde filters.</p>
                       <p className="text-sm mt-1">Probeer de filters aan te passen of voer een handmatige scrape uit.</p>
                     </div>
@@ -396,7 +400,7 @@ export default function ScrapingLogsViewer() {
                 </tr>
               ) : (
                 data.logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50">
+                  <tr key={log.id} className="hover:bg-gray-100">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <span className="mr-2">{getStatusIcon(log.status)}</span>
@@ -438,7 +442,7 @@ export default function ScrapingLogsViewer() {
         </div>
         
         {data?.pagination && data.pagination.hasMore && (
-          <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-center">
+          <div className="px-6 py-3 bg-gray-100 border-t border-gray-200 text-center">
             <p className="text-sm text-gray-500">
               Toont {data.logs.length} van {data.pagination.total} logs. 
               <button className="ml-2 text-blue-600 hover:text-blue-800 font-medium">

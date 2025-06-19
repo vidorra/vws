@@ -29,6 +29,7 @@ interface Product {
   cons?: string[];
   sustainability?: number;
   rating?: number;
+  displayOrder?: number;
   lastUpdated?: string | null;
   variants?: ProductVariant[];
 }
@@ -57,6 +58,7 @@ export default function EditProductModal({ product, isOpen, onClose, onSave }: E
     cons: [],
     sustainability: 0,
     rating: 0,
+    displayOrder: 999,
   });
 
   useEffect(() => {
@@ -200,6 +202,23 @@ export default function EditProductModal({ product, isOpen, onClose, onSave }: E
                 onChange={(e) => setFormData({ ...formData, rating: parseFloat(e.target.value) || 0 })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Weergave volgorde
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formData.displayOrder || 999}
+                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 999 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                placeholder="Lagere nummers verschijnen eerst"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Bepaalt de standaard volgorde op de homepage (0-999)
+              </p>
             </div>
           </div>
 

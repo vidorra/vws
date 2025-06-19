@@ -24,9 +24,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="nl">
-      <body className={`${inter.className} bg-gray-50`}>
+      <body className={`${inter.className} bg-gradient-to-r from-blue-50 to-green-50`}>
         <Navigation />
-        <main>
+        <main className="pt-24">
           {children}
         </main>
         <footer className="bg-white border-t border-gray-200 mt-16">

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import OptimizedProductCard from '@/components/OptimizedProductCard';
 import { calculateProductAwards } from '@/utils/calculateAwards';
 import Link from 'next/link';
-import { Check, Star, Leaf, Euro, Tag, Package } from 'lucide-react';
+import { Check, Star, Leaf, Euro, Tag, Package, Info, ChevronDown } from 'lucide-react';
 
 interface HomePageProps {
   initialProducts: any[];
@@ -15,6 +15,7 @@ export default function HomePage({ initialProducts }: HomePageProps) {
   const [sortBy, setSortBy] = useState<'default' | 'reviews' | 'sustainability' | 'price' | 'tryout'>('default');
   const [packSize, setPackSize] = useState<'all' | 'standard' | 'large'>('all');
   const [loading, setLoading] = useState(true);
+  const [showMethodology, setShowMethodology] = useState(false);
 
   useEffect(() => {
     // Transform products to include variants in the expected format
@@ -162,103 +163,76 @@ export default function HomePage({ initialProducts }: HomePageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Vaatwasstrips Vergelijken Nederland 2025
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Onafhankelijke vergelijking van alle Nederlandse aanbieders
-          </p>
+      <main>
+        {/* Hero Section with Background Image */}
+        <div
+          className="relative bg-cover bg-center"
+          style={{
+            width: 'calc(100% - 48px)',
+            margin: '-96px auto 0 auto',
+            backgroundImage: 'url(/hero.png)',
+            minHeight: '70vh',
+            height: '70vh',
+            borderBottomLeftRadius: '1.5rem',
+            borderBottomRightRadius: '1.5rem',
+            borderTopLeftRadius: '0',
+            borderTopRightRadius: '0'
+          }}
+        >
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-black bg-opacity-40" style={{
+            borderBottomLeftRadius: '1.5rem',
+            borderBottomRightRadius: '1.5rem'
+          }}></div>
+          
+          {/* Hero Content */}
+          <div className="relative z-10 flex items-center h-full px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto w-full">
+              <div className="text-left">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                  Vaatwasstrips Vergelijken Nederland
+                </h1>
+                <p className="text-xl md:text-2xl text-white mb-8">
+                  Onafhankelijke vergelijking van alle Nederlandse aanbieders
+                </p>
+                <a
+                  href="#vergelijking"
+                  className="btn-primary inline-flex items-center justify-center px-8 py-4 text-lg rounded-xl"
+                >
+                  Bekijk Vergelijking →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           
           {/* Feature List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-8">
-            <div className="flex items-center text-left">
-              <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
-              <span className="text-gray-700">Transparante duurzaamheidsscores op basis van certificeringen</span>
-            </div>
-            <div className="flex items-center text-left">
-              <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
-              <span className="text-gray-700">Actuele prijzen van Nederlandse webshops</span>
-            </div>
-            <div className="flex items-center text-left">
-              <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
-              <span className="text-gray-700">Geverifieerde reviews en beoordelingen</span>
-            </div>
-            <div className="flex items-center text-left">
-              <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
-              <span className="text-gray-700">Objectieve vergelijking met traditionele tabletten</span>
+          <div className="bg-white rounded-2xl p-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center justify-center">
+                <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
+                <span className="text-gray-700">Transparante duurzaamheidsscores</span>
+              </div>
+              <div className="flex items-center justify-center">
+                <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
+                <span className="text-gray-700">Actuele prijzen van Nederlandse webshops</span>
+              </div>
+              <div className="flex items-center justify-center">
+                <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
+                <span className="text-gray-700">Geverifieerde reviews en beoordelingen</span>
+              </div>
             </div>
           </div>
           
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#vergelijking" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-              Bekijk Vergelijking →
-            </a>
-            <Link href="/methodologie" className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-              Lees Methodologie →
-            </Link>
-          </div>
-        </div>
 
-        {/* Quick Stats Section */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Marktoverzicht Nederlandse Vaatwasstrips
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
-              <div className="text-3xl font-bold text-blue-600">€{lowestPrice}</div>
-              <div className="text-sm text-gray-600 mt-1">Laagste prijs per wasbeurt</div>
-              <div className="text-xs text-gray-500 mt-1">(December 2024)</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
-              <div className="text-3xl font-bold text-red-600">€{highestPrice}</div>
-              <div className="text-sm text-gray-600 mt-1">Hoogste prijs per wasbeurt</div>
-              <div className="text-xs text-gray-500 mt-1">(Premium segment)</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
-              <div className="text-3xl font-bold text-purple-600">{suppliers.length}</div>
-              <div className="text-sm text-gray-600 mt-1">Nederlandse aanbieders vergeleken</div>
-              <div className="text-xs text-gray-500 mt-1">(100% marktdekking)</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
-              <div className="text-3xl font-bold text-green-600">{minSustainability}-{maxSustainability}</div>
-              <div className="text-sm text-gray-600 mt-1">Duurzaamheidsscores range</div>
-              <div className="text-xs text-gray-500 mt-1">(Op 10-punts schaal)</div>
-            </div>
-          </div>
-        </div>
 
-        {/* Intro Text */}
-        <div className="prose prose-lg max-w-none mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Vaatwasstrips Kopen in Nederland: Complete Vergelijking 2025
-          </h2>
-          <p className="text-gray-700 mb-4">
-            Vergelijk alle <strong>Nederlandse vaatwasstrips merken</strong> op prijs, duurzaamheid en prestaties. 
-            Onze onafhankelijke analyse toont actuele kosten, certificeringen en gebruikerservaringen van 
-            <strong> vaatwasstrips aanbieders</strong> in Nederland.
-          </p>
-          <div className="bg-gray-50 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-3">Marktoverzicht:</h3>
-            <ul className="space-y-2">
-              <li>• Prijzen variëren van €{lowestPrice}-€{highestPrice} per wasbeurt</li>
-              <li>• Duurzaamheidsscores tussen {minSustainability}-{maxSustainability}/10</li>
-              <li>• Alle merken alleen online verkrijgbaar</li>
-              <li>• Productie voornamelijk in China, enkele Nederlandse operaties</li>
-            </ul>
-            <p className="text-sm text-gray-600 mt-4 italic">Gegevens bijgewerkt: December 2024</p>
-          </div>
-        </div>
-
-        {/* Product Filters and Cards - Using new award-based filtering */}
-        <div id="vergelijking" className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Nederlandse Vaatwasstrips Aanbieders Vergelijking
-          </h2>
+          {/* Product Filters and Cards - Using new award-based filtering */}
+          <div id="vergelijking" className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              Nederlandse Vaatwasstrips Aanbieders Vergelijking
+            </h2>
           
           {/* Sort and Filter Section */}
           <div className="flex flex-col lg:flex-row justify-between gap-4 mb-8">
@@ -268,10 +242,10 @@ export default function HomePage({ initialProducts }: HomePageProps) {
                 <button
                   key={key}
                   onClick={() => setSortBy(key as any)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-1 ${
+                  className={`px-3 py-2 rounded-lg text-sm flex items-center space-x-1 ${
                     sortBy === key
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                      ? 'btn-primary'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 font-medium transition-all'
                   }`}
                 >
                   {Icon && <Icon className="h-4 w-4" />}
@@ -285,20 +259,20 @@ export default function HomePage({ initialProducts }: HomePageProps) {
               <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
                 <button
                   onClick={() => setPackSize('all')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-4 py-2 rounded-md text-sm ${
                     packSize === 'all'
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'btn-primary'
+                      : 'text-gray-700 hover:bg-gray-50 font-medium transition-all'
                   }`}
                 >
                   Alle maten
                 </button>
                 <button
                   onClick={() => setPackSize('standard')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                  className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 ${
                     packSize === 'standard'
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'btn-primary'
+                      : 'text-gray-700 hover:bg-gray-50 font-medium transition-all'
                   }`}
                 >
                   <Package className="h-4 w-4" />
@@ -306,10 +280,10 @@ export default function HomePage({ initialProducts }: HomePageProps) {
                 </button>
                 <button
                   onClick={() => setPackSize('large')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                  className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 ${
                     packSize === 'large'
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'btn-primary'
+                      : 'text-gray-700 hover:bg-gray-50 font-medium transition-all'
                   }`}
                 >
                   <Tag className="h-4 w-4" />
@@ -344,27 +318,57 @@ export default function HomePage({ initialProducts }: HomePageProps) {
           )}
         </div>
 
-        {/* Comparison Table */}
-        <ComparisonTable lowestPrice={lowestPrice} highestPrice={highestPrice} minSustainability={minSustainability} maxSustainability={maxSustainability} />
+          {/* Methodology Section */}
+          <div className="mb-12">
+            <div className="bg-gray-50 rounded-2xl p-4 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Info className="h-5 w-5 text-gray-400" />
+              <span className="text-sm text-gray-600">Duurzaamheidsscores gebaseerd op geverifieerde certificeringen</span>
+            </div>
+            <button
+              onClick={() => setShowMethodology(!showMethodology)}
+              className="text-blue-600 text-sm hover:text-blue-800 flex items-center space-x-1"
+            >
+              <span>Lees methodologie</span>
+              <ChevronDown className={`h-4 w-4 transition-transform ${showMethodology ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+          
+            {showMethodology && (
+              <div className="bg-blue-50 rounded-2xl p-4 text-sm text-gray-700 mt-2">
+              <p className="mb-2">Onze duurzaamheidsscores worden berekend op basis van:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4">
+                <li>Verpakking (25%): Plastic gebruik en recycleerbaarheid</li>
+                <li>Ingrediënten (30%): Certificeringen en biologische afbreekbaarheid</li>
+                <li>Productie (25%): Locatie en CO2-compensatie</li>
+                <li>Bedrijf (20%): Transparantie en sociale impact</li>
+              </ul>
+              </div>
+            )}
+          </div>
 
-        {/* FAQ Section */}
-        <FAQSection lowestPrice={lowestPrice} highestPrice={highestPrice} />
+          {/* Comparison Table */}
+          <ComparisonTable lowestPrice={lowestPrice} highestPrice={highestPrice} minSustainability={minSustainability} maxSustainability={maxSustainability} />
 
-        {/* Call-to-Action Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-12 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Vergelijk Alle Opties</h2>
-          <p className="text-gray-600 mb-6">Hulp bij kiezen?</p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
-            Start Productfinder Tool →
-          </button>
-          <p className="text-sm text-gray-500 mt-2">5 vragen over gebruikssituatie en prioriteiten</p>
+          {/* FAQ Section */}
+          <FAQSection lowestPrice={lowestPrice} highestPrice={highestPrice} />
+
+          {/* Call-to-Action Section */}
+          <div className="bg-white rounded-3xl border border-gray-200 p-8 mb-12 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Vergelijk Alle Opties</h2>
+            <p className="text-gray-600 mb-6">Hulp bij kiezen?</p>
+            <button className="btn-primary px-8 py-4 rounded-xl text-lg">
+              Start Productfinder Tool →
+            </button>
+            <p className="text-sm text-gray-500 mt-2">5 vragen over gebruikssituatie en prioriteiten</p>
+          </div>
+
+          {/* Disclaimer */}
+          <DisclaimerSection />
+
+            {/* SEO Footer */}
+            <SEOFooter />
         </div>
-
-        {/* Disclaimer */}
-        <DisclaimerSection />
-
-        {/* SEO Footer */}
-        <SEOFooter />
       </main>
     </>
   );
@@ -373,7 +377,7 @@ export default function HomePage({ initialProducts }: HomePageProps) {
 // Comparison Table Component
 function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSustainability }: any) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-12">
+    <div className="bg-white rounded-3xl border border-gray-200 p-8 mb-12">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
         Vaatwasstrips vs Traditionele Tabletten: Dataoverzicht
       </h2>
@@ -423,7 +427,7 @@ function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSust
       </div>
       
       <div className="mt-6 grid md:grid-cols-2 gap-6">
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-gray-50 rounded-2xl p-4">
           <h3 className="font-semibold text-gray-900 mb-2">Kostenanalyse per Jaar (4 wasbeurten/week)</h3>
           <ul className="space-y-1 text-sm">
             <li>• <strong>Vaatwasstrips:</strong> €{(parseFloat(lowestPrice) * 208).toFixed(0)}-€{(parseFloat(highestPrice) * 208).toFixed(0)} per jaar</li>
@@ -432,7 +436,7 @@ function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSust
           </ul>
         </div>
         
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-gray-50 rounded-2xl p-4">
           <h3 className="font-semibold text-gray-900 mb-2">Geschiktheid per Gebruikssituatie</h3>
           <ul className="space-y-1 text-sm">
             <li>• <strong>Lichte vervuiling:</strong> Alle opties geschikt</li>
@@ -478,11 +482,11 @@ function FAQSection({ lowestPrice, highestPrice }: any) {
   ];
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-8 mb-12">
+    <div className="bg-white rounded-3xl p-8 mb-12 border border-gray-200">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Veelgestelde Vragen over Vaatwasstrips</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {faqs.map((faq, index) => (
-          <div key={index} className="bg-white rounded-lg p-4">
+          <div key={index} className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-4">
             <h3 className="font-semibold text-gray-800 mb-2">Q: {faq.question}</h3>
             <p className="text-gray-600 text-sm">A: {faq.answer}</p>
           </div>
@@ -495,7 +499,7 @@ function FAQSection({ lowestPrice, highestPrice }: any) {
 // Disclaimer Section Component
 function DisclaimerSection() {
   return (
-    <div className="bg-gray-50 rounded-lg p-6 text-sm text-gray-600">
+    <div className="bg-gray-50 rounded-2xl p-6 text-sm text-gray-600">
       <h3 className="font-semibold text-gray-900 mb-3">Disclaimer & Transparantie</h3>
       <p className="mb-2">
         <strong>Prijsinformatie:</strong> Alle prijzen geverifieerd via officiële retailers december 2024. 

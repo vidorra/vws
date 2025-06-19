@@ -16,7 +16,10 @@ export async function getProductsSafe() {
   return safeDbQuery(
     async () => {
       return await prisma.product.findMany({
-        orderBy: { currentPrice: 'asc' },
+        orderBy: [
+          { displayOrder: 'asc' },
+          { currentPrice: 'asc' }
+        ],
         include: {
           variants: {
             orderBy: { washCount: 'asc' }

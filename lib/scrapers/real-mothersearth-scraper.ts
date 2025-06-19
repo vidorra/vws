@@ -81,10 +81,31 @@ export class RealMothersEarthScraper extends BaseScraper {
           bundleRadios.forEach((element: any, index) => {
             // Get the label text
             const label = document.querySelector(`label[for="${element.id}"]`);
-            const text = label?.textContent?.trim() || element.value || '';
             
-            // Clean up the text
-            const cleanText = text.replace(/\s+/g, ' ').trim();
+            // Get only the visible text, excluding hidden elements
+            let text = '';
+            if (label) {
+              // Clone the label to manipulate it
+              const labelClone = label.cloneNode(true) as HTMLElement;
+              
+              // Remove all elements with visually-hidden class
+              const hiddenElements = labelClone.querySelectorAll('.visually-hidden');
+              hiddenElements.forEach(el => el.remove());
+              
+              // Get the text content
+              text = labelClone.textContent?.trim() || element.value || '';
+            } else {
+              text = element.value || '';
+            }
+            
+            // Clean up the text - remove extra whitespace and price info
+            let cleanText = text.replace(/\s+/g, ' ').trim();
+            
+            // Remove price information (e.g., "€ 0,20/wasje")
+            cleanText = cleanText.replace(/€\s*\d+[,\.]\d+\/wasje/g, '').trim();
+            
+            // Remove "BESTE DEAL" text
+            cleanText = cleanText.replace(/BESTE DEAL/g, '').trim();
             
             // Extract pack count
             const packMatch = cleanText.match(/(\d+)\s*stuk/i);

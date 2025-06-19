@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Edit, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, Edit2, ChevronDown, ChevronUp, BarChart3, FileText, Rocket, RefreshCw, Package } from 'lucide-react';
 import EditProductModal from '@/components/EditProductModal';
 import ScrapingLogsViewer from './components/ScrapingLogsViewer';
 
@@ -33,6 +33,7 @@ interface Product {
   cons?: string[];
   sustainability?: number;
   rating?: number;
+  displayOrder?: number;
   variants?: ProductVariant[];
 }
 
@@ -179,19 +180,19 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-gray-600">Laden...</div>
       </div>
     );
   }
 
   const tabs = [
-    { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-    { id: 'logs', name: 'Scraping Logs', icon: '📝' }
+    { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
+    { id: 'logs', name: 'Scraping Logs', icon: FileText }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           
@@ -223,7 +224,7 @@ export default function AdminDashboard() {
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 focus:outline-none`}
                   >
-                    <span>{tab.icon}</span>
+                    <tab.icon className="h-4 w-4" />
                     <span>{tab.name}</span>
                   </button>
                 ))}
@@ -234,7 +235,7 @@ export default function AdminDashboard() {
               {activeTab === 'dashboard' && (
                 <div className="space-y-6">
                   {/* Scraping Controls */}
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                  <div className="bg-white border border-gray-200 rounded-lg p-6">
                     <h2 className="text-lg font-medium text-gray-900 mb-4">Scraping Beheer</h2>
                     
                     <div className="flex items-center justify-between">
@@ -258,9 +259,19 @@ export default function AdminDashboard() {
                       <button
                         onClick={triggerManualScrape}
                         disabled={scrapingStatus === 'running'}
-                        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-2"
                       >
-                        {scrapingStatus === 'running' ? '🔄 Bezig...' : '🚀 Start Handmatige Scrape'}
+                        {scrapingStatus === 'running' ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 animate-spin" />
+                            <span>Bezig...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Rocket className="h-4 w-4" />
+                            <span>Start Handmatige Scrape</span>
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -273,8 +284,11 @@ export default function AdminDashboard() {
                     
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gradient-to-r from-blue-50 to-green-50">
                           <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Volgorde
+                            </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Product
                             </th>
@@ -298,9 +312,9 @@ export default function AdminDashboard() {
                         <tbody className="bg-white divide-y divide-gray-200">
                           {products.length === 0 ? (
                             <tr>
-                              <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                              <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                                 <div className="flex flex-col items-center">
-                                  <span className="text-4xl mb-2">📦</span>
+                                  <Package className="h-12 w-12 text-gray-400 mb-2" />
                                   <p>Geen producten gevonden.</p>
                                   <p className="text-sm mt-1">Voer een scrape uit om productdata te laden.</p>
                                 </div>
@@ -313,7 +327,12 @@ export default function AdminDashboard() {
                               
                               return (
                                 <React.Fragment key={product.id}>
-                                  <tr className="hover:bg-gray-50">
+                                  <tr className="hover:bg-gray-100">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <div className="text-sm font-medium text-gray-900">
+                                        {product.displayOrder || 999}
+                                      </div>
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                       <div className="flex items-center">
                                         {hasVariants && (
@@ -370,17 +389,17 @@ export default function AdminDashboard() {
                                       <div className="flex items-center space-x-3">
                                         <button
                                           onClick={() => handleEdit(product)}
-                                          className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                                          className="text-indigo-600 hover:text-indigo-900"
+                                          title="Bewerken"
                                         >
-                                          <Edit className="h-4 w-4 mr-1" />
-                                          Bewerken
+                                          <Edit2 className="h-4 w-4" />
                                         </button>
                                         <button
                                           onClick={() => handleDelete(product.id)}
-                                          className="text-red-600 hover:text-red-900 flex items-center"
+                                          className="text-red-600 hover:text-red-900"
+                                          title="Verwijderen"
                                         >
-                                          <Trash2 className="h-4 w-4 mr-1" />
-                                          Verwijderen
+                                          <Trash2 className="h-4 w-4" />
                                         </button>
                                       </div>
                                     </td>
@@ -389,7 +408,7 @@ export default function AdminDashboard() {
                                   {/* Expanded variants section */}
                                   {hasVariants && isExpanded && (
                                     <tr>
-                                      <td colSpan={6} className="px-6 py-4 bg-gray-50">
+                                      <td colSpan={7} className="px-6 py-4 bg-gray-100">
                                         <div className="ml-8">
                                           <h4 className="text-sm font-medium text-gray-900 mb-3">Varianten</h4>
                                           <div className="space-y-2">

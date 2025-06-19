@@ -186,47 +186,49 @@ export default function OptimizedProductCard({ product }: OptimizedProductCardPr
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+      <div className="bg-white rounded-2xl border border-gray-200 transition-all duration-300">
         
         {/* Header - Mobile Optimized */}
         <div className="p-4 md:p-6 pb-3 md:pb-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
-              <div className="text-2xl md:text-3xl flex-shrink-0">{logo}</div>
-              <div className="min-w-0 flex-1">
-                <h3 className="text-lg md:text-xl font-bold text-gray-900 truncate">{product.name}</h3>
-                <div className="flex items-center space-x-1">
-                  <Star className="h-3 w-3 md:h-4 md:w-4 text-yellow-400 fill-current flex-shrink-0" />
-                  <span className="text-xs md:text-sm text-gray-600">{product.rating || 4.0}</span>
-                  <span className="text-xs md:text-sm text-gray-400">({product.reviewCount})</span>
-                </div>
-              </div>
+          {/* Logo and Product Name - Full Width */}
+          <div className="flex items-center space-x-2 md:space-x-3 mb-3">
+            <div className="text-2xl md:text-3xl flex-shrink-0">{logo}</div>
+            <h3 className="text-lg md:text-xl font-bold text-gray-900 flex-1">{product.name}</h3>
+          </div>
+          
+          {/* Review Score (left) and Award Badges (right) */}
+          <div className="flex items-center justify-between">
+            {/* Review Score - Left Side */}
+            <div className="flex items-center space-x-1">
+              <Star className="h-3 w-3 md:h-4 md:w-4 text-yellow-400 fill-current flex-shrink-0" />
+              <span className="text-xs md:text-sm text-gray-600">{product.rating || 4.0}</span>
+              <span className="text-xs md:text-sm text-gray-400">({product.reviewCount})</span>
             </div>
 
-            {/* Award Badges - Only for highest scores */}
-            <div className="flex flex-col space-y-1 flex-shrink-0">
+            {/* Award Badges - Right Side */}
+            <div className="flex flex-wrap gap-1 justify-end">
               {product.awards?.bestReview && (
                 <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full whitespace-nowrap">
                   <Star className="h-3 w-3 mr-1 fill-current" />
-                  {isMobile ? '' : 'Beste review'}
+                  Beste review
                 </span>
               )}
               {product.awards?.bestSustainability && (
                 <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full whitespace-nowrap">
                   <Leaf className="h-3 w-3 mr-1" />
-                  {isMobile ? '' : 'Meest duurzaam'}
+                  Meest duurzaam
                 </span>
               )}
               {product.awards?.bestDealPrice && (
                 <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full whitespace-nowrap">
                   <Euro className="h-3 w-3 mr-1" />
-                  {isMobile ? '' : 'Beste deal prijs'}
+                  Beste deal prijs
                 </span>
               )}
               {product.awards?.bestTryPrice && (
                 <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full whitespace-nowrap">
                   <Tag className="h-3 w-3 mr-1" />
-                  {isMobile ? '' : 'Beste try-out'}
+                  Beste try-out
                 </span>
               )}
             </div>
@@ -263,7 +265,7 @@ export default function OptimizedProductCard({ product }: OptimizedProductCardPr
               <MobileVariantSelector />
             ) : (
               showVariants && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl z-20">
                   {product.variants.map((variant) => (
                     <button
                       key={variant.id}
@@ -349,7 +351,7 @@ export default function OptimizedProductCard({ product }: OptimizedProductCardPr
             <button
               className={`flex-1 py-3 px-3 md:px-4 rounded-xl btn-primary text-center font-medium transition-all text-sm md:text-base ${
                 product.inStock
-                  ? 'text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
+                  ? 'text-white active:scale-95'
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{

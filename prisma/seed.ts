@@ -21,6 +21,7 @@ const products = [
     pros: ['Laagste prijs', 'Grote verpakkingen'],
     cons: ['Minder bekende merk', 'Beperkte reviews'],
     url: 'https://wasstrip.nl',
+    displayOrder: 10,
   },
   {
     slug: 'mothers-earth',
@@ -40,6 +41,7 @@ const products = [
     pros: ['Goedkoop per wasbeurt', 'Biologisch afbreekbaar'],
     cons: ['Lange levertijd (5-9 dagen)', 'Verzending vanuit China'],
     url: 'https://mothersearth.nl',
+    displayOrder: 20,
   },
   {
     slug: 'bubblyfy',
@@ -59,6 +61,7 @@ const products = [
     pros: ['Natuurlijke ingrediënten', 'Innovatieve formule'],
     cons: ['Beperkte beschikbaarheid', 'Relatief nieuw merk'],
     url: 'https://bubblyfy.com',
+    displayOrder: 30,
   },
   {
     slug: 'cosmeau',
@@ -78,6 +81,7 @@ const products = [
     pros: ['Snelle levering', 'Breed verkrijgbaar'],
     cons: ['Hoger prijspunt', 'Schuimvorming bij kleine vaatwassers'],
     url: 'https://cosmeau.nl',
+    displayOrder: 40,
   },
   {
     slug: 'bio-suds',
@@ -97,6 +101,7 @@ const products = [
     pros: ['Premium kwaliteit', 'Milieuvriendelijke verpakking'],
     cons: ['Duurste optie', 'Kleinere community'],
     url: 'https://bio-suds.com',
+    displayOrder: 50,
   },
   {
     slug: 'natuwash',
@@ -131,6 +136,7 @@ const products = [
       'Kleinere bekendheid'
     ],
     url: 'https://natuwash.com/products/vaatwasstrips',
+    displayOrder: 60,
   },
 ];
 
