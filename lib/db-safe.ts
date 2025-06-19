@@ -17,6 +17,11 @@ export async function getProductsSafe() {
     async () => {
       return await prisma.product.findMany({
         orderBy: { currentPrice: 'asc' },
+        include: {
+          variants: {
+            orderBy: { washCount: 'asc' }
+          }
+        }
       });
     },
     []

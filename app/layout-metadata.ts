@@ -1,10 +1,6 @@
-export const dynamic = 'force-dynamic';
-
 import { Metadata } from 'next';
-import { getProductsSafe } from '@/lib/db-safe';
-import HomePage from './HomePage';
 
-export const metadata: Metadata = {
+export const homeMetadata: Metadata = {
   title: 'Vaatwasstrips Vergelijken Nederland 2025 - Onafhankelijke Vergelijking',
   description: 'Vergelijk alle Nederlandse vaatwasstrips merken op prijs, duurzaamheid en prestaties. Transparante duurzaamheidsscores, actuele prijzen en geverifieerde reviews.',
   keywords: 'vaatwasstrips, vergelijken, nederland, prijs, duurzaamheid, milieuvriendelijk, afwassen, 2025',
@@ -21,10 +17,3 @@ export const metadata: Metadata = {
     description: 'Onafhankelijke vergelijking van alle Nederlandse aanbieders'
   }
 };
-
-export default async function Page() {
-  // Fetch products from database with error handling
-  const products = await getProductsSafe();
-  
-  return <HomePage initialProducts={products} />;
-}
