@@ -320,7 +320,7 @@ export default function HomePage({ initialProducts }: HomePageProps) {
 
           {/* Methodology Section */}
           <div className="mb-12">
-            <div className="bg-gray-50 rounded-2xl p-4 flex items-center justify-between">
+            <div className="bg-white rounded-2xl p-4 flex items-center justify-between border border-gray-200">
             <div className="flex items-center space-x-2">
               <Info className="h-5 w-5 text-gray-400" />
               <span className="text-sm text-gray-600">Duurzaamheidsscores gebaseerd op geverifieerde certificeringen</span>
@@ -427,7 +427,7 @@ function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSust
       </div>
       
       <div className="mt-6 grid md:grid-cols-2 gap-6">
-        <div className="bg-gray-50 rounded-2xl p-4">
+        <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-4">
           <h3 className="font-semibold text-gray-900 mb-2">Kostenanalyse per Jaar (4 wasbeurten/week)</h3>
           <ul className="space-y-1 text-sm">
             <li>• <strong>Vaatwasstrips:</strong> €{(parseFloat(lowestPrice) * 208).toFixed(0)}-€{(parseFloat(highestPrice) * 208).toFixed(0)} per jaar</li>
@@ -436,7 +436,7 @@ function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSust
           </ul>
         </div>
         
-        <div className="bg-gray-50 rounded-2xl p-4">
+        <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-4">
           <h3 className="font-semibold text-gray-900 mb-2">Geschiktheid per Gebruikssituatie</h3>
           <ul className="space-y-1 text-sm">
             <li>• <strong>Lichte vervuiling:</strong> Alle opties geschikt</li>
