@@ -5,6 +5,8 @@ import OptimizedProductCard from '@/components/OptimizedProductCard';
 import { calculateProductAwards } from '@/utils/calculateAwards';
 import Link from 'next/link';
 import { Check, Star, Leaf, Euro, Tag, Package, Info, ChevronDown } from 'lucide-react';
+import { ComparisonProvider } from '@/components/ComparisonContext';
+import { ComparisonBar } from '@/components/ComparisonBar';
 
 interface HomePageProps {
   initialProducts: any[];
@@ -157,7 +159,7 @@ export default function HomePage({ initialProducts }: HomePageProps) {
   };
 
   return (
-    <>
+    <ComparisonProvider>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -368,9 +370,15 @@ export default function HomePage({ initialProducts }: HomePageProps) {
 
             {/* SEO Footer */}
             <SEOFooter />
+            
+            {/* Extra padding for comparison bar */}
+            <div className="h-20"></div>
         </div>
       </main>
-    </>
+      
+      {/* Comparison Bar - Fixed at bottom */}
+      <ComparisonBar />
+    </ComparisonProvider>
   );
 }
 

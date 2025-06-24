@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, ExternalLink, ChevronDown, Check, Leaf, Euro, Tag } from 'lucide-react';
 import Link from 'next/link';
+import { ComparisonCheckbox } from './ComparisonCheckbox';
 
 interface ProductVariant {
   id: number | string;
@@ -232,6 +233,11 @@ export default function OptimizedProductCard({ product }: OptimizedProductCardPr
                 </span>
               )}
             </div>
+          </div>
+          
+          {/* Comparison Checkbox */}
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <ComparisonCheckbox productId={product.id} productName={product.name} />
           </div>
         </div>
 
