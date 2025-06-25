@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Star, Leaf, Euro, Package, Check, X, Info, Sparkles } from 'lucide-react';
 
@@ -23,7 +23,7 @@ interface Product {
   url?: string | null;
 }
 
-export default function VergelijkPage() {
+function VergelijkPageContent() {
   const searchParams = useSearchParams();
   const productIds = searchParams.get('products')?.split(',').filter(Boolean) || [];
   const [products, setProducts] = useState<Product[]>([]);
@@ -544,5 +544,20 @@ function ComparisonSection({ title, icon, bgColor, items, products }: any) {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function VergelijkPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Laden...</p>
+        </div>
+      </div>
+    }>
+      <VergelijkPageContent />
+    </Suspense>
   );
 }
