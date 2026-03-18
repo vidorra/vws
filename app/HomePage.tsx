@@ -7,12 +7,14 @@ import Link from 'next/link';
 import { Check, Star, Leaf, Euro, Tag, Package, Info, ChevronDown } from 'lucide-react';
 import { ComparisonProvider } from '@/components/ComparisonContext';
 import { ComparisonBar } from '@/components/ComparisonBar';
+import { useSite } from '@/components/SiteProvider';
 
 interface HomePageProps {
   initialProducts: any[];
 }
 
 export default function HomePage({ initialProducts }: HomePageProps) {
+  const site = useSite();
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [sortBy, setSortBy] = useState<'default' | 'reviews' | 'sustainability' | 'price' | 'tryout'>('default');
   const [packSize, setPackSize] = useState<'all' | 'standard' | 'large'>('all');
@@ -148,12 +150,12 @@ export default function HomePage({ initialProducts }: HomePageProps) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Vaatwasstrips Vergelijker Nederland",
-    "url": "https://vaatwasstripsvergelijker.nl",
-    "description": "Onafhankelijke vergelijking van alle Nederlandse vaatwasstrips aanbieders",
+    "name": `${site.name} Nederland`,
+    "url": site.canonicalBase,
+    "description": site.description,
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://vaatwasstripsvergelijker.nl/zoeken?q={search_term_string}",
+      "target": `${site.canonicalBase}/zoeken?q={search_term_string}`,
       "query-input": "required name=search_term_string"
     }
   };
@@ -192,10 +194,10 @@ export default function HomePage({ initialProducts }: HomePageProps) {
             <div className="max-w-7xl mx-auto w-full">
               <div className="text-left">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                  Vaatwasstrips Vergelijken Nederland
+                  {site.productNounCapitalized} Vergelijken Nederland
                 </h1>
                 <p className="text-xl md:text-2xl text-white mb-8">
-                  Onafhankelijke vergelijking van alle Nederlandse aanbieders
+                  {site.tagline}
                 </p>
                 <a
                   href="#vergelijking"
@@ -210,7 +212,7 @@ export default function HomePage({ initialProducts }: HomePageProps) {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           
-          {/* Feature List */}
+          {/* Trust Badges */}
           <div className="bg-white rounded-2xl p-8 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex items-center justify-center">
@@ -227,13 +229,34 @@ export default function HomePage({ initialProducts }: HomePageProps) {
               </div>
             </div>
           </div>
+
+          {/* Productfinder CTA */}
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-6 mb-8 border border-blue-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Welke {site.productNounSingular} past bij jou?</h2>
+              <p className="text-gray-600 text-sm">Beantwoord 5 korte vragen en krijg een persoonlijk advies</p>
+            </div>
+            <Link href="/productfinder" className="whitespace-nowrap bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition">
+              Start Productfinder →
+            </Link>
+          </div>
+
+          {/* Intro paragraph for SEO */}
+          <div className="bg-white rounded-2xl p-6 mb-8 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Wat zijn {site.productNoun}?</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {site.productNounCapitalized} zijn dunne, voorgedoseerde velletjes wasmiddel die je direct in de {site.key === 'vaatwasstrips' ? 'vaatwasser' : 'wastrommel'} plaatst.
+              Ze bevatten geconcentreerd wasmiddel zonder water, waardoor ze compacter en milieuvriendelijker zijn dan traditionele alternatieven.
+              Op deze pagina vergelijken we alle {site.productNoun} die beschikbaar zijn in Nederland op prijs, duurzaamheid en gebruikerservaringen.
+            </p>
+          </div>
           
 
 
           {/* Product Filters and Cards - Using new award-based filtering */}
           <div id="vergelijking" className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
-              Nederlandse Vaatwasstrips Aanbieders Vergelijking
+              Nederlandse {site.productNounCapitalized} Aanbieders Vergelijking
             </h2>
           
           {/* Sort and Filter Section */}
@@ -350,19 +373,26 @@ export default function HomePage({ initialProducts }: HomePageProps) {
           </div>
 
           {/* Comparison Table */}
-          <ComparisonTable lowestPrice={lowestPrice} highestPrice={highestPrice} minSustainability={minSustainability} maxSustainability={maxSustainability} />
+          <ComparisonTable lowestPrice={lowestPrice} highestPrice={highestPrice} minSustainability={minSustainability} maxSustainability={maxSustainability} siteKey={site.key} productNoun={site.productNounCapitalized} />
 
           {/* FAQ Section */}
-          <FAQSection lowestPrice={lowestPrice} highestPrice={highestPrice} />
+          <FAQSection lowestPrice={lowestPrice} highestPrice={highestPrice} siteKey={site.key} productNoun={site.productNounCapitalized} />
 
           {/* Call-to-Action Section */}
           <div className="bg-white rounded-3xl border border-gray-200 p-8 mb-12 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Vergelijk Alle Opties</h2>
-            <p className="text-gray-600 mb-6">Hulp bij kiezen?</p>
-            <button className="btn-primary px-8 py-4 rounded-xl text-lg">
-              Start Productfinder Tool →
-            </button>
-            <p className="text-sm text-gray-500 mt-2">5 vragen over gebruikssituatie en prioriteiten</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Meer weten over {site.productNoun}?</h2>
+            <p className="text-gray-600 mb-6">Bekijk onze gidsen voor tips en uitgebreide informatie</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/gids/beginners" className="btn-primary px-6 py-3 rounded-xl">
+                Beginners Gids
+              </Link>
+              <Link href="/gids/kopen-tips" className="bg-white text-gray-700 border border-gray-200 px-6 py-3 rounded-xl font-medium hover:bg-gray-50 transition">
+                Kopen Tips
+              </Link>
+              <Link href="/gids/milieuvriendelijk" className="bg-white text-gray-700 border border-gray-200 px-6 py-3 rounded-xl font-medium hover:bg-gray-50 transition">
+                Duurzaamheid
+              </Link>
+            </div>
           </div>
 
           {/* Disclaimer */}
@@ -383,34 +413,39 @@ export default function HomePage({ initialProducts }: HomePageProps) {
 }
 
 // Comparison Table Component
-function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSustainability }: any) {
+function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSustainability, siteKey, productNoun }: any) {
+  const isVaatwas = siteKey === 'vaatwasstrips';
+  const altProduct = isVaatwas ? 'Tabletten' : 'Wasmiddel';
+  const altBudget = isVaatwas ? 'Budget Tabletten' : 'Budget Wasmiddel';
+  const altPremium = isVaatwas ? 'Premium Tabletten' : 'Premium Wasmiddel';
+
   return (
     <div className="bg-white rounded-3xl border border-gray-200 p-8 mb-12">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Vaatwasstrips vs Traditionele Tabletten: Dataoverzicht
+        {productNoun} vs Traditioneel {altProduct}: Dataoverzicht
       </h2>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200">
               <th className="text-left py-3 px-4 font-semibold text-gray-700">Categorie</th>
-              <th className="text-left py-3 px-4 font-semibold text-gray-700">Vaatwasstrips</th>
-              <th className="text-left py-3 px-4 font-semibold text-gray-700">Budget Tabletten</th>
-              <th className="text-left py-3 px-4 font-semibold text-gray-700">Premium Tabletten</th>
+              <th className="text-left py-3 px-4 font-semibold text-gray-700">{productNoun}</th>
+              <th className="text-left py-3 px-4 font-semibold text-gray-700">{altBudget}</th>
+              <th className="text-left py-3 px-4 font-semibold text-gray-700">{altPremium}</th>
             </tr>
           </thead>
           <tbody>
             <tr className="border-b border-gray-100">
               <td className="py-3 px-4 font-medium">Prijs/wasbeurt</td>
               <td className="py-3 px-4">€{lowestPrice}-€{highestPrice}</td>
-              <td className="py-3 px-4">€0.14-0.26</td>
-              <td className="py-3 px-4">€0.45-0.65</td>
+              <td className="py-3 px-4">{isVaatwas ? '€0.14-0.26' : '€0.10-0.20'}</td>
+              <td className="py-3 px-4">{isVaatwas ? '€0.45-0.65' : '€0.25-0.45'}</td>
             </tr>
             <tr className="border-b border-gray-100">
               <td className="py-3 px-4 font-medium">Effectiviteit</td>
-              <td className="py-3 px-4">30-45% (CHOICE tests)</td>
-              <td className="py-3 px-4">85-90% (CHOICE tests)</td>
-              <td className="py-3 px-4">90-95% (CHOICE tests)</td>
+              <td className="py-3 px-4">{isVaatwas ? '30-45% (CHOICE tests)' : '70-85% (gebruikerstests)'}</td>
+              <td className="py-3 px-4">{isVaatwas ? '85-90% (CHOICE tests)' : '85-90%'}</td>
+              <td className="py-3 px-4">{isVaatwas ? '90-95% (CHOICE tests)' : '90-95%'}</td>
             </tr>
             <tr className="border-b border-gray-100">
               <td className="py-3 px-4 font-medium">Beschikbaarheid</td>
@@ -433,26 +468,26 @@ function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSust
           </tbody>
         </table>
       </div>
-      
+
       <div className="mt-6 grid md:grid-cols-2 gap-6">
         <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-4">
           <h3 className="font-semibold text-gray-900 mb-2">Kostenanalyse per Jaar (4 wasbeurten/week)</h3>
           <ul className="space-y-1 text-sm">
-            <li>• <strong>Vaatwasstrips:</strong> €{(parseFloat(lowestPrice) * 208).toFixed(0)}-€{(parseFloat(highestPrice) * 208).toFixed(0)} per jaar</li>
-            <li>• <strong>Budget tabletten:</strong> €29-54 per jaar</li>
-            <li>• <strong>Premium tabletten:</strong> €94-135 per jaar</li>
+            <li>• <strong>{productNoun}:</strong> €{(parseFloat(lowestPrice) * 208).toFixed(0)}-€{(parseFloat(highestPrice) * 208).toFixed(0)} per jaar</li>
+            <li>• <strong>{altBudget}:</strong> {isVaatwas ? '€29-54' : '€21-42'} per jaar</li>
+            <li>• <strong>{altPremium}:</strong> {isVaatwas ? '€94-135' : '€52-94'} per jaar</li>
           </ul>
         </div>
-        
+
         <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-4">
           <h3 className="font-semibold text-gray-900 mb-2">Geschiktheid per Gebruikssituatie</h3>
           <ul className="space-y-1 text-sm">
             <li>• <strong>Lichte vervuiling:</strong> Alle opties geschikt</li>
-            <li>• <strong>Zware vervuiling:</strong> Traditionele tabletten effectiever</li>
-            <li>• <strong>Gevoelige huid:</strong> Hypoallergene strips of parfumvrije tabletten</li>
+            <li>• <strong>Zware vervuiling:</strong> Traditioneel {altProduct.toLowerCase()} effectiever</li>
+            <li>• <strong>Gevoelige huid:</strong> Hypoallergene strips of parfumvrij {altProduct.toLowerCase()}</li>
             <li>• <strong>Milieu-impact:</strong> Strips hebben voordeel door minder plastic</li>
-            <li>• <strong>Budget:</strong> Budget tabletten meestal goedkoopst</li>
-            <li>• <strong>Gemak:</strong> Tabletten breder verkrijgbaar</li>
+            <li>• <strong>Budget:</strong> {altBudget} meestal goedkoopst</li>
+            <li>• <strong>Gemak:</strong> {altProduct} breder verkrijgbaar</li>
           </ul>
         </div>
       </div>
@@ -461,8 +496,12 @@ function ComparisonTable({ lowestPrice, highestPrice, minSustainability, maxSust
 }
 
 // FAQ Section Component
-function FAQSection({ lowestPrice, highestPrice }: any) {
-  const faqs = [
+function FAQSection({ lowestPrice, highestPrice, siteKey, productNoun }: any) {
+  const isVaatwas = siteKey === 'vaatwasstrips';
+  const productLower = productNoun.toLowerCase();
+  const altProduct = isVaatwas ? 'tabletten' : 'wasmiddel';
+
+  const faqs = isVaatwas ? [
     {
       question: 'Wat is het prijsverschil met traditionele tabletten?',
       answer: `Vaatwasstrips kosten €${lowestPrice}-€${highestPrice} per wasbeurt. Budget tabletten kosten €0.14-0.26 per wasbeurt, premium tabletten €0.45-0.65 per wasbeurt. Het verschil hangt af van het gekozen merk en segment.`
@@ -487,11 +526,36 @@ function FAQSection({ lowestPrice, highestPrice }: any) {
       question: 'Waar zijn vaatwasstrips verkrijgbaar?',
       answer: 'Alle merken zijn uitsluitend online verkrijgbaar via merkwebsites, Bol.com en gespecialiseerde retailers. Geen fysieke verkoop in Nederlandse supermarkten of drogisterijen.'
     }
+  ] : [
+    {
+      question: 'Wat is het prijsverschil met traditioneel wasmiddel?',
+      answer: `Wasstrips kosten €${lowestPrice}-€${highestPrice} per wasbeurt. Budget wasmiddel kost €0.10-0.20 per wasbeurt, premium wasmiddel €0.25-0.45 per wasbeurt. Het verschil hangt af van het merk en de verpakkingsgrootte.`
+    },
+    {
+      question: 'Hoe presteren wasstrips qua wasresultaat?',
+      answer: 'Wasstrips presteren goed bij licht tot normaal vuile was (70-85% effectiviteit). Bij hardnekkige vlekken kan voorbehandeling nodig zijn. Voor dagelijks gebruik zijn ze een uitstekend alternatief.'
+    },
+    {
+      question: 'Wat zijn de milieuvriendelijke aspecten?',
+      answer: 'Wasstrips bevatten doorgaans 75% minder plastic verpakking dan traditioneel vloeibaar wasmiddel. Ze zijn compacter voor transport, biologisch afbreekbaar en bevatten geen microplastics.'
+    },
+    {
+      question: 'Welke certificeringen hebben de merken?',
+      answer: "Natuwash heeft OECD 301B certificering voor biologische afbreekbaarheid. Cosmeau is dermatologisch getest. HappySoaps gebruikt Zweedse productie. Andere merken hebben eigen duurzaamheidsclaims."
+    },
+    {
+      question: 'Hoe doseer ik wasstrips?',
+      answer: 'Gebruik 1 strip voor een normale wasbeurt. Voor grote of extra vuile ladingen kun je 2 strips gebruiken. Plaats de strip direct op de was, niet in het wasmiddelvak.'
+    },
+    {
+      question: 'Waar zijn wasstrips verkrijgbaar?',
+      answer: 'Wasstrips zijn verkrijgbaar via merkwebsites, Bol.com en geselecteerde drogisterijen. Sommige merken zijn ook te vinden bij supermarkten.'
+    }
   ];
 
   return (
     <div className="bg-white rounded-3xl p-8 mb-12 border border-gray-200">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Veelgestelde Vragen over Vaatwasstrips</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Veelgestelde Vragen over {productNoun}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {faqs.map((faq, index) => (
           <div key={index} className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-4">
@@ -531,24 +595,25 @@ function DisclaimerSection() {
 
 // SEO Footer Component
 function SEOFooter() {
+  const site = useSite();
   return (
     <div className="mt-12 pt-8 border-t border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3">Vaatwasstrips Vergelijker Nederland</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-3">{site.name} Nederland</h3>
       <p className="text-gray-600 mb-4">
-        Onafhankelijke vergelijkingssite voor Nederlandse vaatwasstrips markt. Objectieve data over prijzen,
+        Onafhankelijke vergelijkingssite voor de Nederlandse {site.productNoun} markt. Objectieve data over prijzen,
         duurzaamheid en prestaties zonder commerciële beïnvloeding.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-500">
         <div>
-          <p><strong>Contact:</strong> info@vaatwasstrips-vergelijker.nl</p>
+          <p><strong>Contact:</strong> {site.contactEmail}</p>
           <p><strong>Data Update:</strong> June 2025</p>
           <p><strong>Methodologie:</strong> <Link href="/methodologie" className="text-blue-600 hover:underline">Beschikbaar via aparte pagina</Link></p>
         </div>
         <div>
           <p className="font-semibold mb-2">Gerelateerde Zoektermen:</p>
           <p className="italic">
-            vaatwasstrips nederland, dishwasher strips vergelijking, milieuvriendelijk afwasmiddel,
-            vaatwasstrips prijs, duurzame vaatwas, wasstrip kopen, vaatwasstrips test
+            {site.productNoun} nederland, {site.productNoun} vergelijking, milieuvriendelijk,
+            {site.productNoun} prijs, duurzaam, {site.productNounSingular} kopen, {site.productNoun} test
           </p>
         </div>
       </div>

@@ -25,7 +25,7 @@ interface Product {
 
 function VergelijkPageContent() {
   const searchParams = useSearchParams();
-  const productIds = searchParams.get('products')?.split(',').filter(Boolean) || [];
+  const productIds = searchParams?.get('products')?.split(',').filter(Boolean) || [];
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

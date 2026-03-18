@@ -1,12 +1,16 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { getSite } from '@/lib/get-site';
 
-export const metadata: Metadata = {
-  title: 'Wasstrips Blog - Tips, Nieuws & Achtergronden',
-  description: 'Lees de laatste artikelen over wasstrips, duurzaam wassen, en tips om te besparen op je was. Expert advies en gebruikerservaringen.',
-  keywords: 'wasstrips blog, duurzaam wassen, wastips, milieuvriendelijk'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = getSite();
+  return {
+    title: `${site.productNounCapitalized} Blog - Tips, Nieuws & Achtergronden`,
+    description: `Lees de laatste artikelen over ${site.productNoun}, duurzaam wassen, en tips om te besparen. Expert advies en gebruikerservaringen.`,
+    keywords: `${site.productNoun} blog, duurzaam wassen, wastips, milieuvriendelijk`,
+  };
+}
 
 const blogPosts = [
   {
@@ -71,6 +75,7 @@ const categories = [
 ];
 
 export default function BlogPage() {
+  const site = getSite();
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumbs */}
@@ -80,7 +85,7 @@ export default function BlogPage() {
         <span className="text-gray-900">Blog</span>
       </nav>
 
-      <h1 className="text-4xl font-bold mb-4">Wasstrips Blog</h1>
+      <h1 className="text-4xl font-bold mb-4">{site.productNounCapitalized} Blog</h1>
       <p className="text-xl text-gray-600 mb-12">
         Tips, nieuws en achtergronden over wasstrips en duurzaam wassen
       </p>
@@ -242,8 +247,8 @@ export default function BlogPage() {
       <section className="mt-16 prose max-w-none">
         <h2 className="text-2xl font-bold mb-4">Over onze blog</h2>
         <p className="text-gray-600 mb-4">
-          Op de Wasstrips Vergelijker blog delen we regelmatig nieuwe inzichten, tips en nieuws over 
-          wasstrips en duurzaam wassen. Of je nu net begint met wasstrips of al een ervaren gebruiker 
+          Op de {site.name} blog delen we regelmatig nieuwe inzichten, tips en nieuws over
+          {site.productNoun} en duurzaam wassen. Of je nu net begint met {site.productNoun} of al een ervaren gebruiker
           bent, hier vind je waardevolle informatie om het meeste uit je wasroutine te halen.
         </p>
         <p className="text-gray-600">

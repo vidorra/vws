@@ -1,22 +1,17 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // revalidate every 5 minutes
 
-import { Metadata } from 'next';
 import Link from 'next/link';
 import { getBrandsSafe } from '@/lib/db-safe';
-
-export const metadata: Metadata = {
-  title: 'Vaatwasstrips Merken | Alle Merken Vergelijken',
-  description: 'Ontdek alle merken vaatwasstrips die wij vergelijken. Van premium merken tot huismerken.',
-};
-
+import { getSite } from '@/lib/get-site';
 
 export default async function MerkenPage() {
-  const brands = await getBrandsSafe();
+  const site = getSite();
+  const brands = await getBrandsSafe(site.key);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Alle Vaatwasstrips Merken</h1>
-      
+      <h1 className="text-3xl font-bold mb-8">Alle {site.productNounCapitalized} Merken</h1>
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {brands.map((supplier: string) => (
           <Link

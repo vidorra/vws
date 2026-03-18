@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
+import { useSite } from '@/components/SiteProvider';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const site = useSite();
 
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
@@ -20,8 +22,8 @@ export default function Navigation() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold text-gray-900">Vaatwasstrips</span>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">Vergelijker</span>
+              <span className="text-xl font-bold text-gray-900">{site.productNounCapitalized}</span>
+              <span className="text-xl font-bold text-brand-gradient">Vergelijker</span>
             </Link>
           </div>
 
@@ -45,25 +47,6 @@ export default function Navigation() {
                   <div className="py-1">
                     <Link href="/merken" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Alle merken
-                    </Link>
-                    <div className="border-t border-gray-100"></div>
-                    <Link href="/merken/mothers-earth" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Mother's Earth
-                    </Link>
-                    <Link href="/merken/cosmeau" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Cosmeau
-                    </Link>
-                    <Link href="/merken/bubblyfy" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Bubblyfy
-                    </Link>
-                    <Link href="/merken/bio-suds" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Bio Suds
-                    </Link>
-                    <Link href="/merken/natuwash" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Natuwash
-                    </Link>
-                    <Link href="/merken/greengoods" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      GreenGoods
                     </Link>
                   </div>
                 </div>
@@ -106,6 +89,10 @@ export default function Navigation() {
 
             <Link href="/reviews" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
               Reviews
+            </Link>
+
+            <Link href="/productfinder" className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium rounded-lg transition">
+              Productfinder
             </Link>
 
             {/* Gids Dropdown */}
@@ -166,29 +153,11 @@ export default function Navigation() {
             <Link href="/" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
               Home
             </Link>
-            
+
             <div className="space-y-1">
               <div className="px-3 py-2 text-base font-medium text-gray-500">Merken</div>
               <Link href="/merken" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                 Alle merken
-              </Link>
-              <Link href="/merken/mothers-earth" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                Mother's Earth
-              </Link>
-              <Link href="/merken/cosmeau" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                Cosmeau
-              </Link>
-              <Link href="/merken/bubblyfy" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                Bubblyfy
-              </Link>
-              <Link href="/merken/bio-suds" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                Bio Suds
-              </Link>
-              <Link href="/merken/wasstrip-nl" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                Wasstrip.nl
-              </Link>
-              <Link href="/merken/natuwash" className="block pl-6 pr-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                Natuwash
               </Link>
             </div>
 
@@ -214,6 +183,10 @@ export default function Navigation() {
 
             <Link href="/reviews" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
               Reviews
+            </Link>
+
+            <Link href="/productfinder" className="block mx-3 my-2 px-3 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-center">
+              Productfinder
             </Link>
 
             <div className="space-y-1">

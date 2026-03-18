@@ -20,8 +20,7 @@ RUN npx prisma generate
 
 # Build with a dummy DATABASE_URL to satisfy Prisma during build time
 # The actual DATABASE_URL will be provided at runtime
-ENV DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy"
-RUN npm run build
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npm run build
 
 # Production stage
 FROM node:20-slim AS runner
@@ -75,6 +74,8 @@ RUN apt-get update && apt-get install -y chromium && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 ENV TZ=Europe/Amsterdam
 ENV NODE_ENV=production
+
+# Don't set DATABASE_URL here - it should come from CapRover environment
 
 # Set Puppeteer to use installed Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true

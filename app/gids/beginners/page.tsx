@@ -1,41 +1,78 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, AlertCircle, HelpCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, AlertCircle, HelpCircle, Leaf, ShoppingCart } from 'lucide-react';
+import { getSite } from '@/lib/get-site';
 
-export const metadata: Metadata = {
-  title: 'Beginners Gids Wasstrips - Alles voor Starters',
-  description: 'Complete beginners gids voor wasstrips. Leer wat wasstrips zijn, hoe ze werken, en hoe je ze gebruikt voor de beste wasresultaten.',
-  keywords: 'wasstrips beginners, handleiding, hoe gebruik je wasstrips, dosering'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = getSite();
+  return {
+    title: `Beginners Gids ${site.productNounCapitalized} - Alles wat je moet weten`,
+    description: `Complete beginners gids voor ${site.productNoun}. Leer hoe je ${site.productNoun} gebruikt, doseertips en veelgestelde vragen.`,
+    openGraph: {
+      title: `Beginners Gids ${site.productNounCapitalized}`,
+      description: `Alles wat je moet weten om te starten met ${site.productNoun}`,
+      type: 'article',
+    },
+  };
+}
+
+const faqs = [
+  {
+    question: 'Werken wasstrips in koud water?',
+    answer: 'Ja! Wasstrips zijn speciaal ontwikkeld om al vanaf 20°C volledig op te lossen. Dit maakt ze ideaal voor koud wassen en energiebesparing.',
+  },
+  {
+    question: 'Zijn wasstrips geschikt voor gevoelige huid?',
+    answer: 'De meeste wasstrips zijn hypoallergeen en geschikt voor gevoelige huid. Check altijd de verpakking voor specifieke informatie over het merk dat je kiest.',
+  },
+  {
+    question: 'Kan ik wasstrips gebruiken voor handwas?',
+    answer: 'Absoluut! Los een halve strip op in een emmer warm water voor handwas. Perfect voor delicate items of op reis.',
+  },
+];
 
 export default function BeginnersGuidePage() {
-  const structuredData = {
+  const site = getSite();
+
+  const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Beginners Gids Wasstrips",
-    "description": "Complete gids voor beginners over het gebruik van wasstrips",
-    "author": {
-      "@type": "Organization",
-      "name": "Wasstrips Vergelijker"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Wasstrips Vergelijker",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://wasstripsvergelijker.nl/images/logo.png"
-      }
-    },
+    "headline": `Beginners Gids ${site.productNounCapitalized}`,
+    "description": `Complete gids voor beginners over het gebruik van ${site.productNoun}`,
+    "author": { "@type": "Organization", "name": site.name },
+    "publisher": { "@type": "Organization", "name": site.name },
     "datePublished": "2024-01-01",
     "dateModified": new Date().toISOString()
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": site.canonicalBase },
+      { "@type": "ListItem", "position": 2, "name": "Gids", "item": `${site.canonicalBase}/gids` },
+      { "@type": "ListItem", "position": 3, "name": "Beginners", "item": `${site.canonicalBase}/gids/beginners` },
+    ],
+  };
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
@@ -278,10 +315,32 @@ export default function BeginnersGuidePage() {
           </div>
         </section>
 
+        {/* Related Guides */}
+        <div className="bg-gray-50 rounded-lg p-6 mb-10">
+          <h3 className="font-bold mb-3">Gerelateerde gidsen</h3>
+          <ul className="space-y-2">
+            <li>
+              <Link href="/gids/milieuvriendelijk" className="text-blue-600 hover:text-blue-800">
+                → Milieuvriendelijk wassen: duurzaamheid uitgelegd
+              </Link>
+            </li>
+            <li>
+              <Link href="/gids/kopen-tips" className="text-blue-600 hover:text-blue-800">
+                → Kopen tips: waar op letten bij het vergelijken van {site.productNoun}
+              </Link>
+            </li>
+            <li>
+              <Link href="/gids/troubleshooting" className="text-blue-600 hover:text-blue-800">
+                → Problemen oplossen: veelvoorkomende issues en oplossingen
+              </Link>
+            </li>
+          </ul>
+        </div>
+
         {/* CTA */}
         <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Klaar om te beginnen?</h2>
-          <p className="mb-6">Ontdek welke wasstrips het beste bij jou passen</p>
+          <p className="mb-6">Ontdek welke {site.productNoun} het beste bij jou passen</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/prijzen/goedkoopste" className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
               Bekijk goedkoopste opties

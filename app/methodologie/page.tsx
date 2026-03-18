@@ -1,13 +1,18 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { getSite } from '@/lib/get-site';
 
-export const metadata: Metadata = {
-  title: 'Duurzaamheidsscore Methodologie - Vaatwasstrips Vergelijker',
-  description: 'Transparante uitleg over hoe wij de duurzaamheidsscores berekenen voor vaatwasstrips. Objectieve criteria en wegingsfactoren.',
-  keywords: 'duurzaamheidsscore, methodologie, vaatwasstrips, beoordeling, criteria',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = getSite();
+  return {
+    title: `Duurzaamheidsscore Methodologie - ${site.name}`,
+    description: `Transparante uitleg over hoe wij de duurzaamheidsscores berekenen voor ${site.productNoun}. Objectieve criteria en wegingsfactoren.`,
+    keywords: `duurzaamheidsscore, methodologie, ${site.productNoun}, beoordeling, criteria`,
+  };
+}
 
 export default function MethodologiePage() {
+  const site = getSite();
   const criteria = [
     {
       name: 'Verpakking',
@@ -103,7 +108,7 @@ export default function MethodologiePage() {
           Transparante Duurzaamheidsmethodologie
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-          Hoe wij objectief de duurzaamheid van vaatwasstrips beoordelen op basis van
+          Hoe wij objectief de duurzaamheid van {site.productNoun} beoordelen op basis van
           geverifieerde data en erkende certificeringen
         </p>
         <Link href="/" className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
@@ -115,13 +120,13 @@ export default function MethodologiePage() {
       <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-8 mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Waarom deze methodologie?</h2>
         <p className="text-gray-700 mb-4">
-          Onze duurzaamheidsscores bieden consumenten een objectieve manier om vaatwasstrips te vergelijken
+          Onze duurzaamheidsscores bieden consumenten een objectieve manier om {site.productNoun} te vergelijken
           op basis van milieu-impact en bedrijfsverantwoordelijkheid. We gebruiken alleen verifieerbare data
           en erkende certificeringen.
         </p>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <p className="text-gray-700">
-            <strong className="text-blue-600">Baseline score:</strong> Alle vaatwasstrips starten op minimaal 6.0/10 vanwege inherente
+            <strong className="text-blue-600">Baseline score:</strong> Alle {site.productNoun} starten op minimaal 6.0/10 vanwege inherente
             voordelen ten opzichte van traditionele tabletten (compacte verpakking, minder plastic,
             geconcentreerde formule).
           </p>
@@ -316,11 +321,11 @@ export default function MethodologiePage() {
         <p className="text-gray-600 mb-6">
           We staan open voor feedback en verbeteringen
         </p>
-        <a href="mailto:methodologie@vaatwasstrips-vergelijker.nl" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+        <a href={`mailto:${site.contactEmail}`} className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
           Contact opnemen →
         </a>
         <p className="text-sm text-gray-500 mt-6">
-          <strong>Email:</strong> methodologie@vaatwasstrips-vergelijker.nl<br/>
+          <strong>Email:</strong> {site.contactEmail}<br/>
           <strong>Laatste update:</strong> December 2024
         </p>
       </div>

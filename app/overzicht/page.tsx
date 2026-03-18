@@ -1,66 +1,36 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // revalidate every 5 minutes
 
-import { Metadata } from 'next';
 import { getProductsSafe } from '@/lib/db-safe';
+import { getSite } from '@/lib/get-site';
 import ProductFilters from '@/components/ProductFilters';
 import Link from 'next/link';
 import { Check } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Overzicht Vaatwasstrips Nederland 2025 - Complete Vergelijking',
-  description: 'Compleet overzicht van alle Nederlandse vaatwasstrips merken. Vergelijk prijzen, duurzaamheid en prestaties in één overzicht.',
-  keywords: 'vaatwasstrips overzicht, vergelijken, nederland, prijs, duurzaamheid, milieuvriendelijk, afwassen, 2025',
-  openGraph: {
-    title: 'Overzicht Vaatwasstrips Nederland 2025',
-    description: 'Compleet overzicht van alle Nederlandse vaatwasstrips aanbieders',
-    type: 'website',
-    url: 'https://vaatwasstripsvergelijker.nl/overzicht',
-    images: ['/og-image.jpg']
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Overzicht Vaatwasstrips Nederland 2025',
-    description: 'Compleet overzicht van alle Nederlandse vaatwasstrips aanbieders'
+const getFaqs = (lowestPrice: string, highestPrice: string, siteKey: string) => {
+  if (siteKey === 'vaatwasstrips') {
+    return [
+      { question: 'Wat is het prijsverschil met traditionele tabletten?', answer: `Vaatwasstrips kosten €${lowestPrice}-€${highestPrice} per wasbeurt. Budget tabletten kosten €0.14-0.26 per wasbeurt, premium tabletten €0.45-0.65 per wasbeurt.` },
+      { question: 'Hoe presteren vaatwasstrips qua reinigingskracht?', answer: 'Volgens CHOICE Australia tests (2024) behalen vaatwasstrips 30-45% effectiviteit vergeleken met 85-95% voor traditionele tabletten.' },
+      { question: 'Wat zijn de milieuvriendelijke aspecten?', answer: 'Vaatwasstrips bevatten doorgaans 75% minder plastic verpakking dan traditionele PVA-wrapped tabletten. Ze zijn compacter voor transport en bevatten geen microplastics.' },
+      { question: 'Welke certificeringen hebben de merken?', answer: "Natuwash heeft als enige merk OECD 301B certificering voor biologische afbreekbaarheid. Cosmeau is dermatologisch getest. Andere merken hebben eigen claims." },
+      { question: 'Hoe doseer ik vaatwasstrips?', answer: 'Standaard dosering is een halve strip per normale wasbeurt. Voor zware vervuiling kan een hele strip nodig zijn.' },
+      { question: 'Waar zijn vaatwasstrips verkrijgbaar?', answer: 'Alle merken zijn uitsluitend online verkrijgbaar via merkwebsites, Bol.com en gespecialiseerde retailers.' },
+    ];
   }
+  return [
+    { question: 'Wat is het prijsverschil met traditioneel wasmiddel?', answer: `Wasstrips kosten €${lowestPrice}-€${highestPrice} per wasbeurt. Budget wasmiddel kost €0.10-0.20 per wasbeurt, premium wasmiddel €0.25-0.45 per wasbeurt.` },
+    { question: 'Hoe presteren wasstrips qua wasresultaat?', answer: 'Wasstrips presteren goed bij licht tot normaal vuile was (70-85%). Bij hardnekkige vlekken kan voorbehandeling nodig zijn.' },
+    { question: 'Wat zijn de milieuvriendelijke aspecten?', answer: 'Wasstrips bevatten doorgaans 75% minder plastic verpakking dan vloeibaar wasmiddel. Ze zijn compacter voor transport en biologisch afbreekbaar.' },
+    { question: 'Welke certificeringen hebben de merken?', answer: "Natuwash heeft OECD 301B certificering. Cosmeau is dermatologisch getest. HappySoaps produceert in Zweden." },
+    { question: 'Hoe doseer ik wasstrips?', answer: 'Gebruik 1 strip voor een normale wasbeurt. Voor grote of extra vuile ladingen kun je 2 strips gebruiken. Plaats de strip direct op de was.' },
+    { question: 'Waar zijn wasstrips verkrijgbaar?', answer: 'Wasstrips zijn verkrijgbaar via merkwebsites, Bol.com en geselecteerde drogisterijen.' },
+  ];
 };
 
-// Comparison data
-const comparisonData = [
-  { type: 'Vaatwasstrips', priceRange: '€0.26-0.48', effectiveness: '30-45%', availability: 'Online only', plasticPackaging: '0-25%', sustainabilityScore: '6.2-9.4/10' },
-  { type: 'Budget Tabletten', priceRange: '€0.14-0.26', effectiveness: '85-90%', availability: 'Alle retailers', plasticPackaging: '60-80%', sustainabilityScore: '4.0-5.5/10' },
-  { type: 'Premium Tabletten', priceRange: '€0.45-0.65', effectiveness: '90-95%', availability: 'Alle retailers', plasticPackaging: '60-80%', sustainabilityScore: '4.5-6.0/10' }
-];
-
-const faqs = (lowestPrice: string, highestPrice: string) => [
-  {
-    question: 'Wat is het prijsverschil met traditionele tabletten?',
-    answer: `Vaatwasstrips kosten €${lowestPrice}-€${highestPrice} per wasbeurt. Budget tabletten kosten €0.14-0.26 per wasbeurt, premium tabletten €0.45-0.65 per wasbeurt. Het verschil hangt af van het gekozen merk en segment.`
-  },
-  {
-    question: 'Hoe presteren vaatwasstrips qua reinigingskracht?',
-    answer: 'Volgens CHOICE Australia tests (2024) behalen vaatwasstrips 30-45% effectiviteit vergeleken met 85-95% voor traditionele tabletten. Prestaties variëren per vervuilingstype en merk.'
-  },
-  {
-    question: 'Wat zijn de milieuvriendelijke aspecten?',
-    answer: 'Vaatwasstrips bevatten doorgaans 75% minder plastic verpakking dan traditionele PVA-wrapped tabletten. Ze zijn compacter voor transport en bevatten geen microplastics. Productie vindt echter vaak in China plaats.'
-  },
-  {
-    question: 'Welke certificeringen hebben de merken?',
-    answer: "Natuwash heeft als enige merk OECD 301B certificering voor biologische afbreekbaarheid. Cosmeau is dermatologisch getest. Andere merken hebben eigen claims zonder externe certificering."
-  },
-  {
-    question: 'Hoe doseer ik vaatwasstrips?',
-    answer: 'Standaard dosering is een halve strip per normale wasbeurt. Voor zware vervuiling kan een hele strip nodig zijn. Bij kleine/oude vaatwassers wordt een kwart strip aanbevolen om schuimvorming te voorkomen.'
-  },
-  {
-    question: 'Waar zijn vaatwasstrips verkrijgbaar?',
-    answer: 'Alle merken zijn uitsluitend online verkrijgbaar via merkwebsites, Bol.com en gespecialiseerde retailers. Geen fysieke verkoop in Nederlandse supermarkten of drogisterijen.'
-  }
-];
-
 export default async function OverzichtPage() {
+  const site = getSite();
   // Fetch products from database with error handling
-  const products = await getProductsSafe();
+  const products = await getProductsSafe(site.key);
   
   // Sort by price per wash if available
   const sortedProducts = products.sort((a: any, b: any) => {
@@ -90,9 +60,9 @@ export default async function OverzichtPage() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Overzicht Vaatwasstrips Nederland",
-    "url": "https://vaatwasstripsvergelijker.nl/overzicht",
-    "description": "Compleet overzicht van alle Nederlandse vaatwasstrips aanbieders",
+    "name": `Overzicht ${site.productNounCapitalized} Nederland`,
+    "url": `${site.canonicalBase}/overzicht`,
+    "description": `Compleet overzicht van alle Nederlandse ${site.productNoun} aanbieders`,
     "breadcrumb": {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -100,13 +70,13 @@ export default async function OverzichtPage() {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://vaatwasstripsvergelijker.nl"
+          "item": site.canonicalBase
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Overzicht",
-          "item": "https://vaatwasstripsvergelijker.nl/overzicht"
+          "item": `${site.canonicalBase}/overzicht`
         }
       ]
     }
@@ -123,10 +93,10 @@ export default async function OverzichtPage() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Vaatwasstrips Overzicht Nederland 2025
+            {site.productNounCapitalized} Overzicht Nederland 2025
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Compleet overzicht van alle Nederlandse vaatwasstrips aanbieders
+            Compleet overzicht van alle Nederlandse {site.productNoun} aanbieders
           </p>
           
           {/* Feature List */}
@@ -163,7 +133,7 @@ export default async function OverzichtPage() {
         {/* Quick Stats Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Marktoverzicht Nederlandse Vaatwasstrips
+            Marktoverzicht Nederlandse {site.productNounCapitalized}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
@@ -192,12 +162,12 @@ export default async function OverzichtPage() {
         {/* Intro Text */}
         <div className="prose prose-lg max-w-none mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Vaatwasstrips Kopen in Nederland: Complete Vergelijking 2025
+            {site.productNounCapitalized} Kopen in Nederland: Complete Vergelijking 2025
           </h2>
           <p className="text-gray-700 mb-4">
-            Vergelijk alle <strong>Nederlandse vaatwasstrips merken</strong> op prijs, duurzaamheid en prestaties. 
-            Onze onafhankelijke analyse toont actuele kosten, certificeringen en gebruikerservaringen van 
-            <strong> vaatwasstrips aanbieders</strong> in Nederland.
+            Vergelijk alle <strong>Nederlandse {site.productNoun} merken</strong> op prijs, duurzaamheid en prestaties.
+            Onze onafhankelijke analyse toont actuele kosten, certificeringen en gebruikerservaringen van
+            <strong> {site.productNoun} aanbieders</strong> in Nederland.
           </p>
           <div className="bg-gray-50 rounded-lg p-6 mb-6">
             <h3 className="text-xl font-semibold mb-3">Marktoverzicht:</h3>
@@ -214,7 +184,7 @@ export default async function OverzichtPage() {
         {/* Product Filters and Cards - Using existing component with database data */}
         <div id="vergelijking" className="mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Nederlandse Vaatwasstrips Aanbieders Vergelijking
+            Nederlandse {site.productNounCapitalized} Aanbieders Vergelijking
           </h2>
           <ProductFilters products={products} />
         </div>
@@ -222,14 +192,14 @@ export default async function OverzichtPage() {
         {/* Comparison Table */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Vaatwasstrips vs Traditionele Tabletten: Dataoverzicht
+            {site.productNounCapitalized} vs Traditioneel {site.key === 'vaatwasstrips' ? 'Tabletten' : 'Wasmiddel'}: Dataoverzicht
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Categorie</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Vaatwasstrips</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">{site.productNounCapitalized}</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Budget Tabletten</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Premium Tabletten</th>
                 </tr>
@@ -273,7 +243,7 @@ export default async function OverzichtPage() {
             <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="font-semibold text-gray-900 mb-2">Kostenanalyse per Jaar (4 wasbeurten/week)</h3>
               <ul className="space-y-1 text-sm">
-                <li>• <strong>Vaatwasstrips:</strong> €{(parseFloat(lowestPrice) * 208).toFixed(0)}-€{(parseFloat(highestPrice) * 208).toFixed(0)} per jaar</li>
+                <li>• <strong>{site.productNounCapitalized}:</strong> €{(parseFloat(lowestPrice) * 208).toFixed(0)}-€{(parseFloat(highestPrice) * 208).toFixed(0)} per jaar</li>
                 <li>• <strong>Budget tabletten:</strong> €29-54 per jaar</li>
                 <li>• <strong>Premium tabletten:</strong> €94-135 per jaar</li>
               </ul>
@@ -295,9 +265,9 @@ export default async function OverzichtPage() {
 
         {/* FAQ Section */}
         <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Veelgestelde Vragen over Vaatwasstrips</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Veelgestelde Vragen over {site.productNounCapitalized}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {faqs(lowestPrice, highestPrice).map((faq, index) => (
+            {getFaqs(lowestPrice, highestPrice, site.key).map((faq, index) => (
               <div key={index} className="bg-white rounded-lg p-4">
                 <h3 className="font-semibold text-gray-800 mb-2">Q: {faq.question}</h3>
                 <p className="text-gray-600 text-sm">A: {faq.answer}</p>
@@ -310,9 +280,9 @@ export default async function OverzichtPage() {
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-12 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Vergelijk Alle Opties</h2>
           <p className="text-gray-600 mb-6">Hulp bij kiezen?</p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+          <Link href="/productfinder" className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
             Start Productfinder Tool →
-          </button>
+          </Link>
           <p className="text-sm text-gray-500 mt-2">5 vragen over gebruikssituatie en prioriteiten</p>
         </div>
 
@@ -338,22 +308,22 @@ export default async function OverzichtPage() {
         </div>
 {/* SEO Footer */}
 <div className="mt-12 pt-8 border-t border-gray-200">
-  <h3 className="text-lg font-semibold text-gray-900 mb-3">Vaatwasstrips Overzicht Nederland</h3>
+  <h3 className="text-lg font-semibold text-gray-900 mb-3">{site.productNounCapitalized} Overzicht Nederland</h3>
   <p className="text-gray-600 mb-4">
-    Compleet overzicht van de Nederlandse vaatwasstrips markt. Objectieve data over prijzen,
+    Compleet overzicht van de Nederlandse {site.productNoun} markt. Objectieve data over prijzen,
     duurzaamheid en prestaties zonder commerciële beïnvloeding.
   </p>
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-500">
     <div>
-      <p><strong>Contact:</strong> info@vaatwasstrips-vergelijker.nl</p>
+      <p><strong>Contact:</strong> {site.contactEmail}</p>
       <p><strong>Data Update:</strong> June 2025</p>
       <p><strong>Methodologie:</strong> <Link href="/methodologie" className="text-blue-600 hover:underline">Beschikbaar via aparte pagina</Link></p>
     </div>
     <div>
       <p className="font-semibold mb-2">Gerelateerde Zoektermen:</p>
       <p className="italic">
-        vaatwasstrips overzicht, dishwasher strips vergelijking, milieuvriendelijk afwasmiddel,
-        vaatwasstrips prijs, duurzame vaatwas, wasstrip kopen, vaatwasstrips test
+        {site.productNoun} overzicht, {site.productNoun} vergelijking, milieuvriendelijk,
+        {site.productNoun} prijs, duurzaam, {site.productNounSingular} kopen, {site.productNoun} test
       </p>
     </div>
   </div>

@@ -248,7 +248,7 @@ export default function EditProductModal({ product, isOpen, onClose, onSave }: E
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kenmerken (gescheiden door komma's)
+              Kenmerken (gescheiden door komma&apos;s)
             </label>
             <input
               type="text"
@@ -261,7 +261,7 @@ export default function EditProductModal({ product, isOpen, onClose, onSave }: E
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Voordelen (gescheiden door komma's)
+              Voordelen (gescheiden door komma&apos;s)
             </label>
             <input
               type="text"
@@ -274,7 +274,7 @@ export default function EditProductModal({ product, isOpen, onClose, onSave }: E
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nadelen (gescheiden door komma's)
+              Nadelen (gescheiden door komma&apos;s)
             </label>
             <input
               type="text"

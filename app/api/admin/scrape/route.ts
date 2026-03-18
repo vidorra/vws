@@ -3,6 +3,7 @@ import { verifyToken } from '@/lib/auth';
 import { ScrapingCoordinator } from '@/lib/scrapers/scraping-coordinator';
 import { prisma } from '@/lib/prisma';
 import { upsertProductWithVariants } from '@/lib/db/variants';
+import { invalidateCache } from '@/lib/db-safe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -97,6 +98,8 @@ export async function POST(request: NextRequest) {
         }
       });
       
+      invalidateCache(); // clear product/brands cache so fresh data is served immediately
+
       return NextResponse.json({
         success: true,
         results: {

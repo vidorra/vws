@@ -1,12 +1,15 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, Leaf, ShoppingCart, HelpCircle } from 'lucide-react';
+import { BookOpen, Leaf, ShoppingCart, HelpCircle, Wrench } from 'lucide-react';
+import { getSite } from '@/lib/get-site';
 
-export const metadata: Metadata = {
-  title: 'Wasstrips Gids - Alles wat je moet weten',
-  description: 'Complete gids over wasstrips. Van beginners tips tot milieuvriendelijk wassen. Leer alles over het gebruik van wasstrips.',
-  keywords: 'wasstrips gids, handleiding, tips, beginners, milieuvriendelijk'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = getSite();
+  return {
+    title: `${site.productNounCapitalized} Gids - Alles wat je moet weten`,
+    description: `Complete gids over ${site.productNoun}. Van beginners tips tot milieuvriendelijk wassen. Leer alles over het gebruik van ${site.productNoun}.`,
+  };
+}
 
 const guides = [
   {
@@ -50,10 +53,26 @@ const guides = [
       'Waar te kopen',
       'Bulk kortingen'
     ]
+  },
+  {
+    slug: 'troubleshooting',
+    title: 'Problemen Oplossen',
+    description: 'Veelvoorkomende problemen en hoe je ze oplost',
+    icon: Wrench,
+    color: 'bg-orange-100 text-orange-800',
+    iconColor: 'text-orange-600',
+    topics: [
+      'Strip lost niet op',
+      'Witte aanslag of vlekken',
+      'Dosering problemen',
+      'Gevoelige huid & allergieën'
+    ]
   }
 ];
 
 export default function GidsPage() {
+  const site = getSite();
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumbs */}
@@ -63,13 +82,13 @@ export default function GidsPage() {
         <span className="text-gray-900">Gids</span>
       </nav>
 
-      <h1 className="text-4xl font-bold mb-4">Wasstrips Gids</h1>
+      <h1 className="text-4xl font-bold mb-4">{site.productNounCapitalized} Gids</h1>
       <p className="text-xl text-gray-600 mb-12">
-        Ontdek alles over wasstrips - van basis gebruik tot expert tips
+        Ontdek alles over {site.productNoun} - van basis gebruik tot expert tips
       </p>
 
       {/* Guide Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         {guides.map((guide) => {
           const Icon = guide.icon;
           return (
@@ -178,7 +197,7 @@ export default function GidsPage() {
         
         <div className="mt-6 text-center">
           <Link href="/gids/beginners" className="text-blue-600 hover:text-blue-800 font-semibold">
-            Bekijk alle FAQ's →
+            Bekijk alle FAQ&apos;s →
           </Link>
         </div>
       </section>
