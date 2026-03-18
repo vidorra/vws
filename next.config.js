@@ -13,6 +13,10 @@ const nextConfig = {
 
     return config;
   },
+  eslint: {
+    // Skip linting during production builds (already done in CI)
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     serverComponentsExternalPackages: ['bcryptjs']
   }

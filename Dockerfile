@@ -18,10 +18,10 @@ COPY . .
 # Generate Prisma client (already done in postinstall, but keeping for clarity)
 RUN npx prisma generate
 
-# Build with a dummy DATABASE_URL to satisfy Prisma during build time
-# The actual DATABASE_URL will be provided at runtime
-# Increase Node memory limit to prevent OOM kills on constrained Docker builders
-RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" NODE_OPTIONS="--max-old-space-size=1024" npm run build
+# Build with a dummy DATABASE_URL to satisfy Prisma's schema validation during build.
+# The real DATABASE_URL is injected at runtime via CapRover env vars.
+# Increase Node memory limit and skip linting (already done in CI) to prevent OOM.
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
 # Production stage
 FROM node:20-slim AS runner
