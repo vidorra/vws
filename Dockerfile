@@ -1,8 +1,8 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
-# Install timezone data
-RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
+# Install timezone data and OpenSSL (required by Prisma query engine during build)
+RUN apt-get update && apt-get install -y tzdata openssl && rm -rf /var/lib/apt/lists/*
 ENV TZ=Europe/Amsterdam
 
 COPY package.json package-lock.json ./

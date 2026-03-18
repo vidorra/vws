@@ -8,10 +8,15 @@ import { prisma } from '@/lib/prisma';
 import { getSite } from '@/lib/get-site';
 
 export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    select: { slug: true, site: true },
-  });
-  return products.map((p) => ({ slug: p.slug }));
+  try {
+    const products = await prisma.product.findMany({
+      select: { slug: true, site: true },
+    });
+    return products.map((p) => ({ slug: p.slug }));
+  } catch {
+    // DB unavailable during build (e.g. Docker build with dummy URL) — pages will be generated on-demand
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
