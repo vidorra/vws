@@ -101,10 +101,15 @@ describe('getBrandsSafe', () => {
 });
 
 describe('invalidateCache', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    invalidateCache();
+  });
+
   it('clears specific cache key', async () => {
     mockFindMany.mockResolvedValue([] as never);
-    await getProductsSafe(); // populate cache
-    invalidateCache('products');
+    await getProductsSafe(); // populate cache with key 'products_vaatwasstrips'
+    invalidateCache('products_vaatwasstrips');
     await getProductsSafe(); // should hit DB again
     expect(mockFindMany).toHaveBeenCalledTimes(2);
   });
