@@ -18,9 +18,13 @@ const nextConfig = {
   }
 }
 
-module.exports = withSentryConfig(nextConfig, {
-  silent: true,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  disableSourceMapUpload: !process.env.SENTRY_AUTH_TOKEN,
-});
+// Only wrap with Sentry when auth token is available (avoids extra memory usage during Docker builds)
+if (process.env.SENTRY_AUTH_TOKEN) {
+  module.exports = withSentryConfig(nextConfig, {
+    silent: true,
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+  });
+} else {
+  module.exports = nextConfig;
+}
