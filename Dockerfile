@@ -18,10 +18,9 @@ COPY . .
 # Generate Prisma client (already done in postinstall, but keeping for clarity)
 RUN npx prisma generate
 
-# Build with a dummy DATABASE_URL to satisfy Prisma's schema validation during build.
-# The real DATABASE_URL is injected at runtime via CapRover env vars.
-# Increase Node memory limit and skip linting (already done in CI) to prevent OOM.
-RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" NODE_OPTIONS="--max-old-space-size=2048" npm run build
+# Build Next.js with dummy DATABASE_URL (real one injected at runtime via CapRover).
+# Use npx next build directly (Prisma already generated above) to save memory.
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" NODE_OPTIONS="--max-old-space-size=2048" npx next build
 
 # Production stage
 FROM node:20-slim AS runner

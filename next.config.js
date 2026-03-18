@@ -17,6 +17,10 @@ const nextConfig = {
     // Skip linting during production builds (already done in CI)
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    // Skip type checking during production builds (already done in CI)
+    ignoreBuildErrors: true,
+  },
   experimental: {
     serverComponentsExternalPackages: ['bcryptjs']
   }
