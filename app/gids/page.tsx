@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, Leaf, ShoppingCart, HelpCircle, Wrench } from 'lucide-react';
+import { BookOpen, Leaf, ShoppingCart, Wrench, Lightbulb, ArrowRight } from 'lucide-react';
 import { getSite } from '@/lib/get-site';
+import GidsSidebar from '@/components/GidsSidebar';
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSite();
@@ -15,192 +16,142 @@ const guides = [
   {
     slug: 'beginners',
     title: 'Beginners Gids',
-    description: 'Alles wat je moet weten om te starten met wasstrips',
+    description: 'Alles wat je moet weten om te starten',
     icon: BookOpen,
-    color: 'bg-blue-100 text-blue-800',
-    iconColor: 'text-blue-600',
-    topics: [
-      'Wat zijn wasstrips?',
-      'Hoe gebruik je wasstrips?',
-      'Dosering en tips',
-      'Veelgestelde vragen'
-    ]
+    topics: ['Wat zijn wasstrips?', 'Hoe gebruik je wasstrips?', 'Dosering en tips', 'Veelgestelde vragen'],
   },
   {
     slug: 'milieuvriendelijk',
     title: 'Milieuvriendelijk Wassen',
-    description: 'De impact van wasstrips op het milieu en duurzaam wassen',
+    description: 'De impact op het milieu en duurzaam wassen',
     icon: Leaf,
-    color: 'bg-green-100 text-green-800',
-    iconColor: 'text-green-600',
-    topics: [
-      'Milieuvoordelen wasstrips',
-      'Plasticvrij wassen',
-      'CO2 besparing',
-      'Biologisch afbreekbaar'
-    ]
+    topics: ['Milieuvoordelen', 'Plasticvrij wassen', 'CO2 besparing', 'Biologisch afbreekbaar'],
   },
   {
     slug: 'kopen-tips',
     title: 'Kopen Tips',
-    description: 'Waar op te letten bij het kopen van wasstrips',
+    description: 'Waar op te letten bij het kopen',
     icon: ShoppingCart,
-    color: 'bg-purple-100 text-purple-800',
-    iconColor: 'text-purple-600',
-    topics: [
-      'Prijsvergelijking',
-      'Kwaliteitsindicatoren',
-      'Waar te kopen',
-      'Bulk kortingen'
-    ]
+    topics: ['Prijsvergelijking', 'Kwaliteitsindicatoren', 'Waar te kopen', 'Bulk kortingen'],
   },
   {
     slug: 'troubleshooting',
     title: 'Problemen Oplossen',
-    description: 'Veelvoorkomende problemen en hoe je ze oplost',
+    description: 'Veelvoorkomende problemen en oplossingen',
     icon: Wrench,
-    color: 'bg-orange-100 text-orange-800',
-    iconColor: 'text-orange-600',
-    topics: [
-      'Strip lost niet op',
-      'Witte aanslag of vlekken',
-      'Dosering problemen',
-      'Gevoelige huid & allergieën'
-    ]
-  }
+    topics: ['Strip lost niet op', 'Witte aanslag', 'Dosering problemen', 'Gevoelige huid'],
+  },
+];
+
+const quickTips = [
+  { title: 'Dosering', text: 'Gebruik 1 strip voor normale was, 2 strips voor grote of vuile was' },
+  { title: 'Temperatuur', text: 'Wasstrips werken al vanaf 20°C, ideaal voor koud wassen' },
+  { title: 'Oplossen', text: 'Plaats de strip direct op de was, niet in het wasmiddellade' },
+  { title: 'Opslag', text: 'Bewaar wasstrips droog en uit direct zonlicht' },
+];
+
+const faqItems = [
+  { question: 'Zijn wasstrips geschikt voor alle wasmachines?', answer: 'Ja, wasstrips werken in alle wasmachines: voorladers, bovenladers, en zelfs voor handwas.' },
+  { question: 'Hoe lang zijn wasstrips houdbaar?', answer: 'Wasstrips zijn meestal 2-3 jaar houdbaar mits droog bewaard. Check de verpakking voor exacte datum.' },
+  { question: 'Werken wasstrips ook bij hardnekkige vlekken?', answer: 'Voor hardnekkige vlekken raden we aan om deze voor te behandelen of een extra strip te gebruiken.' },
 ];
 
 export default function GidsPage() {
   const site = getSite();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Breadcrumbs */}
-      <nav className="flex text-sm text-gray-500 mb-8">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
-        <span className="mx-2">/</span>
-        <span className="text-gray-900">Gids</span>
-      </nav>
-
-      <h1 className="text-4xl font-bold mb-4">{site.productNounCapitalized} Gids</h1>
-      <p className="text-xl text-gray-600 mb-12">
-        Ontdek alles over {site.productNoun} - van basis gebruik tot expert tips
-      </p>
-
-      {/* Guide Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {guides.map((guide) => {
-          const Icon = guide.icon;
-          return (
-            <Link 
-              key={guide.slug}
-              href={`/gids/${guide.slug}`}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition group"
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className={`p-4 rounded-full ${guide.color}`}>
-                    <Icon className={`h-8 w-8 ${guide.iconColor}`} />
-                  </div>
-                </div>
-                
-                <h2 className="text-2xl font-bold mb-2 text-center group-hover:text-blue-600 transition">
-                  {guide.title}
-                </h2>
-                <p className="text-gray-600 text-center mb-4">{guide.description}</p>
-                
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold mb-2 text-sm text-gray-700">In deze gids:</h3>
-                  <ul className="space-y-1">
-                    {guide.topics.map((topic, index) => (
-                      <li key={index} className="text-sm text-gray-600 flex items-center">
-                        <span className="text-green-500 mr-2">•</span>
-                        {topic}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="mt-4 text-center">
-                  <span className="text-blue-600 font-semibold group-hover:text-blue-800 transition">
-                    Lees meer →
-                  </span>
-                </div>
+    <div className="mx-auto px-2 sm:px-4 py-8">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-7">
+            <div className="space-y-6">
+              {/* Header */}
+              <div>
+                <div className="text-sm text-gray-500 mb-2">Gids</div>
+                <h1 className="text-2xl font-bold text-primary mb-3 flex items-center">
+                  <BookOpen className="w-6 h-6 mr-3 text-primary" />
+                  {site.productNounCapitalized} Gids
+                </h1>
+                <p className="text-gray-500 leading-relaxed">
+                  Ontdek alles over {site.productNoun} — van basis gebruik tot expert tips
+                </p>
               </div>
-            </Link>
-          );
-        })}
+
+              {/* Guide Categories */}
+              {guides.map((guide) => {
+                const Icon = guide.icon;
+                return (
+                  <Link
+                    key={guide.slug}
+                    href={`/gids/${guide.slug}`}
+                    className="block bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6 hover:border-primary transition-colors group"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0">
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-lg font-semibold text-primary mb-1 group-hover:underline">
+                          {guide.title}
+                        </h2>
+                        <p className="text-gray-600 mb-3">{guide.description}</p>
+                        <ul className="space-y-1">
+                          {guide.topics.map((topic, index) => (
+                            <li key={index} className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                              <span className="text-gray-700 text-sm">{topic}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-3 flex items-center text-primary text-sm font-medium">
+                          Lees meer <ArrowRight className="w-4 h-4 ml-1" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+
+              {/* Quick Tips */}
+              <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-primary mb-4 flex items-center">
+                  <Lightbulb className="w-5 h-5 mr-2" />
+                  Quick Tips
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {quickTips.map((tip, index) => (
+                    <div key={index}>
+                      <h3 className="font-medium text-primary mb-1">{tip.title}</h3>
+                      <p className="text-gray-600 text-sm">{tip.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* FAQ */}
+              <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-primary mb-4">Veelgestelde Vragen</h2>
+                <div className="space-y-4">
+                  {faqItems.map((item, index) => (
+                    <div key={index}>
+                      <h3 className="font-medium text-gray-700 mb-2">{item.question}</h3>
+                      <p className="text-gray-600">{item.answer}</p>
+                      {index < faqItems.length - 1 && (
+                        <div className="border-b border-gray-200 mt-4"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <GidsSidebar relatedGuides={[
+            { href: '/productfinder', title: 'Productfinder', description: 'Vind het beste product voor jouw situatie' },
+            { href: '/overzicht', title: 'Productoverzicht', description: 'Bekijk alle producten en prijzen' },
+          ]} />
+        </div>
       </div>
-
-      {/* Quick Tips Section */}
-      <section className="bg-blue-50 rounded-lg p-8 mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-center">Quick Tips</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg p-4">
-            <h3 className="font-semibold mb-2">💡 Dosering</h3>
-            <p className="text-gray-600">
-              Gebruik 1 strip voor normale was, 2 strips voor grote of vuile was
-            </p>
-          </div>
-          <div className="bg-white rounded-lg p-4">
-            <h3 className="font-semibold mb-2">🌡️ Temperatuur</h3>
-            <p className="text-gray-600">
-              Wasstrips werken al vanaf 20°C, ideaal voor koud wassen
-            </p>
-          </div>
-          <div className="bg-white rounded-lg p-4">
-            <h3 className="font-semibold mb-2">💧 Oplossen</h3>
-            <p className="text-gray-600">
-              Plaats de strip direct op de was, niet in het wasmiddellade
-            </p>
-          </div>
-          <div className="bg-white rounded-lg p-4">
-            <h3 className="font-semibold mb-2">📦 Opslag</h3>
-            <p className="text-gray-600">
-              Bewaar wasstrips droog en uit direct zonlicht
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Preview */}
-      <section className="bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6">Veelgestelde Vragen</h2>
-        <div className="space-y-4">
-          <details className="border-b pb-4">
-            <summary className="cursor-pointer font-semibold hover:text-blue-600">
-              Zijn wasstrips geschikt voor alle wasmachines?
-            </summary>
-            <p className="mt-2 text-gray-600">
-              Ja, wasstrips werken in alle wasmachines: voorladers, bovenladers, en zelfs voor handwas.
-            </p>
-          </details>
-          
-          <details className="border-b pb-4">
-            <summary className="cursor-pointer font-semibold hover:text-blue-600">
-              Hoe lang zijn wasstrips houdbaar?
-            </summary>
-            <p className="mt-2 text-gray-600">
-              Wasstrips zijn meestal 2-3 jaar houdbaar mits droog bewaard. Check de verpakking voor exacte datum.
-            </p>
-          </details>
-          
-          <details className="border-b pb-4">
-            <summary className="cursor-pointer font-semibold hover:text-blue-600">
-              Werken wasstrips ook bij hardnekkige vlekken?
-            </summary>
-            <p className="mt-2 text-gray-600">
-              Voor hardnekkige vlekken raden we aan om deze voor te behandelen of een extra strip te gebruiken.
-            </p>
-          </details>
-        </div>
-        
-        <div className="mt-6 text-center">
-          <Link href="/gids/beginners" className="text-blue-600 hover:text-blue-800 font-semibold">
-            Bekijk alle FAQ&apos;s →
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }

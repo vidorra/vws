@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { BookOpen, CheckCircle, AlertCircle, HelpCircle, Leaf, ShoppingCart } from 'lucide-react';
+import { BookOpen, CheckCircle, AlertTriangle, Lightbulb } from 'lucide-react';
 import { getSite } from '@/lib/get-site';
+import GidsSidebar from '@/components/GidsSidebar';
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSite();
@@ -17,18 +18,23 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const faqs = [
-  {
-    question: 'Werken wasstrips in koud water?',
-    answer: 'Ja! Wasstrips zijn speciaal ontwikkeld om al vanaf 20°C volledig op te lossen. Dit maakt ze ideaal voor koud wassen en energiebesparing.',
-  },
-  {
-    question: 'Zijn wasstrips geschikt voor gevoelige huid?',
-    answer: 'De meeste wasstrips zijn hypoallergeen en geschikt voor gevoelige huid. Check altijd de verpakking voor specifieke informatie over het merk dat je kiest.',
-  },
-  {
-    question: 'Kan ik wasstrips gebruiken voor handwas?',
-    answer: 'Absoluut! Los een halve strip op in een emmer warm water voor handwas. Perfect voor delicate items of op reis.',
-  },
+  { question: 'Werken wasstrips in koud water?', answer: 'Ja! Wasstrips zijn speciaal ontwikkeld om al vanaf 20°C volledig op te lossen. Dit maakt ze ideaal voor koud wassen en energiebesparing.' },
+  { question: 'Zijn wasstrips geschikt voor gevoelige huid?', answer: 'De meeste wasstrips zijn hypoallergeen en geschikt voor gevoelige huid. Check altijd de verpakking voor specifieke informatie over het merk dat je kiest.' },
+  { question: 'Kan ik wasstrips gebruiken voor handwas?', answer: 'Absoluut! Los een halve strip op in een emmer warm water voor handwas. Perfect voor delicate items of op reis.' },
+];
+
+const steps = [
+  { title: 'Sorteer je was', description: 'Net als bij normaal wassen, sorteer op kleur en temperatuur' },
+  { title: 'Plaats de was in de machine', description: 'Vul de trommel niet te vol voor beste resultaten' },
+  { title: 'Voeg de wasstrip toe', description: 'Leg de strip direct op de was, NIET in het wasmiddellade' },
+  { title: 'Start het wasprogramma', description: 'Kies je gewenste programma en temperatuur' },
+];
+
+const tips = [
+  { title: 'Vlekken', text: 'Voor hardnekkige vlekken: maak de vlek nat en wrijf er een stukje wasstrip op. Laat 5 minuten intrekken voor het wassen.' },
+  { title: 'Opslag', text: 'Bewaar wasstrips in een droge ruimte. Vocht kan ze laten plakken. De originele verpakking is meestal het beste.' },
+  { title: 'Reizen', text: 'Neem een paar strips mee op reis in een ziplock zakje. Geen gedoe met vloeistoffen bij de security!' },
+  { title: 'Wasverzachter', text: 'Wasstrips bevatten vaak al verzachtende ingrediënten. Extra wasverzachter is meestal niet nodig.' },
 ];
 
 export default function BeginnersGuidePage() {
@@ -42,7 +48,7 @@ export default function BeginnersGuidePage() {
     "author": { "@type": "Organization", "name": site.name },
     "publisher": { "@type": "Organization", "name": site.name },
     "datePublished": "2024-01-01",
-    "dateModified": new Date().toISOString()
+    "dateModified": new Date().toISOString(),
   };
 
   const faqSchema = {
@@ -51,10 +57,7 @@ export default function BeginnersGuidePage() {
     "mainEntity": faqs.map((faq) => ({
       "@type": "Question",
       "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer,
-      },
+      "acceptedAnswer": { "@type": "Answer", "text": faq.answer },
     })),
   };
 
@@ -73,284 +76,202 @@ export default function BeginnersGuidePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumbs */}
-        <nav className="flex text-sm text-gray-500 mb-8">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids" className="hover:text-blue-600">Gids</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">Beginners</span>
-        </nav>
 
-        <header className="mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="p-4 rounded-full bg-blue-100">
-              <BookOpen className="h-12 w-12 text-blue-600" />
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold text-center mb-4">Beginners Gids Wasstrips</h1>
-          <p className="text-xl text-gray-600 text-center">
-            Alles wat je moet weten om te starten met wasstrips
-          </p>
-        </header>
-
-        {/* Table of Contents */}
-        <div className="bg-gray-50 rounded-lg p-6 mb-12">
-          <h2 className="text-xl font-bold mb-4">Inhoud</h2>
-          <ol className="space-y-2">
-            <li><a href="#wat-zijn-wasstrips" className="text-blue-600 hover:text-blue-800">1. Wat zijn wasstrips?</a></li>
-            <li><a href="#voordelen" className="text-blue-600 hover:text-blue-800">2. Voordelen van wasstrips</a></li>
-            <li><a href="#hoe-gebruik" className="text-blue-600 hover:text-blue-800">3. Hoe gebruik je wasstrips?</a></li>
-            <li><a href="#dosering" className="text-blue-600 hover:text-blue-800">4. Dosering tips</a></li>
-            <li><a href="#veelgestelde-vragen" className="text-blue-600 hover:text-blue-800">5. Veelgestelde vragen</a></li>
-            <li><a href="#tips-tricks" className="text-blue-600 hover:text-blue-800">6. Tips & tricks</a></li>
-          </ol>
-        </div>
-
-        {/* Content Sections */}
-        <section id="wat-zijn-wasstrips" className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">1. Wat zijn wasstrips?</h2>
-          <p className="text-gray-600 mb-4">
-            Wasstrips zijn dunne, voorgedoseerde velletjes wasmiddel die je direct in de wastrommel gooit. 
-            Ze bevatten geconcentreerd wasmiddel zonder water, waardoor ze veel compacter zijn dan 
-            traditioneel vloeibaar wasmiddel of waspoeder.
-          </p>
-          <div className="bg-blue-50 rounded-lg p-6 mb-6">
-            <h3 className="font-semibold mb-2">Hoe werken wasstrips?</h3>
-            <p className="text-gray-600">
-              Zodra de wasstrip in contact komt met water, lost deze volledig op en verspreidt het 
-              wasmiddel zich gelijkmatig door je was. De actieve ingrediënten gaan direct aan het 
-              werk om vuil en vlekken te verwijderen.
-            </p>
-          </div>
-        </section>
-
-        <section id="voordelen" className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">2. Voordelen van wasstrips</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-start">
-              <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="font-semibold mb-1">Milieuvriendelijk</h3>
-                <p className="text-gray-600">Geen plastic verpakking, biologisch afbreekbaar</p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="font-semibold mb-1">Ruimtebesparend</h3>
-                <p className="text-gray-600">Neemt 94% minder ruimte in dan vloeibaar wasmiddel</p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="font-semibold mb-1">Geen overdosering</h3>
-                <p className="text-gray-600">Voorgedoseerd voor perfecte resultaten</p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="font-semibold mb-1">Geen morsen</h3>
-                <p className="text-gray-600">Schone handen, schone wasmachine</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="hoe-gebruik" className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">3. Hoe gebruik je wasstrips?</h2>
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h3 className="font-semibold mb-4">Stap-voor-stap instructies:</h3>
-            <ol className="space-y-4">
-              <li className="flex items-start">
-                <span className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">1</span>
+      <div className="mx-auto px-2 sm:px-4 py-8">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-12 lg:col-span-7">
+              <div className="space-y-6">
+                {/* Header */}
                 <div>
-                  <p className="font-semibold">Sorteer je was</p>
-                  <p className="text-gray-600">Net als bij normaal wassen, sorteer op kleur en temperatuur</p>
+                  <div className="text-sm text-gray-500 mb-2">Gids &bull; Beginners</div>
+                  <h1 className="text-2xl font-bold text-primary mb-3 flex items-center">
+                    <BookOpen className="w-6 h-6 mr-3 text-primary" />
+                    Beginners Gids {site.productNounCapitalized}
+                  </h1>
+                  <p className="text-gray-500 leading-relaxed">
+                    Alles wat je moet weten om te starten met {site.productNoun}
+                  </p>
                 </div>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">2</span>
-                <div>
-                  <p className="font-semibold">Plaats de was in de machine</p>
-                  <p className="text-gray-600">Vul de trommel niet te vol voor beste resultaten</p>
+
+                {/* Wat zijn wasstrips? */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4">Wat zijn {site.productNoun}?</h2>
+                  <p className="text-gray-700 leading-relaxed mb-4">
+                    {site.productNounCapitalized} zijn dunne, voorgedoseerde velletjes wasmiddel die je direct in de wastrommel gooit. Ze bevatten geconcentreerd wasmiddel zonder water, waardoor ze veel compacter zijn dan traditioneel vloeibaar wasmiddel of waspoeder.
+                  </p>
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <h3 className="font-medium text-primary mb-2">Hoe werken {site.productNoun}?</h3>
+                    <p className="text-gray-700">
+                      Zodra de strip in contact komt met water, lost deze volledig op en verspreidt het wasmiddel zich gelijkmatig door je was. De actieve ingrediënten gaan direct aan het werk om vuil en vlekken te verwijderen.
+                    </p>
+                  </div>
+                </section>
+
+                {/* Voordelen */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4 flex items-center">
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Voordelen van {site.productNoun}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { title: 'Milieuvriendelijk', desc: 'Geen plastic verpakking, biologisch afbreekbaar' },
+                      { title: 'Ruimtebesparend', desc: 'Neemt 94% minder ruimte in dan vloeibaar wasmiddel' },
+                      { title: 'Geen overdosering', desc: 'Voorgedoseerd voor perfecte resultaten' },
+                      { title: 'Geen morsen', desc: 'Schone handen, schone wasmachine' },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start space-x-2">
+                        <CheckCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h3 className="font-medium text-primary">{item.title}</h3>
+                          <p className="text-gray-600 text-sm">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Stap voor stap */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4">Hoe gebruik je {site.productNoun}?</h2>
+                  <div className="space-y-4">
+                    {steps.map((step, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-semibold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-primary">{step.title}</h3>
+                          <p className="text-gray-600 text-sm">{step.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Warning */}
+                <div className="bg-amber-50 rounded-2xl shadow-sm border border-amber-200 p-6">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <AlertTriangle className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-amber-800 mb-2">Let op</h3>
+                      <p className="text-sm text-amber-700 leading-relaxed">
+                        Plaats de wasstrip altijd direct op de was, niet in het wasmiddellade. Dit zorgt voor optimale oplossing en wasresultaten.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">3</span>
-                <div>
-                  <p className="font-semibold">Voeg de wasstrip toe</p>
-                  <p className="text-gray-600">Leg de strip direct op de was, NIET in het wasmiddellade</p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0">4</span>
-                <div>
-                  <p className="font-semibold">Start het wasprogramma</p>
-                  <p className="text-gray-600">Kies je gewenste programma en temperatuur</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-          
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-            <div className="flex">
-              <AlertCircle className="h-6 w-6 text-yellow-400 mr-2" />
-              <div>
-                <h4 className="font-semibold">Belangrijk!</h4>
-                <p className="text-gray-600">
-                  Plaats de wasstrip altijd direct op de was, niet in het wasmiddellade. 
-                  Dit zorgt voor optimale oplossing en wasresultaten.
-                </p>
+
+                {/* Dosering */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4">Dosering tips</h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-white">
+                          <th className="border border-gray-300 px-4 py-2 text-left">Wastype</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Aantal strips</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">Licht bevuilde was (4-5 kg)</td>
+                          <td className="border border-gray-300 px-4 py-2 font-semibold">1 strip</td>
+                        </tr>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 px-4 py-2">Normaal bevuilde was (6-8 kg)</td>
+                          <td className="border border-gray-300 px-4 py-2 font-semibold">1 strip</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">Zwaar bevuilde was</td>
+                          <td className="border border-gray-300 px-4 py-2 font-semibold">2 strips</td>
+                        </tr>
+                        <tr className="bg-white">
+                          <td className="border border-gray-300 px-4 py-2">Extra grote was (8+ kg)</td>
+                          <td className="border border-gray-300 px-4 py-2 font-semibold">2 strips</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                {/* FAQ */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4">Veelgestelde Vragen</h2>
+                  <div className="space-y-4">
+                    {faqs.map((faq, index) => (
+                      <div key={index}>
+                        <h3 className="font-medium text-gray-700 mb-2">{faq.question}</h3>
+                        <p className="text-gray-600">{faq.answer}</p>
+                        {index < faqs.length - 1 && <div className="border-b border-gray-200 mt-4"></div>}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Tips */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4 flex items-center">
+                    <Lightbulb className="w-5 h-5 mr-2" />
+                    Tips &amp; Tricks
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {tips.map((tip, index) => (
+                      <div key={index}>
+                        <h3 className="font-medium text-primary mb-1">{tip.title}</h3>
+                        <p className="text-gray-600 text-sm">{tip.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Related Guides */}
+                <section className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-primary mb-4">Gerelateerde Gidsen</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Link href="/gids/milieuvriendelijk" className="p-3 bg-gray-50 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+                      <div className="font-medium text-primary text-sm">Milieuvriendelijk Wassen &rarr;</div>
+                      <div className="text-xs text-gray-600 mt-1">Duurzaamheid uitgelegd</div>
+                    </Link>
+                    <Link href="/gids/kopen-tips" className="p-3 bg-gray-50 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+                      <div className="font-medium text-primary text-sm">Kopen Tips &rarr;</div>
+                      <div className="text-xs text-gray-600 mt-1">Waar op letten bij het vergelijken</div>
+                    </Link>
+                    <Link href="/gids/troubleshooting" className="p-3 bg-gray-50 border border-gray-200 rounded-lg hover:border-primary transition-colors">
+                      <div className="font-medium text-primary text-sm">Problemen Oplossen &rarr;</div>
+                      <div className="text-xs text-gray-600 mt-1">Veelvoorkomende issues en oplossingen</div>
+                    </Link>
+                  </div>
+                </section>
+
+                {/* CTA */}
+                <section className="bg-white rounded-2xl border border-gray-200 p-6">
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold text-primary mb-2">Klaar om te beginnen?</h2>
+                    <p className="text-gray-600 mb-4">Ontdek welke {site.productNoun} het beste bij jou passen</p>
+                    <div className="flex flex-wrap justify-center gap-3">
+                      <Link href="/prijzen/goedkoopste" className="inline-flex items-center px-5 py-2 btn-primary rounded-lg text-sm">
+                        Bekijk goedkoopste opties
+                      </Link>
+                      <Link href="/overzicht" className="inline-flex items-center px-5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-primary hover:border-primary transition-colors">
+                        Vergelijk alle merken
+                      </Link>
+                    </div>
+                  </div>
+                </section>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section id="dosering" className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">4. Dosering tips</h2>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2">Wastype</th>
-                  <th className="text-left py-2">Aantal strips</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-2">Licht bevuilde was (4-5 kg)</td>
-                  <td className="py-2 font-semibold">1 strip</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Normaal bevuilde was (6-8 kg)</td>
-                  <td className="py-2 font-semibold">1 strip</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Zwaar bevuilde was</td>
-                  <td className="py-2 font-semibold">2 strips</td>
-                </tr>
-                <tr>
-                  <td className="py-2">Extra grote was (8+ kg)</td>
-                  <td className="py-2 font-semibold">2 strips</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section id="veelgestelde-vragen" className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">5. Veelgestelde vragen</h2>
-          <div className="space-y-4">
-            <details className="bg-white rounded-lg shadow p-4">
-              <summary className="cursor-pointer font-semibold flex items-center justify-between">
-                <span>Werken wasstrips in koud water?</span>
-                <HelpCircle className="h-5 w-5 text-gray-400" />
-              </summary>
-              <p className="mt-3 text-gray-600">
-                Ja! Wasstrips zijn speciaal ontwikkeld om al vanaf 20°C volledig op te lossen. 
-                Dit maakt ze ideaal voor koud wassen en energiebesparing.
-              </p>
-            </details>
-            
-            <details className="bg-white rounded-lg shadow p-4">
-              <summary className="cursor-pointer font-semibold flex items-center justify-between">
-                <span>Zijn wasstrips geschikt voor gevoelige huid?</span>
-                <HelpCircle className="h-5 w-5 text-gray-400" />
-              </summary>
-              <p className="mt-3 text-gray-600">
-                De meeste wasstrips zijn hypoallergeen en geschikt voor gevoelige huid. 
-                Check altijd de verpakking voor specifieke informatie over het merk dat je kiest.
-              </p>
-            </details>
-            
-            <details className="bg-white rounded-lg shadow p-4">
-              <summary className="cursor-pointer font-semibold flex items-center justify-between">
-                <span>Kan ik wasstrips gebruiken voor handwas?</span>
-                <HelpCircle className="h-5 w-5 text-gray-400" />
-              </summary>
-              <p className="mt-3 text-gray-600">
-                Absoluut! Los een halve strip op in een emmer warm water voor handwas. 
-                Perfect voor delicate items of op reis.
-              </p>
-            </details>
-          </div>
-        </section>
-
-        <section id="tips-tricks" className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">6. Tips & tricks</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-green-50 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">💡 Pro tip: Vlekken</h3>
-              <p className="text-gray-600">
-                Voor hardnekkige vlekken: maak de vlek nat en wrijf er een stukje wasstrip op. 
-                Laat 5 minuten intrekken voor het wassen.
-              </p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">💡 Pro tip: Opslag</h3>
-              <p className="text-gray-600">
-                Bewaar wasstrips in een droge ruimte. Vocht kan ze laten plakken. 
-                De originele verpakking is meestal het beste.
-              </p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">💡 Pro tip: Reizen</h3>
-              <p className="text-gray-600">
-                Neem een paar strips mee op reis in een ziplock zakje. 
-                Geen gedoe met vloeistoffen bij de security!
-              </p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">💡 Pro tip: Wasverzachter</h3>
-              <p className="text-gray-600">
-                Wasstrips bevatten vaak al verzachtende ingrediënten. 
-                Extra wasverzachter is meestal niet nodig.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Related Guides */}
-        <div className="bg-gray-50 rounded-lg p-6 mb-10">
-          <h3 className="font-bold mb-3">Gerelateerde gidsen</h3>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/gids/milieuvriendelijk" className="text-blue-600 hover:text-blue-800">
-                → Milieuvriendelijk wassen: duurzaamheid uitgelegd
-              </Link>
-            </li>
-            <li>
-              <Link href="/gids/kopen-tips" className="text-blue-600 hover:text-blue-800">
-                → Kopen tips: waar op letten bij het vergelijken van {site.productNoun}
-              </Link>
-            </li>
-            <li>
-              <Link href="/gids/troubleshooting" className="text-blue-600 hover:text-blue-800">
-                → Problemen oplossen: veelvoorkomende issues en oplossingen
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* CTA */}
-        <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Klaar om te beginnen?</h2>
-          <p className="mb-6">Ontdek welke {site.productNoun} het beste bij jou passen</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/prijzen/goedkoopste" className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-              Bekijk goedkoopste opties
-            </Link>
-            <Link href="/merken" className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">
-              Vergelijk alle merken
-            </Link>
+            <GidsSidebar relatedGuides={[
+              { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk Wassen', description: 'Duurzaam wassen uitgelegd' },
+              { href: '/gids/kopen-tips', title: 'Kopen Tips', description: 'Slim vergelijken en kopen' },
+            ]} />
           </div>
         </div>
-      </article>
+      </div>
     </>
   );
 }

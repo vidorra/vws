@@ -7,6 +7,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: 'var(--color-brand-primary)',
+        },
+      },
+      backgroundColor: {
+        'brand-light': 'var(--color-brand-primary-light)',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

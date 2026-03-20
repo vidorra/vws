@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Eye, CheckCircle, AlertCircle } from 'lucide-react';
+import { AlertTriangle, Info } from 'lucide-react';
 import { getSite } from '@/lib/get-site';
+import GidsSidebar from '@/components/GidsSidebar';
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSite();
@@ -109,102 +110,94 @@ export default function WitteAanslagPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <nav className="flex text-sm text-gray-500 mb-8">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids" className="hover:text-blue-600">Gids</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids/troubleshooting" className="hover:text-blue-600">Troubleshooting</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">{isVaatwas ? 'Witte aanslag' : 'Witte vlekken'}</span>
-        </nav>
+      <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <p className="text-sm text-gray-500 mb-6">
+          <Link href="/gids" className="hover:text-primary">Gids</Link>
+          {' • '}
+          <Link href="/gids/troubleshooting" className="hover:text-primary">Troubleshooting</Link>
+          {' • '}
+          <span>{isVaatwas ? 'Witte aanslag' : 'Witte vlekken'}</span>
+        </p>
 
-        <header className="mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="p-4 rounded-full bg-gray-100">
-              <Eye className="h-12 w-12 text-gray-600" />
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-7 space-y-6">
+            {/* Header */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h1 className="text-3xl font-bold text-primary mb-3">{pageTitle}</h1>
+              <p className="text-gray-600">{pageSubtitle}</p>
             </div>
-          </div>
-          <h1 className="text-4xl font-bold text-center mb-4">{pageTitle}</h1>
-          <p className="text-xl text-gray-600 text-center">{pageSubtitle}</p>
-        </header>
 
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Oorzaken</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {causes.map((cause, i) => (
-              <div key={i} className="bg-white rounded-lg shadow p-5">
+            {/* Oorzaken */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Oorzaken</h2>
+              <div className="space-y-4">
+                {causes.map((cause) => (
+                  <div key={cause.title} className="flex items-start border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">{cause.title}</h3>
+                      <p className="text-gray-600 text-sm">{cause.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Oplossingen */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Oplossingen</h2>
+              <div className="space-y-4">
+                {solutions.map((item, i) => (
+                  <div key={i} className="flex items-start border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                    <span className="bg-brand-light text-primary rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0 font-bold text-sm">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <p className="font-semibold text-gray-900">{item.step}</p>
+                      <p className="text-gray-600 text-sm">{item.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Wist je dat (vaatwas only) */}
+            {isVaatwas && (
+              <div className="bg-brand-light border border-gray-200 rounded-2xl p-6">
                 <div className="flex items-start">
-                  <AlertCircle className="h-5 w-5 text-orange-400 mr-3 flex-shrink-0 mt-1" />
+                  <Info className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold mb-1">{cause.title}</h3>
-                    <p className="text-gray-600 text-sm">{cause.description}</p>
+                    <h3 className="font-semibold text-primary mb-1">Wist je dat?</h3>
+                    <p className="text-gray-700 text-sm">
+                      Vaatwasstrips bevatten doorgaans geen glansspoelmiddel, in tegenstelling tot all-in-one tabletten.
+                      Dit is bewust: zo kun je de hoeveelheid glansspoelmiddel aanpassen aan je waterhardheid.
+                      In zachte watergebieden heb je minder nodig, in harde watergebieden meer.
+                    </p>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            )}
 
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Oplossingen</h2>
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <ol className="space-y-4">
-              {solutions.map((item, i) => (
-                <li key={i} className="flex items-start">
-                  <span className="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0 font-bold">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <p className="font-semibold">{item.step}</p>
-                    <p className="text-gray-600 text-sm">{item.detail}</p>
+            {/* FAQ */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Veelgestelde vragen</h2>
+              <div className="space-y-0">
+                {faqs.map(faq => (
+                  <div key={faq.question} className="border-b border-gray-100 last:border-0 py-4 first:pt-0 last:pb-0">
+                    <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                    <p className="text-gray-600 text-sm">{faq.answer}</p>
                   </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        {isVaatwas && (
-          <section className="mb-12">
-            <div className="bg-blue-50 rounded-lg p-6">
-              <h3 className="font-bold mb-3">Wist je dat?</h3>
-              <p className="text-gray-700">
-                Vaatwasstrips bevatten doorgaans geen glansspoelmiddel, in tegenstelling tot all-in-one tabletten.
-                Dit is bewust: zo kun je de hoeveelheid glansspoelmiddel aanpassen aan je waterhardheid.
-                In zachte watergebieden heb je minder nodig, in harde watergebieden meer.
-              </p>
+                ))}
+              </div>
             </div>
-          </section>
-        )}
-
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Veelgestelde vragen</h2>
-          <div className="space-y-4">
-            {faqs.map(faq => (
-              <details key={faq.question} className="bg-white rounded-lg shadow p-4">
-                <summary className="cursor-pointer font-semibold">{faq.question}</summary>
-                <p className="mt-3 text-gray-600">{faq.answer}</p>
-              </details>
-            ))}
           </div>
-        </section>
 
-        <div className="bg-gray-50 rounded-lg p-6 mb-10">
-          <h3 className="font-bold mb-3">Gerelateerde artikelen</h3>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/gids/troubleshooting/strip-lost-niet-op" className="text-blue-600 hover:text-blue-800">
-                &rarr; {site.productNounCapitalized.slice(0, -1)} lost niet op
-              </Link>
-            </li>
-            <li>
-              <Link href="/gids/troubleshooting/dosering-problemen" className="text-blue-600 hover:text-blue-800">
-                &rarr; {isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen'}
-              </Link>
-            </li>
-          </ul>
+          <GidsSidebar
+            relatedGuides={[
+              { href: '/gids/troubleshooting/strip-lost-niet-op', title: `${site.productNounCapitalized.slice(0, -1)} lost niet op`, description: 'Oorzaken en oplossingen' },
+              { href: '/gids/troubleshooting/dosering-problemen', title: isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen', description: 'Tips voor de juiste dosering' },
+            ]}
+          />
         </div>
       </article>
     </>

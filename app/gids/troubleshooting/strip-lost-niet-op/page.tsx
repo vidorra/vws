@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Droplets, CheckCircle, AlertCircle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { getSite } from '@/lib/get-site';
+import GidsSidebar from '@/components/GidsSidebar';
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSite();
@@ -95,121 +96,111 @@ export default function StripLostNietOpPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <nav className="flex text-sm text-gray-500 mb-8">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids" className="hover:text-blue-600">Gids</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids/troubleshooting" className="hover:text-blue-600">Troubleshooting</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">Strip lost niet op</span>
-        </nav>
+      <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <p className="text-sm text-gray-500 mb-6">
+          <Link href="/gids" className="hover:text-primary">Gids</Link>
+          {' • '}
+          <Link href="/gids/troubleshooting" className="hover:text-primary">Troubleshooting</Link>
+          {' • '}
+          <span>Strip lost niet op</span>
+        </p>
 
-        <header className="mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="p-4 rounded-full bg-blue-100">
-              <Droplets className="h-12 w-12 text-blue-600" />
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold text-center mb-4">
-            {site.productNounCapitalized.slice(0, -1)} Lost Niet Op
-          </h1>
-          <p className="text-xl text-gray-600 text-center">
-            De 5 meest voorkomende oorzaken en directe oplossingen
-          </p>
-        </header>
-
-        <div className="bg-blue-50 rounded-lg p-6 mb-12">
-          <h2 className="text-xl font-bold mb-2">Snel antwoord</h2>
-          <p className="text-gray-700">
-            In 90% van de gevallen lost het probleem zich op door de {noun} <strong>los bovenop</strong> de {isVaatwas ? 'vaat' : 'was'} te leggen,
-            de {machine} maximaal 80% te vullen, en een programma van minimaal {isVaatwas ? '55' : '30'}°C te kiezen.
-          </p>
-        </div>
-
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">5 oorzaken waarom je {noun} niet oplost</h2>
-          <div className="space-y-4">
-            {causes.map((cause, i) => (
-              <div key={cause.title} className="bg-white rounded-lg shadow p-5">
-                <div className="flex items-start">
-                  <span className="bg-orange-100 text-orange-700 rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0 font-bold">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">{cause.title}</h3>
-                    <p className="text-gray-600">{cause.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Stap-voor-stap oplossing</h2>
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <ol className="space-y-4">
-              {[
-                { step: `Haal de ${noun} uit de verpakking en vouw hem niet dubbel`, detail: 'Een gevouwen strip heeft minder oppervlakte in contact met water.' },
-                { step: isVaatwas ? 'Leg de strip los op het bovenrek of in het bestekmandje' : 'Leg de strip bovenop de was in de trommel', detail: `Niet in het ${isVaatwas ? 'zeepvakje' : 'wasmiddellade'} stoppen.` },
-                { step: `Vul de ${machine} tot maximaal 80%`, detail: 'Water moet vrij kunnen circuleren.' },
-                { step: `Kies een programma van minimaal ${isVaatwas ? '55' : '30'}°C`, detail: isVaatwas ? 'Eco-programma werkt ook, maar normaal programma is betrouwbaarder.' : 'Koud wassen (20°C) kan bij sommige merken te laag zijn.' },
-                { step: 'Start de machine en controleer na afloop', detail: 'Als de strip nog steeds niet oplost, probeer een ander merk.' },
-              ].map((item, i) => (
-                <li key={i} className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-semibold">{item.step}</p>
-                    <p className="text-gray-600 text-sm">{item.detail}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Veelgestelde vragen</h2>
-          <div className="space-y-4">
-            {faqs.map(faq => (
-              <details key={faq.question} className="bg-white rounded-lg shadow p-4">
-                <summary className="cursor-pointer font-semibold">{faq.question}</summary>
-                <p className="mt-3 text-gray-600">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-10">
-          <div className="flex">
-            <AlertCircle className="h-6 w-6 text-yellow-400 mr-2 flex-shrink-0 mt-1" />
-            <div>
-              <h4 className="font-semibold">Nog steeds problemen?</h4>
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-7 space-y-6">
+            {/* Header */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h1 className="text-3xl font-bold text-primary mb-3">
+                {site.productNounCapitalized.slice(0, -1)} Lost Niet Op
+              </h1>
               <p className="text-gray-600">
-                Als de strip na het volgen van alle stappen nog steeds niet oplost, kan het aan het specifieke merk liggen.
-                Probeer de <Link href="/productfinder" className="text-blue-600 hover:text-blue-800 font-medium">Productfinder</Link> om
-                een {noun} te vinden die beter bij jouw {machine} past.
+                De 5 meest voorkomende oorzaken en directe oplossingen
               </p>
             </div>
-          </div>
-        </div>
 
-        <div className="bg-gray-50 rounded-lg p-6 mb-10">
-          <h3 className="font-bold mb-3">Gerelateerde artikelen</h3>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/gids/troubleshooting/dosering-problemen" className="text-blue-600 hover:text-blue-800">
-                &rarr; {isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen'}
-              </Link>
-            </li>
-            <li>
-              <Link href="/gids/beginners" className="text-blue-600 hover:text-blue-800">
-                &rarr; Beginners Gids: hoe gebruik je {nouns}?
-              </Link>
-            </li>
-          </ul>
+            {/* Snel antwoord */}
+            <div className="bg-brand-light border border-gray-200 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold text-primary mb-2">Snel antwoord</h2>
+              <p className="text-gray-700">
+                In 90% van de gevallen lost het probleem zich op door de {noun} <strong>los bovenop</strong> de {isVaatwas ? 'vaat' : 'was'} te leggen,
+                de {machine} maximaal 80% te vullen, en een programma van minimaal {isVaatwas ? '55' : '30'}°C te kiezen.
+              </p>
+            </div>
+
+            {/* Oorzaken */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">5 oorzaken waarom je {noun} niet oplost</h2>
+              <div className="space-y-4">
+                {causes.map((cause, i) => (
+                  <div key={cause.title} className="flex items-start border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                    <span className="bg-brand-light text-primary rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0 font-bold text-sm">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">{cause.title}</h3>
+                      <p className="text-gray-600 text-sm">{cause.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Stap-voor-stap */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Stap-voor-stap oplossing</h2>
+              <ol className="space-y-4">
+                {[
+                  { step: `Haal de ${noun} uit de verpakking en vouw hem niet dubbel`, detail: 'Een gevouwen strip heeft minder oppervlakte in contact met water.' },
+                  { step: isVaatwas ? 'Leg de strip los op het bovenrek of in het bestekmandje' : 'Leg de strip bovenop de was in de trommel', detail: `Niet in het ${isVaatwas ? 'zeepvakje' : 'wasmiddellade'} stoppen.` },
+                  { step: `Vul de ${machine} tot maximaal 80%`, detail: 'Water moet vrij kunnen circuleren.' },
+                  { step: `Kies een programma van minimaal ${isVaatwas ? '55' : '30'}°C`, detail: isVaatwas ? 'Eco-programma werkt ook, maar normaal programma is betrouwbaarder.' : 'Koud wassen (20°C) kan bij sommige merken te laag zijn.' },
+                  { step: 'Start de machine en controleer na afloop', detail: 'Als de strip nog steeds niet oplost, probeer een ander merk.' },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-gray-900">{item.step}</p>
+                      <p className="text-gray-600 text-sm">{item.detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* FAQ */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Veelgestelde vragen</h2>
+              <div className="space-y-0">
+                {faqs.map(faq => (
+                  <div key={faq.question} className="border-b border-gray-100 last:border-0 py-4 first:pt-0 last:pb-0">
+                    <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                    <p className="text-gray-600 text-sm">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Warning */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+              <div className="flex items-start">
+                <AlertTriangle className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Nog steeds problemen?</h3>
+                  <p className="text-gray-600 text-sm">
+                    Als de strip na het volgen van alle stappen nog steeds niet oplost, kan het aan het specifieke merk liggen.
+                    Probeer de <Link href="/productfinder" className="text-primary hover:underline font-medium">Productfinder</Link> om
+                    een {noun} te vinden die beter bij jouw {machine} past.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <GidsSidebar
+            relatedGuides={[
+              { href: '/gids/troubleshooting/dosering-problemen', title: isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen', description: 'Tips voor de juiste dosering' },
+              { href: '/gids/beginners', title: 'Beginners Gids', description: `Hoe gebruik je ${nouns}?` },
+            ]}
+          />
         </div>
       </article>
     </>

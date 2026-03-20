@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Gauge, CheckCircle, AlertCircle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { getSite } from '@/lib/get-site';
+import GidsSidebar from '@/components/GidsSidebar';
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSite();
@@ -118,115 +119,104 @@ export default function DoseringProblemenPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <nav className="flex text-sm text-gray-500 mb-8">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids" className="hover:text-blue-600">Gids</Link>
-          <span className="mx-2">/</span>
-          <Link href="/gids/troubleshooting" className="hover:text-blue-600">Troubleshooting</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">Dosering</span>
-        </nav>
+      <article className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <p className="text-sm text-gray-500 mb-6">
+          <Link href="/gids" className="hover:text-primary">Gids</Link>
+          {' • '}
+          <Link href="/gids/troubleshooting" className="hover:text-primary">Troubleshooting</Link>
+          {' • '}
+          <span>Dosering</span>
+        </p>
 
-        <header className="mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="p-4 rounded-full bg-orange-100">
-              <Gauge className="h-12 w-12 text-orange-600" />
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-7 space-y-6">
+            {/* Header */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h1 className="text-3xl font-bold text-primary mb-3">
+                {site.productNounCapitalized} {pageTitle}
+              </h1>
+              <p className="text-gray-600">De juiste dosering voor elke situatie</p>
             </div>
-          </div>
-          <h1 className="text-4xl font-bold text-center mb-4">
-            {site.productNounCapitalized} {pageTitle}
-          </h1>
-          <p className="text-xl text-gray-600 text-center">
-            De juiste dosering voor elke situatie
-          </p>
-        </header>
 
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Doseertabel</h2>
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="text-left py-3 px-4 font-semibold">Situatie</th>
-                  <th className="text-left py-3 px-4 font-semibold">Aantal strips</th>
-                  <th className="text-left py-3 px-4 font-semibold">Temperatuur</th>
-                </tr>
-              </thead>
-              <tbody>
-                {doseringTable.map((row, i) => (
-                  <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="py-3 px-4">{row.situation}</td>
-                    <td className="py-3 px-4 font-semibold">{row.strips}</td>
-                    <td className="py-3 px-4">{row.temp}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="text-sm text-gray-500 mt-3">
-            * Dosering kan per merk verschillen. Raadpleeg altijd de verpakking voor merkspecifieke aanbevelingen.
-          </p>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Tips voor optimale dosering</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tips.map((tip) => (
-              <div key={tip.title} className="bg-white rounded-lg shadow p-5">
-                <div className="flex items-start">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-1">{tip.title}</h3>
-                    <p className="text-gray-600 text-sm">{tip.detail}</p>
-                  </div>
-                </div>
+            {/* Doseertabel */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Doseertabel</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 pr-4 font-semibold text-gray-900">Situatie</th>
+                      <th className="text-left py-3 pr-4 font-semibold text-gray-900">Aantal strips</th>
+                      <th className="text-left py-3 font-semibold text-gray-900">Temperatuur</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {doseringTable.map((row, i) => (
+                      <tr key={i} className="border-b border-gray-100 last:border-0">
+                        <td className="py-3 pr-4 text-gray-600">{row.situation}</td>
+                        <td className="py-3 pr-4 font-semibold text-primary">{row.strips}</td>
+                        <td className="py-3 text-gray-600">{row.temp}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-12">
-          <div className="flex">
-            <AlertCircle className="h-6 w-6 text-yellow-400 mr-2 flex-shrink-0 mt-1" />
-            <div>
-              <h4 className="font-semibold">Let op: hard water</h4>
-              <p className="text-gray-600">
-                {isVaatwas
-                  ? 'In hard-water-gebieden (Utrecht, Zeeland) kan het nodig zijn om de onthardingsinstelling van je vaatwasser te verhogen. Dit is geen doseringsprobleem maar een waterprobleem.'
-                  : 'In hard-water-gebieden (Utrecht, Zeeland) kan het nodig zijn om een halve strip extra te gebruiken. Sommige merken bieden speciale hard-water-varianten aan.'}
+              <p className="text-xs text-gray-500 mt-3">
+                * Dosering kan per merk verschillen. Raadpleeg altijd de verpakking voor merkspecifieke aanbevelingen.
               </p>
             </div>
-          </div>
-        </div>
 
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Veelgestelde vragen</h2>
-          <div className="space-y-4">
-            {faqs.map(faq => (
-              <details key={faq.question} className="bg-white rounded-lg shadow p-4">
-                <summary className="cursor-pointer font-semibold">{faq.question}</summary>
-                <p className="mt-3 text-gray-600">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+            {/* Tips */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Tips voor optimale dosering</h2>
+              <div className="space-y-4">
+                {tips.map((tip) => (
+                  <div key={tip.title} className="flex items-start border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">{tip.title}</h3>
+                      <p className="text-gray-600 text-sm">{tip.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        <div className="bg-gray-50 rounded-lg p-6 mb-10">
-          <h3 className="font-bold mb-3">Gerelateerde artikelen</h3>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/gids/troubleshooting/strip-lost-niet-op" className="text-blue-600 hover:text-blue-800">
-                &rarr; {site.productNounCapitalized.slice(0, -1)} lost niet op
-              </Link>
-            </li>
-            <li>
-              <Link href="/gids/kopen-tips" className="text-blue-600 hover:text-blue-800">
-                &rarr; Kopen tips: waar op letten bij het vergelijken van {nouns}
-              </Link>
-            </li>
-          </ul>
+            {/* Hard water warning */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+              <div className="flex items-start">
+                <AlertTriangle className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Let op: hard water</h3>
+                  <p className="text-gray-600 text-sm">
+                    {isVaatwas
+                      ? 'In hard-water-gebieden (Utrecht, Zeeland) kan het nodig zijn om de onthardingsinstelling van je vaatwasser te verhogen. Dit is geen doseringsprobleem maar een waterprobleem.'
+                      : 'In hard-water-gebieden (Utrecht, Zeeland) kan het nodig zijn om een halve strip extra te gebruiken. Sommige merken bieden speciale hard-water-varianten aan.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* FAQ */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-primary mb-4">Veelgestelde vragen</h2>
+              <div className="space-y-0">
+                {faqs.map(faq => (
+                  <div key={faq.question} className="border-b border-gray-100 last:border-0 py-4 first:pt-0 last:pb-0">
+                    <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                    <p className="text-gray-600 text-sm">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <GidsSidebar
+            relatedGuides={[
+              { href: '/gids/troubleshooting/strip-lost-niet-op', title: `${site.productNounCapitalized.slice(0, -1)} lost niet op`, description: 'Oorzaken en oplossingen' },
+              { href: '/gids/kopen-tips', title: 'Kopen Tips', description: `Waar let je op bij het vergelijken van ${nouns}?` },
+            ]}
+          />
         </div>
       </article>
     </>
