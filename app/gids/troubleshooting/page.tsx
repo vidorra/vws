@@ -14,6 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Problemen met ${site.productNoun}? Hier vind je de oplossing`,
       type: 'article',
     },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/troubleshooting`,
+    },
   };
 }
 
@@ -145,6 +148,7 @@ export default function TroubleshootingHubPage() {
               { href: '/gids/kopen-tips', title: 'Kopen Tips', description: `Waar let je op bij het kopen van ${site.productNoun}?` },
               { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk', description: `Hoe duurzaam zijn ${site.productNoun}?` },
             ]}
+            sisterSite={site.sisterSite}
           />
         </div>
       </div>

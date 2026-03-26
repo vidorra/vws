@@ -23,6 +23,15 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['bcryptjs']
+  },
+  async redirects() {
+    return [
+      {
+        source: '/overzicht',
+        destination: '/#vergelijking',
+        permanent: true,
+      },
+    ];
   }
 }
 

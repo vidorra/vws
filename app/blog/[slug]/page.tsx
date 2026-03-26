@@ -154,7 +154,7 @@ const posts: BlogPost[] = [
     cta: {
       heading: 'De meest duurzame wasstrip kiezen?',
       text: 'Bekijk onze duurzaamheidsscores en vergelijk alle merken',
-      href: '/overzicht',
+      href: '/#vergelijking',
       label: 'Bekijk duurzaamheidsscores',
     },
     related: [

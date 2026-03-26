@@ -17,6 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     openGraph: { title, description, type: 'article' },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/troubleshooting/dosering-problemen`,
+    },
   };
 }
 
@@ -216,6 +219,7 @@ export default function DoseringProblemenPage() {
               { href: '/gids/troubleshooting/strip-lost-niet-op', title: `${site.productNounCapitalized.slice(0, -1)} lost niet op`, description: 'Oorzaken en oplossingen' },
               { href: '/gids/kopen-tips', title: 'Kopen Tips', description: `Waar let je op bij het vergelijken van ${nouns}?` },
             ]}
+            sisterSite={site.sisterSite}
           />
         </div>
       </article>

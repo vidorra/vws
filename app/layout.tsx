@@ -19,11 +19,22 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${site.name}`,
     },
     description: site.description,
-    keywords: `${site.productNoun}, vergelijken, nederland, prijs, duurzaamheid, milieuvriendelijk`,
+    alternates: {
+      canonical: site.canonicalBase,
+    },
     openGraph: {
       title: `${site.name} Nederland`,
       description: site.description,
+      url: site.canonicalBase,
+      siteName: site.name,
+      locale: 'nl_NL',
+      type: 'website',
       images: ['/og-image.jpg'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${site.name} Nederland`,
+      description: site.description,
     },
   };
 }
@@ -32,15 +43,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const site = getSite();
   const year = new Date().getFullYear();
 
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: site.name,
+    url: site.canonicalBase,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: site.contactEmail,
+      contactType: 'customer service',
+      availableLanguage: 'Dutch',
+    },
+  };
+
   return (
     <html lang="nl" data-site={site.key}>
       <body className={`${inter.className} bg-brand-gradient-light`}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <SiteProvider config={site}>
           <Navigation />
           <main className="pt-24">{children}</main>
           <footer className="bg-white border-t border-gray-200 mt-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3">Over Ons</h3>
                   <p className="text-sm text-gray-600">
@@ -52,31 +77,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <h3 className="font-semibold text-gray-900 mb-3">Snelle Links</h3>
                   <ul className="space-y-2 text-sm">
                     <li>
-                      <Link href="/merken" className="text-gray-600 hover:text-blue-600">
+                      <Link href="/merken" className="text-gray-600 hover:text-primary">
                         Alle Merken
                       </Link>
                     </li>
                     <li>
-                      <Link href="/prijzen/goedkoopste" className="text-gray-600 hover:text-blue-600">
+                      <Link href="/prijzen/goedkoopste" className="text-gray-600 hover:text-primary">
                         Goedkoopste Opties
                       </Link>
                     </li>
                     <li>
-                      <Link href="/gids/beginners" className="text-gray-600 hover:text-blue-600">
+                      <Link href="/gids/beginners" className="text-gray-600 hover:text-primary">
                         Beginners Gids
                       </Link>
                     </li>
                     <li>
-                      <Link href="/reviews" className="text-gray-600 hover:text-blue-600">
+                      <Link href="/reviews" className="text-gray-600 hover:text-primary">
                         Reviews
                       </Link>
                     </li>
                     <li>
-                      <Link href="/privacybeleid" className="text-gray-600 hover:text-blue-600">
+                      <Link href="/privacybeleid" className="text-gray-600 hover:text-primary">
                         Privacybeleid
                       </Link>
                     </li>
                   </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Zustersite</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Ook {site.sisterSite.productNoun} vergelijken?
+                  </p>
+                  <a
+                    href={site.sisterSite.url}
+                    rel="noopener"
+                    className="text-sm text-primary hover:underline font-medium"
+                  >
+                    {site.sisterSite.name} →
+                  </a>
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3">Contact</h3>

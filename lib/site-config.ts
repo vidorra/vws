@@ -1,5 +1,12 @@
 export type SiteKey = 'wasstrips' | 'vaatwasstrips';
 
+export interface SisterSite {
+  name: string;
+  url: string;
+  productNoun: string;
+  productNounCapitalized: string;
+}
+
 export interface SiteConfig {
   key: SiteKey;
   domain: string;
@@ -11,6 +18,7 @@ export interface SiteConfig {
   productNounCapitalized: string;
   canonicalBase: string;
   contactEmail: string;
+  sisterSite: SisterSite;
 }
 
 export const SITE_CONFIG: Record<SiteKey, SiteConfig> = {
@@ -26,6 +34,12 @@ export const SITE_CONFIG: Record<SiteKey, SiteConfig> = {
     productNounCapitalized: 'Vaatwasstrips',
     canonicalBase: 'https://vaatwasstripsvergelijker.nl',
     contactEmail: 'info@vaatwasstripsvergelijker.nl',
+    sisterSite: {
+      name: 'Wasstrips Vergelijker',
+      url: 'https://wasstripsvergelijker.nl',
+      productNoun: 'wasstrips',
+      productNounCapitalized: 'Wasstrips',
+    },
   },
   wasstrips: {
     key: 'wasstrips',
@@ -39,5 +53,11 @@ export const SITE_CONFIG: Record<SiteKey, SiteConfig> = {
     productNounCapitalized: 'Wasstrips',
     canonicalBase: 'https://wasstripsvergelijker.nl',
     contactEmail: 'info@wasstripsvergelijker.nl',
+    sisterSite: {
+      name: 'Vaatwasstrips Vergelijker',
+      url: 'https://vaatwasstripsvergelijker.nl',
+      productNoun: 'vaatwasstrips',
+      productNounCapitalized: 'Vaatwasstrips',
+    },
   },
 };

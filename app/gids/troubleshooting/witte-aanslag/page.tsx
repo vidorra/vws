@@ -17,6 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     openGraph: { title, description, type: 'article' },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/troubleshooting/witte-aanslag`,
+    },
   };
 }
 
@@ -197,6 +200,7 @@ export default function WitteAanslagPage() {
               { href: '/gids/troubleshooting/strip-lost-niet-op', title: `${site.productNounCapitalized.slice(0, -1)} lost niet op`, description: 'Oorzaken en oplossingen' },
               { href: '/gids/troubleshooting/dosering-problemen', title: isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen', description: 'Tips voor de juiste dosering' },
             ]}
+            sisterSite={site.sisterSite}
           />
         </div>
       </article>

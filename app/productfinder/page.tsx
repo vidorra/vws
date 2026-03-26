@@ -368,7 +368,7 @@ export default function ProductfinderPage() {
           </button>
           <p className="text-sm text-gray-500">
             Of bekijk het{' '}
-            <Link href="/overzicht" className="text-blue-600 hover:underline">
+            <Link href="/#vergelijking" className="text-primary hover:underline">
               volledige overzicht
             </Link>
           </p>

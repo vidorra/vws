@@ -17,6 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     openGraph: { title, description, type: 'article' },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/troubleshooting/gevoelige-huid`,
+    },
   };
 }
 
@@ -267,6 +270,7 @@ export default function GevoeligeHuidPage() {
               { href: '/gids/troubleshooting/dosering-problemen', title: isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen', description: 'Tips voor de juiste dosering' },
               { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk', description: `Ingrediënten van ${nouns} uitgelegd` },
             ]}
+            sisterSite={site.sisterSite}
           />
         </div>
       </article>

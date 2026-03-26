@@ -14,6 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Alles wat je moet weten voordat je ${site.productNoun} koopt`,
       type: 'article',
     },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/kopen-tips`,
+    },
   };
 }
 
@@ -292,10 +295,13 @@ export default function KopenTipsGidsPage() {
               </div>
             </div>
 
-            <GidsSidebar relatedGuides={[
-              { href: '/gids/beginners', title: 'Beginners Gids', description: 'Starten met wasstrips' },
-              { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk Wassen', description: 'Duurzaam wassen uitgelegd' },
-            ]} />
+            <GidsSidebar
+              relatedGuides={[
+                { href: '/gids/beginners', title: 'Beginners Gids', description: 'Starten met wasstrips' },
+                { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk Wassen', description: 'Duurzaam wassen uitgelegd' },
+              ]}
+              sisterSite={site.sisterSite}
+            />
           </div>
         </div>
       </div>

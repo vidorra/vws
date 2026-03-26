@@ -15,6 +15,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Oorzaken en oplossingen wanneer je ${site.productNounSingular} niet oplost`,
       type: 'article',
     },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/troubleshooting/strip-lost-niet-op`,
+    },
   };
 }
 
@@ -200,6 +203,7 @@ export default function StripLostNietOpPage() {
               { href: '/gids/troubleshooting/dosering-problemen', title: isVaatwas ? 'Dosering bij vol gevulde machine' : 'Dosering bij lage temperaturen', description: 'Tips voor de juiste dosering' },
               { href: '/gids/beginners', title: 'Beginners Gids', description: `Hoe gebruik je ${nouns}?` },
             ]}
+            sisterSite={site.sisterSite}
           />
         </div>
       </article>

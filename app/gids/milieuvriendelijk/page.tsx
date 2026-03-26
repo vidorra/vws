@@ -14,6 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Hoe ${site.productNoun} bijdragen aan een duurzamere wasroutine`,
       type: 'article',
     },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/milieuvriendelijk`,
+    },
   };
 }
 
@@ -273,7 +276,7 @@ export default function MilieuvriendelijkGidsPage() {
                     <h2 className="text-lg font-semibold text-primary mb-2">Klaar voor duurzamer wassen?</h2>
                     <p className="text-gray-600 mb-4">Vergelijk alle merken op duurzaamheid en prijs</p>
                     <div className="flex flex-wrap justify-center gap-3">
-                      <Link href="/overzicht" className="inline-flex items-center px-5 py-2 btn-primary rounded-lg text-sm">
+                      <Link href="/#vergelijking" className="inline-flex items-center px-5 py-2 btn-primary rounded-lg text-sm">
                         Vergelijk alle merken
                       </Link>
                       <Link href="/productfinder" className="inline-flex items-center px-5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-primary hover:border-primary transition-colors">
@@ -285,10 +288,13 @@ export default function MilieuvriendelijkGidsPage() {
               </div>
             </div>
 
-            <GidsSidebar relatedGuides={[
-              { href: '/gids/beginners', title: 'Beginners Gids', description: 'Starten met wasstrips' },
-              { href: '/gids/kopen-tips', title: 'Kopen Tips', description: 'Slim vergelijken en kopen' },
-            ]} />
+            <GidsSidebar
+              relatedGuides={[
+                { href: '/gids/beginners', title: 'Beginners Gids', description: 'Starten met wasstrips' },
+                { href: '/gids/kopen-tips', title: 'Kopen Tips', description: 'Slim vergelijken en kopen' },
+              ]}
+              sisterSite={site.sisterSite}
+            />
           </div>
         </div>
       </div>

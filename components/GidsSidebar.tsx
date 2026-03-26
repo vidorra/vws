@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, Search, ArrowRight } from 'lucide-react';
+import { BookOpen, Search, ArrowRight, ExternalLink } from 'lucide-react';
 
 interface RelatedGuide {
   href: string;
@@ -7,16 +7,23 @@ interface RelatedGuide {
   description: string;
 }
 
-interface GidsSidebarProps {
-  relatedGuides?: RelatedGuide[];
+interface SisterSiteInfo {
+  name: string;
+  url: string;
+  productNoun: string;
 }
 
-export default function GidsSidebar({ relatedGuides = [] }: GidsSidebarProps) {
+interface GidsSidebarProps {
+  relatedGuides?: RelatedGuide[];
+  sisterSite?: SisterSiteInfo;
+}
+
+export default function GidsSidebar({ relatedGuides = [], sisterSite }: GidsSidebarProps) {
   return (
     <div className="col-span-12 lg:col-span-5 space-y-6">
       <div className="hidden lg:block space-y-6">
         {/* Productfinder CTA */}
-        <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="card p-6">
           <div className="flex items-center space-x-2 mb-3">
             <Search className="w-5 h-5 text-primary" />
             <h3 className="font-semibold text-primary">Productfinder</h3>
@@ -35,7 +42,7 @@ export default function GidsSidebar({ relatedGuides = [] }: GidsSidebarProps) {
 
         {/* Related Guides */}
         {relatedGuides.length > 0 && (
-          <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="card p-6">
             <div className="flex items-center space-x-2 mb-4">
               <BookOpen className="w-5 h-5 text-primary" />
               <h3 className="font-semibold text-primary">Gerelateerde Gidsen</h3>
@@ -56,19 +63,40 @@ export default function GidsSidebar({ relatedGuides = [] }: GidsSidebarProps) {
         )}
 
         {/* Vergelijk CTA */}
-        <div className="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div className="card p-6">
           <h3 className="font-semibold text-primary mb-3">Vergelijk Producten</h3>
           <p className="text-gray-600 text-sm mb-4">
             Bekijk alle producten naast elkaar en vergelijk op prijs, rating en ingrediënten.
           </p>
           <Link
-            href="/overzicht"
+            href="/#vergelijking"
             className="inline-flex items-center text-primary text-sm font-medium hover:underline"
           >
-            Bekijk overzicht
+            Bekijk vergelijking
             <ArrowRight className="w-4 h-4 ml-1" />
           </Link>
         </div>
+
+        {/* Sister Site Cross-link */}
+        {sisterSite && (
+          <div className="card p-6">
+            <div className="flex items-center space-x-2 mb-3">
+              <ExternalLink className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold text-primary">Ook {sisterSite.productNoun}?</h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Bekijk onze zustersite voor een onafhankelijke vergelijking van {sisterSite.productNoun}.
+            </p>
+            <a
+              href={sisterSite.url}
+              rel="noopener"
+              className="inline-flex items-center text-primary text-sm font-medium hover:underline"
+            >
+              {sisterSite.name}
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

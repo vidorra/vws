@@ -9,6 +9,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${site.productNounCapitalized} Gids - Alles wat je moet weten`,
     description: `Complete gids over ${site.productNoun}. Van beginners tips tot milieuvriendelijk wassen. Leer alles over het gebruik van ${site.productNoun}.`,
+    alternates: { canonical: `${site.canonicalBase}/gids` },
+    openGraph: {
+      title: `${site.productNounCapitalized} Gids`,
+      description: `Complete gids over ${site.productNoun}`,
+      type: 'article',
+    },
   };
 }
 
@@ -59,7 +65,29 @@ const faqItems = [
 export default function GidsPage() {
   const site = getSite();
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": site.canonicalBase },
+      { "@type": "ListItem", "position": 2, "name": "Gids", "item": `${site.canonicalBase}/gids` },
+    ],
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": { "@type": "Answer", "text": faq.answer },
+    })),
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <div className="mx-auto px-2 sm:px-4 py-8">
       <div className="container mx-auto">
         <div className="grid grid-cols-12 gap-6">
@@ -146,12 +174,15 @@ export default function GidsPage() {
             </div>
           </div>
 
-          <GidsSidebar relatedGuides={[
-            { href: '/productfinder', title: 'Productfinder', description: 'Vind het beste product voor jouw situatie' },
-            { href: '/overzicht', title: 'Productoverzicht', description: 'Bekijk alle producten en prijzen' },
-          ]} />
+          <GidsSidebar
+            relatedGuides={[
+              { href: '/productfinder', title: 'Productfinder', description: 'Vind het beste product voor jouw situatie' },
+            ]}
+            sisterSite={site.sisterSite}
+          />
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -14,6 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Alles wat je moet weten om te starten met ${site.productNoun}`,
       type: 'article',
     },
+    alternates: {
+      canonical: `${site.canonicalBase}/gids/beginners`,
+    },
   };
 }
 
@@ -256,7 +259,7 @@ export default function BeginnersGuidePage() {
                       <Link href="/prijzen/goedkoopste" className="inline-flex items-center px-5 py-2 btn-primary rounded-lg text-sm">
                         Bekijk goedkoopste opties
                       </Link>
-                      <Link href="/overzicht" className="inline-flex items-center px-5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-primary hover:border-primary transition-colors">
+                      <Link href="/#vergelijking" className="inline-flex items-center px-5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-primary hover:border-primary transition-colors">
                         Vergelijk alle merken
                       </Link>
                     </div>
@@ -265,10 +268,13 @@ export default function BeginnersGuidePage() {
               </div>
             </div>
 
-            <GidsSidebar relatedGuides={[
-              { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk Wassen', description: 'Duurzaam wassen uitgelegd' },
-              { href: '/gids/kopen-tips', title: 'Kopen Tips', description: 'Slim vergelijken en kopen' },
-            ]} />
+            <GidsSidebar
+              relatedGuides={[
+                { href: '/gids/milieuvriendelijk', title: 'Milieuvriendelijk Wassen', description: 'Duurzaam wassen uitgelegd' },
+                { href: '/gids/kopen-tips', title: 'Kopen Tips', description: 'Slim vergelijken en kopen' },
+              ]}
+              sisterSite={site.sisterSite}
+            />
           </div>
         </div>
       </div>

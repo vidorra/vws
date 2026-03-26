@@ -63,4 +63,8 @@ body {
   .bg-brand-gradient-light {
     background: linear-gradient(to right, var(--color-brand-primary-light), #f0fdf4);
   }
+
+  .card {
+    @apply bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-gray-200;
+  }
 }
